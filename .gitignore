@@ -6,3 +6,4 @@ dist
 .cache
 .iml
 .idea
+*.iml
