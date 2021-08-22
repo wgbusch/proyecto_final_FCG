@@ -230,24 +230,7 @@ function CompileShader(type, source, wgl = gl) {
     return shader;
 }
 
-// Los argumentos y el resultado son arreglos que representan matrices en orden column-major
-function MatrixMult(A, B) {
-    let C = [];
-    for (let i = 0; i < 4; ++i) {
-        for (let j = 0; j < 4; ++j) {
-            let v = 0;
-            for (let k = 0; k < 4; ++k) {
-                v += A[j + 4 * k] * B[k + 4 * i];
-            }
-
-            C.push(v);
-        }
-    }
-    return C;
-}
-
 let showBox;  // boleano para determinar si se debe o no mostrar la caja
-
 
 // Evento resize
 function WindowResize() {

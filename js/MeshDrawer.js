@@ -132,26 +132,6 @@ function GetModelViewMatrix(translationX, translationY, translationZ,
     return MatrixMult(direction, mv);
 }
 
-function Norm(u) {
-    var norm = Math.sqrt(u.x * u.x + u.y * u.y + u.z * u.z);
-    var l = {x: u.x / norm, y: u.y / norm, z: u.z / norm};
-    return l;
-}
-
-function proj(u, v) {
-    var num = u.x * v.x + u.y * v.y + u.z * v.z;
-    var den = u.x * u.x + u.y * u.y + u.z * u.z;
-    var c = num / den;
-    return {x: c * u.x, y: c * u.y, z: c * u.z}
-}
-
-function crossProduct(u, v) {
-    var s1 = u.y * v.z - u.z * v.y;
-    var s2 = u.z * v.x - u.x * v.z;
-    var s3 = u.x * v.y - u.y * v.x;
-    return {x: s1, y: s2, z: s3};
-}
-
 class MeshDrawer {
     // El constructor es donde nos encargamos de realizar las inicializaciones necesarias.
     constructor() {
