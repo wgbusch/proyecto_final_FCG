@@ -86,21 +86,21 @@ input[type=range] {
 	font-size: 1rem;
 	font-weight: bold;
 	background: white;
-	border-top: 1px solid #002aff;
-	border-right: 1px solid #00fff7;
-	border-bottom: 1px solid red;
-	border-left: 1px solid green;
+	border-top: 1px solid black;
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+	border-left: 1px solid black;
 }
 
 @media (orientation: landscape) {
 	#canvas-div {
 		display: inline-block;
-		width:  calc(100% - 40em);
+		width:  calc(100% - 16em);
 		height: 100%;
 	}
 	#controls-div {
 		display: inline-block;
-		width:   40em;
+		width:   16em;
 		height: 100%;
 		overflow: scroll;
 	}

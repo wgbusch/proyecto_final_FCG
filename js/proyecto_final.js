@@ -119,7 +119,7 @@ function InitWebGL() {
 
     // Inicializar los shaders y buffers para renderizar
     boxDrawer = new BoxDrawer();
-    meshDrawer = new MeshDrawer();
+    meshDrawer = new MeshDrawerSimple();
 
     // Setear el tamaño del viewport
     UpdateCanvasSize();
@@ -338,7 +338,7 @@ function SetShininess(param) {
     DrawScene();
 }
 
-function GenerateLabyrinth(param) {
+function GenerateLabyrinth() {
     let columns = parseInt(document.getElementById("columns").value);
     let rows = parseInt(document.getElementById("rows").value);
     labyrinthGenerator = new LabyrinthGenerator(rows, columns);
@@ -367,6 +367,4 @@ function GenerateLabyrinth(param) {
             grid.appendChild(cell)
         }
     }
-    // labyrinthGenerator.test();
-
 }

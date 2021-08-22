@@ -1,4 +1,4 @@
-class Graph {
+class Node {
     id;
     neighbors = []
 
@@ -30,7 +30,7 @@ class Graph {
         if (!this.nodes[rowNum])
             this.nodes[rowNum] = []
         if (!this.nodes[rowNum][column]) {
-            this.nodes[rowNum][column] = new Graph(id);
+            this.nodes[rowNum][column] = new Node(id);
             this.size++;
         } else {
             console.log("Graph already exists at id " + id)
