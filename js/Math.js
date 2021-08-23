@@ -15,10 +15,9 @@ function MatrixMult(A, B) {
     return C;
 }
 
-function Norm(u) {
+function Normalize(u) {
     let norm = Math.sqrt(u.x * u.x + u.y * u.y + u.z * u.z);
-    let l = {x: u.x / norm, y: u.y / norm, z: u.z / norm};
-    return l;
+    return new Vertex([u.x / norm, u.y / norm, u.z / norm]);
 }
 
 function proj(u, v) {
@@ -32,6 +31,6 @@ function crossProduct(u, v) {
     let s1 = u.y * v.z - u.z * v.y;
     let s2 = u.z * v.x - u.x * v.z;
     let s3 = u.x * v.y - u.y * v.x;
-    return {x: s1, y: s2, z: s3};
+    return new Vertex([s1,s2,s3]);
 }
 

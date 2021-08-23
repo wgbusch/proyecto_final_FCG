@@ -5,7 +5,7 @@ let perspectiveMatrix;	// matriz de perspectiva
 
 let rotX = 0, rotY = 0, rotZ = 0, transX = 0, transY = 0, transZ = 3, autorot = 0, cameraRotationXY = 0;
 let buttonsPressed;
-let movementSpeed = 5;
+let movementSpeed = 2;
 
 window.onload = function () {
     showBox = document.getElementById('show-box');
@@ -68,6 +68,14 @@ window.onload = function () {
         }
         if (buttonsPressed['d'] === true) {
             transX += -movementSpeed / canvas.height;
+            validKey = true;
+        }
+        if (buttonsPressed['q'] === true) {
+            transY += movementSpeed / canvas.height;
+            validKey = true;
+        }
+        if (buttonsPressed['e'] === true) {
+            transY += -movementSpeed / canvas.height;
             validKey = true;
         }
         if (event.code === 'ArrowRight') {

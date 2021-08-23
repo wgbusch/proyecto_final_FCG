@@ -119,10 +119,10 @@ function GetModelViewMatrix(translationX, translationY, translationZ,
     var p = proj(w, v2);
     var u2 = {x: v2.x - p.x, y: v2.y - p.y, z: v2.z - p.z};
 
-    var u = Norm(u2);
+    var u = Normalize(u2);
 
     var u3 = crossProduct(w, u);
-    var v = Norm(u3);
+    var v = Normalize(u3);
 
     var direction = [
         -u.x, -u.y, -u.z, 0,
@@ -180,44 +180,9 @@ class MeshDrawerSimple {
     // cooredenadas de textura se componen de a 2 elementos
     // consecutivos y se  asocian a cada vértice en orden.
     setMesh(vertPos, texCoords, normals) {
-        let vertPos2 = new Mesh();
 
-        let triangle1 = new Triangle([-1.0, 0.0, 1.0,
-                                             1.0, 0.0, -1.0,
-                                            -1.0, 0.0, -1.0]);
-
-        vertPos2 = this.translateTriangle(vertPos2, triangle1,
-            0, -0.3, 0);
-
-        let triangle2 = new Triangle([-1.0, 0.0, 1.0,
-            1.0, 0.0, -1.0,
-            1.0, 0.0, 1.0]);
-
-        let N = 10;
-        let triangleBaseLength = 1/N;
-
-        let triangle = new Triangle([-1.0, 0.0, -1.0,
-            -1.0, 0.0, -1 + triangleBaseLength,
-            -1.0, 0.1, -1.0]);
-        vertPos2 = this.translateTriangle(vertPos2, triangle,
-            0.01, 0, 0);
-        let triangle3 = new Triangle([-1.0, 0.1, -1.0 + triangleBaseLength,
-            -1.0, 0.0, -1 + triangleBaseLength,
-            -1.0, 0.1, -1.0]);
-        vertPos2 = this.translateTriangle(vertPos2, triangle3,
-            0.01, 0, 0);
-
-        for (let i = 0; i < 2 * N - 1; i++) {
-            triangle = triangle.transZ(triangleBaseLength);
-            vertPos2 = this.translateTriangle(vertPos2, triangle,
-                WALL_WIDTH, 0, 0);
-            triangle3 = triangle3.transZ(triangleBaseLength);
-            vertPos2 = this.translateTriangle(vertPos2, triangle3,
-                WALL_WIDTH, 0, 0);
-        }
-
-        vertPos2 = this.translateTriangle(vertPos2, triangle2,
-            0, -0.3, 0);
+        let labyrinthDrawer = new LabyrinthDrawer(10,0.05);
+        let vertPos2 = labyrinthDrawer.draw();
 
         this.numVertex = vertPos2.numVertex;
         this.vertPos = vertPos2.convertToArray();
@@ -312,16 +277,6 @@ class MeshDrawerSimple {
     // Este método se llama al actualizar el brillo del material
     setShininess(shininess) {
         // [COMPLETAR] Setear variables uniformes en el fragment shader para especificar el brillo.
-    }
-
-    translateTriangle(mesh, triangle, x, y, z) {
-        let translatedTriangle = triangle.transX(x).transY(y).transZ(z);
-
-        mesh.addTriangle(triangle);
-        mesh.addTriangle(translatedTriangle);
-
-        mesh.fillTwoTriangles(triangle, translatedTriangle);
-        return mesh;
     }
 }
 

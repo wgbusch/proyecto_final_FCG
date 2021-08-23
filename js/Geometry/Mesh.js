@@ -10,6 +10,10 @@ class Vertex {
     add(vertex) {
         return new Vertex([this.x + vertex.x, this.y + vertex.y, this.z + vertex.z]);
     }
+
+    minus(vertex){
+        return new Vertex([this.x - vertex.x, this.y - vertex.y, this.z - vertex.z]);
+    }
 }
 
 class Triangle{
@@ -27,6 +31,14 @@ class Triangle{
     construct(A,B,C) {
         this.A = A; this.B = B; this.C = C;
         return this;
+    }
+
+    trans([a,b,c]){
+        let diff = new Vertex([a, b, c]);
+        let triangle =  new Triangle();
+        triangle.construct(this.A.add(diff), this.B.add(diff), this.C.add(diff));
+        return triangle;
+
     }
 
     transX(translation) {

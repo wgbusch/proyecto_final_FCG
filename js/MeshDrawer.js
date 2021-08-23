@@ -117,10 +117,10 @@ function GetModelViewMatrix(translationX, translationY, translationZ,
     var p = proj(w, v2);
     var u2 = {x: v2.x - p.x, y: v2.y - p.y, z: v2.z - p.z};
 
-    var u = Norm(u2);
+    var u = Normalize(u2);
 
     var u3 = crossProduct(w, u);
-    var v = Norm(u3);
+    var v = Normalize(u3);
 
     var direction = [
         -u.x, -u.y, -u.z, 0,
