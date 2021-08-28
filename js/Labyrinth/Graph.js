@@ -24,7 +24,7 @@ class Graph {
         this.nodes = [];
     }
 
-    add(id) {
+    insertNodeById(id) {
         let rowNum = this.row(id);
         let column = this.column(id);
         if (!this.nodes[rowNum])
@@ -50,13 +50,13 @@ class Graph {
         return this.nodes[this.row(id)] && this.nodes[this.row(id)][this.column(id)] ? true : false;
     }
 
-    addWalk(randomWalk) {
+    insertWalk(randomWalk) {
         for (let i = 0; i < randomWalk.length - 1; i++) {
             let currentNode = randomWalk[i];
             let nextNode = randomWalk[i + 1];
             let row = this.row(currentNode);
             let column = this.column(currentNode);
-            this.add(currentNode);
+            this.insertNodeById(currentNode);
             this.nodes[row][column].neighbors.push(nextNode);
             if (i > 0) {
                 let previousNode = randomWalk[i - 1];

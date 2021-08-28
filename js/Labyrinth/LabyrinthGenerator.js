@@ -15,10 +15,10 @@ class LabyrinthGenerator {
         let n = this.n;
         let m = this.m;
         let uts = new Graph(n, m);
-        uts.add(this.random(n * m));
+        uts.insertNodeById(this.random(n * m));
         while (uts.size < n * m) {
             let randomWalk = this.generateRandomWalk(uts);
-            uts.addWalk(randomWalk);
+            uts.insertWalk(randomWalk);
         }
         return uts;
     }

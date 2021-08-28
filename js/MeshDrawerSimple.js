@@ -60,7 +60,6 @@
 // 3D (rotación, traslación y proyección) en una matriz de 4x4,
 // representada por un arreglo en formato column-major.
 
-WALL_WIDTH = 0.01;
 
 function GetModelViewMatrix(translationX, translationY, translationZ,
                             rotationX, rotationY, rotationZ, cameraRotationXY) {
@@ -74,57 +73,56 @@ function GetModelViewMatrix(translationX, translationY, translationZ,
     const cosRotZ = Math.cos(rotationZ);
     const sinRotZ = Math.sin(rotationZ);
 
-    var rotationMatrixX = [
+    let rotationMatrixX = [
         1, 0, 0, 0,
         0, cosRotX, sinRotX, 0,
         0, -sinRotX, cosRotX, 0,
         0, 0, 0, 1
     ]
 
-    var rotationMatrixY = [
+    let rotationMatrixY = [
         cosRotY, 0, -sinRotY, 0,
         0, 1, 0, 0,
         sinRotY, 0, cosRotY, 0,
         0, 0, 0, 1
     ]
 
-    var rotationMatrixZ = [
+    let rotationMatrixZ = [
         cosRotZ, sinRotZ, 0, 0,
         -sinRotZ, cosRotZ, 0, 0,
         0, 0, 1, 0,
         0, 0, 0, 1
     ]
 
-    var rotations = MatrixMult(rotationMatrixZ, MatrixMult(rotationMatrixX, rotationMatrixY));
+    let rotations = MatrixMult(rotationMatrixZ, MatrixMult(rotationMatrixX, rotationMatrixY));
 
-    var trans = [
+    let trans = [
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
         translationX, translationY, translationZ, 1
     ];
 
-    var mv = MatrixMult(trans, rotations);
+    let mv = MatrixMult(trans, rotations);
 
-    var alpha = 0;
-    var theta = cameraRotationXY;
+    let alpha = 0;
+    let theta = cameraRotationXY;
 
-    var w = {
-        x: Math.cos(alpha) * Math.sin(theta),
-        y: Math.sin(alpha) * Math.sin(theta),
-        z: Math.cos(theta)
-    };
+    let w = new Vertex([
+        Math.cos(alpha) * Math.sin(theta),
+        Math.sin(alpha) * Math.sin(theta),
+        Math.cos(theta)]);
 
-    var v2 = {x: -w.z, y: 0, z: w.y};
-    var p = proj(w, v2);
-    var u2 = {x: v2.x - p.x, y: v2.y - p.y, z: v2.z - p.z};
+    let v2 = new Vertex([-w.z, 0, w.y]);
+    let p = proj(w, v2);
+    let u2 = new Vertex([v2.x - p.x, v2.y - p.y, v2.z - p.z]);
 
-    var u = Normalize(u2);
+    let u = Normalize(u2);
 
-    var u3 = crossProduct(w, u);
-    var v = Normalize(u3);
+    let u3 = crossProduct(w, u);
+    let v = Normalize(u3);
 
-    var direction = [
+    let direction = [
         -u.x, -u.y, -u.z, 0,
         -v.x, -v.y, -v.z, 0,
         w.x, w.y, w.z, 0,
