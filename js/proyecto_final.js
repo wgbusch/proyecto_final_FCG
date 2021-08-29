@@ -86,12 +86,6 @@ window.onload = function () {
             cameraRotationXY += Math.PI / 32;
             validKey = true;
         }
-        // if (event.code === 'ArrowUp') {
-        //     validKey = true;
-        // }
-        // if (event.code === 'ArrowDown') {
-        //     validKey = true;
-        // }
         if (validKey && (event.type === 'keydown')) {
             UpdateProjectionMatrix();
             DrawScene();
@@ -128,6 +122,13 @@ function InitWebGL() {
     // Inicializar los shaders y buffers para renderizar
     boxDrawer = new BoxDrawer();
     meshDrawer = new MeshDrawerSimple();
+
+    //mvp that has error
+    // transX = 1.2000000000000015;
+    // transY = -0.08959999999999997;
+    // transZ = 0.4559999999999461;
+    // rotX =rotY =rotZ= 0;
+    // cameraRotationXY = -2.0616701789183027;
 
     // Setear el tamaño del viewport
     UpdateCanvasSize();
@@ -170,7 +171,7 @@ function ProjectionMatrix(c, z, fov_angle = 60) {
     const min_n = 0.001;
     if (n < min_n) n = min_n;
     let f = (z + magia_z);
-    let fov = 3.145 * fov_angle / 180;
+    let fov = Math.PI * fov_angle / 180;
     let s = 1 / Math.tan(fov / 2);
 
     return [
@@ -186,7 +187,6 @@ function DrawScene() {
     // 1. Obtenemos las matrices de transformación
     let mv = GetModelViewMatrix(transX, transY, transZ, rotX, autorot + rotY, rotZ, cameraRotationXY);
     let mvp = MatrixMult(perspectiveMatrix, mv);
-
     // 2. Limpiamos la escena
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 

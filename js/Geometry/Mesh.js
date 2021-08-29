@@ -10,6 +10,10 @@ class Vertex {
         this.y = array[1];
         this.z = array[2];
     }
+
+    times(constant) {
+        return new Vertex([constant * this.x, constant * this.y, constant * this.z]);
+    }
 }
 
 class Triangle {
@@ -34,32 +38,9 @@ class Triangle {
         return this;
     }
 
-    trans([a, b, c]) {
-        let diff = new Vertex([a, b, c]);
+    trans(diff) {
         let triangle = new Triangle();
-        triangle.constructFromVertices(add(this.A, diff), add(this.B, diff), add(this.C, diff));
-        return triangle;
-
-    }
-
-    transX(translation) {
-        let diff = new Vertex([translation, 0, 0]);
-        return this.getTranslatedTriangle(diff);
-    }
-
-    transY(translation) {
-        let diff = new Vertex([0, translation, 0]);
-        return this.getTranslatedTriangle(diff);
-    }
-
-    transZ(translation) {
-        let diff = new Vertex([0, 0, translation]);
-        return this.getTranslatedTriangle(diff);
-    }
-
-    getTranslatedTriangle(diff) {
-        let triangle = new Triangle();
-        triangle.constructFromVertices(add(this.A, diff), add(this.B, diff), add(this.C, diff));
+        triangle.constructFromVertices(sum(this.A, diff), sum(this.B, diff), sum(this.C, diff));
         return triangle;
     }
 

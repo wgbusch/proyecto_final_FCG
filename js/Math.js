@@ -14,6 +14,10 @@ function MatrixMult(A, B) {
     return C;
 }
 
+function Norm(u) {
+    return Math.sqrt(dot(u, u));
+}
+
 function Normalize(u) {
     let norm = Math.sqrt(dot(u, u));
     return new Vertex([u.x / norm, u.y / norm, u.z / norm]);
@@ -37,11 +41,35 @@ function dot(u, v) {
     return u.x * v.x + u.y * v.y + u.z * v.z;
 }
 
-function add(u, v) {
+function sum(u, v) {
     return new Vertex([u.x + v.x, u.y + v.y, u.z + v.z]);
 }
 
 function minus(u, v) {
     return new Vertex([u.x - v.x, u.y - v.y, u.z - v.z]);
 }
+
+function directionOfLine(l1, l2) {
+    let minusVector = minus(l2, l1);
+    let norm = Norm(minusVector);
+    return new Vertex([minusVector.x / norm, minusVector.y / norm, minusVector.z / norm]);
+}
+
+function calculateBaseLengthOfTriangle(triangle, direction) {
+    let [orthogonalVertex, P1, P2] = triangle.orthogonalVertex();
+
+    let a = crossProduct(minus(P1, orthogonalVertex), direction);
+    let baseL;
+    if (equalsZero(a))
+        baseL = Norm(minus(orthogonalVertex, P1));
+    let b = crossProduct(minus(P2, orthogonalVertex), direction);
+    if (equalsZero(b))
+        baseL = Norm(minus(orthogonalVertex, P2));
+    return baseL;
+}
+
+function equalsZero(vertex) {
+    return vertex.x === 0 && vertex.y === 0 && vertex.z === 0;
+}
+
 

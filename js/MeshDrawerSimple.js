@@ -179,7 +179,7 @@ class MeshDrawerSimple {
     // consecutivos y se  asocian a cada vértice en orden.
     setMesh(vertPos, texCoords, normals) {
 
-        let labyrinthDrawer = new LabyrinthDrawer(10,0.05);
+        let labyrinthDrawer = new LabyrinthDrawer(3,0.05);
         let vertPos2 = labyrinthDrawer.draw();
 
         this.numVertex = vertPos2.numVertex;
