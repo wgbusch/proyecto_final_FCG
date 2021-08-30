@@ -179,7 +179,7 @@ class MeshDrawerSimple {
     // consecutivos y se  asocian a cada vértice en orden.
     setMesh(vertPos, texCoords, normals) {
 
-        let labyrinthDrawer = new LabyrinthDrawer(3,0.05);
+        let labyrinthDrawer = new LabyrinthDrawer(this.abstractLabyrinth, 0.05);
         let vertPos2 = labyrinthDrawer.draw();
 
         this.numVertex = vertPos2.numVertex;
@@ -249,7 +249,6 @@ class MeshDrawerSimple {
         gl.vertexAttribPointer(this.color, 4, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(this.color);
 
-
         // Dibujamos
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.useProgram(this.prog);
@@ -275,6 +274,10 @@ class MeshDrawerSimple {
     // Este método se llama al actualizar el brillo del material
     setShininess(shininess) {
         // [COMPLETAR] Setear variables uniformes en el fragment shader para especificar el brillo.
+    }
+
+    setAbstractLabyrinth(labyrinth) {
+        this.abstractLabyrinth = labyrinth;
     }
 }
 

@@ -1,4 +1,4 @@
-var labyrinthGenerator;
+// var labyrinthGenerator;
 
 class LabyrinthGenerator {
     n;
@@ -37,6 +37,7 @@ class LabyrinthGenerator {
         return Math.floor(Math.random() * range);
     }
 
+    //TODO fix for n != m
     generateRandomWalk(uts) {
         let randomWalk = [];
         let previousNode = -1;

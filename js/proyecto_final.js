@@ -6,7 +6,9 @@ let perspectiveMatrix;	// matriz de perspectiva
 let rotX = 0, rotY = 0, rotZ = 0, transX = 0, transY = 0, transZ = 3, autorot = 0, cameraRotationXY = 0;
 let buttonsPressed;
 let movementSpeed = 2;
+let labyrinthGenerator;
 
+//TODO add controls for speed and position of camera.
 window.onload = function () {
     showBox = document.getElementById('show-box');
     InitWebGL();
@@ -299,8 +301,8 @@ function LoadObj(param) {
             let scale = 1 / maxSize;
             mesh.shiftAndScale(shift, scale);
             let buffers = mesh.getVertexBuffers();
-            meshDrawer.setMesh(buffers.positionBuffer, buffers.texCoordBuffer, buffers.normalBuffer);
-            DrawScene();
+            // meshDrawer.setMesh(buffers.positionBuffer, buffers.texCoordBuffer, buffers.normalBuffer);
+            // DrawScene();
         }
         reader.readAsText(param.files[0]);
     }
@@ -333,6 +335,8 @@ function GenerateLabyrinth() {
     let columns = parseInt(document.getElementById("columns").value);
     let rows = parseInt(document.getElementById("rows").value);
     labyrinthGenerator = new LabyrinthGenerator(rows, columns);
+
+    //draw in right side bar
     let grid = document.getElementsByClassName("grid").item(0);
     grid.innerHTML = '';
     grid.style.gridTemplateColumns = `repeat(${columns}, 10px)`;
@@ -358,4 +362,7 @@ function GenerateLabyrinth() {
             grid.appendChild(cell)
         }
     }
+    meshDrawer.setAbstractLabyrinth(uts);
+    meshDrawer.setMesh([], [], []);
+    DrawScene();
 }

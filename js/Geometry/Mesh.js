@@ -91,6 +91,7 @@ class Mesh {
         return answer;
     }
 
+    //TODO add option to skip sides.
     fillTwoTriangles(triangle1, triangle2) {
         let A1 = triangle1.A;
         let B1 = triangle1.B;
