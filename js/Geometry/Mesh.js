@@ -21,17 +21,9 @@ class Triangle {
     B;
     C;
     orthogonal;
+    numberOfTriangles = 1;
 
-    constructor(array) {
-        if (!array) {
-            array = [];
-        }
-        this.A = new Vertex(array.slice(0, 3));
-        this.B = new Vertex(array.slice(3, 6));
-        this.C = new Vertex(array.slice(6, 9));
-    }
-
-    constructFromVertices(A, B, C) {
+    constructor(A, B, C) {
         this.A = A;
         this.B = B;
         this.C = C;
@@ -39,9 +31,7 @@ class Triangle {
     }
 
     trans(diff) {
-        let triangle = new Triangle();
-        triangle.constructFromVertices(sum(this.A, diff), sum(this.B, diff), sum(this.C, diff));
-        return triangle;
+        return new Triangle(sum(this.A, diff), sum(this.B, diff), sum(this.C, diff));
     }
 
     orthogonalVertex() {
@@ -61,23 +51,28 @@ class Triangle {
         }
         return this.orthogonal;
     }
+
+    getIterator() {
+        return new ShapeIterator([[this.A, this.B, this.C]]);
+    }
 }
 
 class Mesh {
     numTriangles;
-    numVertex;
     vertex;
 
     constructor() {
         this.vertex = [];
-        this.numVertex = 0;
         this.numTriangles = 0;
     }
 
-    insertTriangle(triangle) {
-        this.vertex = this.vertex.concat(triangle.A).concat(triangle.B).concat(triangle.C);
-        this.numVertex += 3;
-        this.numTriangles++;
+    insert(shape) {
+        let iterator = shape.getIterator();
+        while (iterator.hasValue()) {
+            let triangle = iterator.getNextTriangle();
+            this.vertex = this.vertex.concat(triangle[0]).concat(triangle[1]).concat(triangle[2]);
+        }
+        this.numTriangles += shape.numberOfTriangles;
     }
 
     convertToArray() {
@@ -112,7 +107,28 @@ class Mesh {
     }
 
     fillTwoLines([A1, B1], [A2, B2]) {
-        this.insertTriangle((new Triangle()).constructFromVertices(A1, B1, A2));
-        this.insertTriangle((new Triangle()).constructFromVertices(A2, B1, B2));
+        this.insert(new Triangle(A1, B1, A2));
+        this.insert(new Triangle(A2, B1, B2));
     }
+}
+
+class ShapeIterator {
+    triangles;
+    indexPosition = 0;
+
+    constructor(listOfTriangles) {
+        this.triangles = listOfTriangles;
+        this.indexPosition = 0;
+    }
+
+    hasValue() {
+        return this.indexPosition < this.triangles.length;
+    }
+
+    getNextTriangle() {
+        let triangleToReturn = this.triangles[this.indexPosition];
+        this.indexPosition++;
+        return triangleToReturn;
+    }
+
 }

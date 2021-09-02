@@ -86,7 +86,7 @@ class LabyrinthDrawer {
         let baseLength = Norm(minus(start, end)) / numOfSubdivisions;
         let translatedPoint = sum(start, direction.times(baseLength));
 
-        let initialTriangle = (new Triangle()).constructFromVertices(start, translatedPoint, height);
+        let initialTriangle = new Triangle(start, translatedPoint, height);
 
         mesh = this.drawWall(mesh, numOfSubdivisions, initialTriangle, direction, width);
         return mesh;
@@ -114,34 +114,32 @@ class LabyrinthDrawer {
         let oppositeOrthogonalVertexTemp = sum(minus(P1, orthogonalAngle), minus(P2, orthogonalAngle));
         let oppositeOrthogonalVertex = sum(oppositeOrthogonalVertexTemp, orthogonalAngle);
 
-        let triangle2 = (new Triangle()).constructFromVertices(P1, P2, oppositeOrthogonalVertex);
+        let triangle2 = new Triangle(P1, P2, oppositeOrthogonalVertex);
         //TODO skip hypothenuse from rectangle. Use only
         mesh = this.extrude(mesh, triangle2, alpha);
         return mesh;
     }
 
-    //TODO skip intermediate triangle to save polygons.
     extrude(mesh, triangle, width) {
-        mesh = this.translateTriangle(mesh, triangle, width / 2);
-        mesh = this.translateTriangle(mesh, triangle, -width / 2);
+        let t1 = this.translateTriangle(triangle, width / 2);
+        mesh.insert(t1);
+
+        let t2  = this.translateTriangle(triangle, -width / 2);
+        mesh.insert(t2);
+
+        mesh.fillTwoTriangles(t1, t2);
         return mesh;
     }
 
-    translateTriangle(mesh, triangle, alpha) {
+    translateTriangle(triangle, alpha) {
         let A = triangle.A;
         let B = triangle.B;
         let C = triangle.C;
         let cp = Normalize(crossProduct(minus(A, B), minus(C, B)));
 
-        let translatedTriangle = triangle.trans(new Vertex([Math.abs(cp.x) * alpha,
-                                                            Math.abs(cp.y) * alpha,
-                                                            Math.abs(cp.z) * alpha]));
-
-        mesh.insertTriangle(triangle);
-        mesh.insertTriangle(translatedTriangle);
-
-        mesh.fillTwoTriangles(triangle, translatedTriangle);
-        return mesh;
+        return triangle.trans(new Vertex([Math.abs(cp.x) * alpha,
+                                          Math.abs(cp.y) * alpha,
+                                          Math.abs(cp.z) * alpha]));
     }
 
     createInnerWalls(mesh) {

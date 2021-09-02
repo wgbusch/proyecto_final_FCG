@@ -109,9 +109,9 @@ function GetModelViewMatrix(translationX, translationY, translationZ,
     let theta = cameraRotationXY;
 
     let w = new Vertex([
-        Math.cos(alpha) * Math.sin(theta),
-        Math.sin(alpha) * Math.sin(theta),
-        Math.cos(theta)]);
+                           Math.cos(alpha) * Math.sin(theta),
+                           Math.sin(alpha) * Math.sin(theta),
+                           Math.cos(theta)]);
 
     let v2 = new Vertex([-w.z, 0, w.y]);
     let p = proj(w, v2);
@@ -182,7 +182,7 @@ class MeshDrawerSimple {
         let labyrinthDrawer = new LabyrinthDrawer(this.abstractLabyrinth, 0.05);
         let vertPos2 = labyrinthDrawer.draw();
 
-        this.numVertex = vertPos2.numVertex;
+        this.numVertex = vertPos2.numTriangles * 3;
         this.vertPos = vertPos2.convertToArray();
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
