@@ -120,26 +120,29 @@ class LabyrinthDrawer {
         return mesh;
     }
 
-    extrude(mesh, triangle, width) {
-        let t1 = this.translateTriangle(triangle, width / 2);
-        mesh.insert(t1);
+    drawRectangle2(mesh, triangle1, alpha) {
 
-        let t2  = this.translateTriangle(triangle, -width / 2);
-        mesh.insert(t2);
+        let [orthogonalAngle, P1, P2] = triangle1.orthogonalVertex();
 
-        mesh.fillTwoTriangles(t1, t2);
+        let oppositeOrthogonalVertexTemp = sum(minus(P1, orthogonalAngle), minus(P2, orthogonalAngle));
+        let oppositeOrthogonalVertex = sum(oppositeOrthogonalVertexTemp, orthogonalAngle);
+
+        let triangle2 = new Triangle(P1, P2, oppositeOrthogonalVertex);
+        let rectangle = new Rectangle(triangle1, triangle2);
+
+        mesh = this.extrude(mesh, rectangle, alpha);
         return mesh;
     }
 
-    translateTriangle(triangle, alpha) {
-        let A = triangle.A;
-        let B = triangle.B;
-        let C = triangle.C;
-        let cp = Normalize(crossProduct(minus(A, B), minus(C, B)));
+    extrude(mesh, shape, width) {
+        let translatedShape1 = shape.translateAlongNormal(width / 2);
+        mesh.insert(translatedShape1);
 
-        return triangle.trans(new Vertex([Math.abs(cp.x) * alpha,
-                                          Math.abs(cp.y) * alpha,
-                                          Math.abs(cp.z) * alpha]));
+        let translatedShape2 = shape.translateAlongNormal(-width / 2);
+        mesh.insert(translatedShape2);
+
+        mesh.insert(translatedShape1.fill(translatedShape2));
+        return mesh;
     }
 
     createInnerWalls(mesh) {
