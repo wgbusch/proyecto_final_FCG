@@ -2,11 +2,16 @@ let boxDrawer;          // clase para contener el comportamiento de la caja
 let meshDrawer;         // clase para contener el comportamiento de la malla
 let canvas, gl;         // canvas y contexto WebGL
 let perspectiveMatrix;	// matriz de perspectiva
-
-let rotX = 0, rotY = 0, rotZ = 0, transX = 0, transY = 0, transZ = 3, autorot = 0, cameraRotationXY = 0;
 let buttonsPressed;
-let movementSpeed = 2;
 let labyrinthGenerator;
+let utsx;
+
+let xxx;
+let end_id = 9;
+let start_x = 0;
+let start_z = 0;
+let rotX = 0, rotY = 0, rotZ = 0, transX = 0, transY = 0, transZ = 3, autorot = 0, cameraRotationXY = 0;
+let movementSpeed = 100;
 
 //TODO add controls for speed and position of camera.
 window.onload = function () {
@@ -94,7 +99,6 @@ window.onload = function () {
         }
     }
 
-
     let objectLoaded = document.getElementById('obj');
     let textureLoaded = document.getElementById('texture')
     LoadObj(objectLoaded);
@@ -111,6 +115,7 @@ function InitWebGL() {
     canvas.oncontextmenu = function () {
         return false;
     };
+
     gl = canvas.getContext("webgl", {antialias: false, depth: true});
     if (!gl) {
         alert("Imposible inicializar WebGL. Tu navegador quizás no lo soporte.");
@@ -198,6 +203,10 @@ function DrawScene() {
     if (showBox.checked) {
         boxDrawer.draw(mvp);
     }
+    document.getElementById("cameraRotationXY").innerText = cameraRotationXY + "";
+    document.getElementById("transX").innerText = transX + "";
+    document.getElementById("transY").innerText = transY + "";
+    document.getElementById("transZ").innerText = transZ + "";
 }
 
 // Función que compila los shaders que se le pasan por parámetro (vertex & fragment shaders)
@@ -255,13 +264,13 @@ function AutoRotate(param) {
     if (param.checked) {
         // Vamos rotando una cantiad constante cada 30 ms
         timer = setInterval(function () {
-                let v = document.getElementById('rotation-speed').value;
-                autorot += 0.0005 * v;
-                if (autorot > 2 * Math.PI) autorot -= 2 * Math.PI;
+                                let v = document.getElementById('rotation-speed').value;
+                                autorot += 0.0005 * v;
+                                if (autorot > 2 * Math.PI) autorot -= 2 * Math.PI;
 
-                // Reenderizamos
-                DrawScene();
-            }, 30
+                                // Reenderizamos
+                                DrawScene();
+                            }, 30
         );
         document.getElementById('rotation-speed').disabled = false;
     } else {
@@ -331,6 +340,18 @@ function SetShininess(param) {
     DrawScene();
 }
 
+function SetTransZ(param) {
+    let exp = param.value;
+    transZ = Number.parseFloat(exp);
+    DrawScene();
+}
+
+function SetTransX(param) {
+    let exp = param.value;
+    transX = Number.parseFloat(exp);
+    DrawScene();
+}
+
 function GenerateLabyrinth() {
     let columns = parseInt(document.getElementById("columns").value);
     let rows = parseInt(document.getElementById("rows").value);
@@ -345,12 +366,13 @@ function GenerateLabyrinth() {
     let uts = labyrinthGenerator.wilsonAlgorithm();
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < columns; j++) {
-            let id = i * rows + j;
+            let node = uts.nodes[i][j];
+            let id = node.id;
+
             let cell = document.createElement("div");
             cell.setAttribute("class", "cell");
             cell.setAttribute("id", id + "");
 
-            let node = uts.nodes[i][j];
             if (i > 0 && node.neighbors.includes(id - columns))
                 cell.style.borderTop = "hidden";
             if (i < rows - 1 && node.neighbors.includes(id + columns))
@@ -362,7 +384,131 @@ function GenerateLabyrinth() {
             grid.appendChild(cell)
         }
     }
+    utsx = uts;
     meshDrawer.setAbstractLabyrinth(uts);
     meshDrawer.setMesh([], [], []);
+
+    let converter = new Converter(utsx.xLength, utsx.zLength);
+
+    [transX, transZ] = converter.calculateCenterCoordinates(start_x, start_z);
+    transY = StartingPoint(uts.zLength);
+
+    UpdateCanvasSize();
     DrawScene();
 }
+
+function StartingPoint(n) {
+    return -0.025;
+}
+
+function evaluatePath(list) {
+    if (list.length === 1) {
+        list[0].evaluate().finally();
+        return;
+    }
+    list[0].evaluate().then(() => {
+        evaluatePath(list.slice(1, list.length));
+    });
+}
+
+function evaluatePath(list, callback) {
+    if (list.length === 1) {
+        list[0].evaluate().finally(() => {
+            callback();
+        });
+        return;
+    }
+    list[0].evaluate().then(() => {
+        evaluatePath(list.slice(1, list.length), callback);
+    });
+}
+
+function AutomaticRoute2(converter, start_id, start_direction, next_id) {
+    if (next_id !== end_id) {
+        let [z, nextDirection] = converter.getNextDirection(start_id, start_direction, next_id);
+        let callback = () => {
+            start_id = next_id;
+            next_id = getNextMovement();
+            AutomaticRoute2(converter, start_id, nextDirection, next_id);
+        }
+        evaluatePath(z, callback);
+
+        // let f = () => {
+        //     return new Promise((resolve, reject) => {
+        //         let length = 2 / utsx.getZLength();
+        //         let speed = UPDATE_SPEED * length / TIME_TO_TRAVEL_ONE_BLOCK;
+        //         let original = transZ;
+        //         let forward = () => {
+        //             console.log("forward first!!");
+        //             transZ -= speed;
+        //             DrawScene();
+        //             if (transZ <= original - length) {
+        //                 resolve();
+        //                 return;
+        //             }
+        //             setTimeout(forward, UPDATE_SPEED);
+        //         }
+        //         forward();
+        //     });
+        // }
+        // f().then(
+        //     (result) => {
+        //         start_id = next_id;
+        //         next_id = getNextMovement();
+        //         AutomaticRoute2(converter, start_id, next_id);
+        //     }
+        // )
+    }
+}
+
+function AutomaticRoute() {
+
+    let converter = new Converter(utsx.getXLength(), utsx.getZLength());
+    let start_id = 0;
+    let next_id = getNextMovement();
+
+    AutomaticRoute2(converter, start_id, new North(), next_id);
+    // if(next_id !== end_id){
+    //     let f  = ()=>{
+    //         return new Promise((resolve, reject) => {
+    //             let length = 2 / utsx.getZLength();
+    //             let speed = UPDATE_SPEED * length / TIME_TO_TRAVEL_ONE_BLOCK;
+    //             let original = transZ;
+    //             let forward = () => {
+    //                 console.log("forward first!!");
+    //                 transZ -= speed;
+    //                 DrawScene();
+    //                 if (transZ <= original - length) {
+    //                     resolve();
+    //                     return;
+    //                 }
+    //                 setTimeout(forward, UPDATE_SPEED);
+    //             }
+    //             forward();
+    //         });
+    //     }
+    //     f().then(
+    //         (result) =>{
+    //             AutomaticRoute();
+    //         }
+    //     )
+    // }
+    // while (next_id !== end_id) {
+    //
+    //     let list = converter.convertPathToMovementInstructions([start_id, next_id],
+    //                                                 new North(), new North());
+    //     evaluatePath(list);
+    //     start_id = next_id;
+    //     next_id = getNextMovement();
+    // }
+}
+
+function getNextMovement() {
+    let values = [0, 1, 6, 7, 8, 13, 14, 9];
+    if (xxx == null) {
+        xxx = 0;
+    }
+    xxx++;
+    return values[xxx];
+}
+

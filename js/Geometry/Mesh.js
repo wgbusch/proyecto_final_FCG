@@ -146,7 +146,7 @@ class Rectangle extends Shape{
     }
 
     fill(rectangle2){
-        let
+
         let A1 = this.A;
         let B1 = this.B;
         let C1 = this.C;

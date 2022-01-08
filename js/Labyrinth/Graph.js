@@ -6,25 +6,21 @@ class Node {
         this.id = id;
         this.neighbors = [];
     }
-
-    addEdge(id) {
-        this.neighbors.push(id);
-    }
 }
 
 class Graph {
-    n;
-    m;
+    xLength;
+    zLength;
     nodes;
     size = 0;
 
-    constructor(n, m) {
-        this.n = n;
-        this.m = m;
+    constructor(xLength, zLength) {
+        this.xLength = zLength;
+        this.zLength = xLength;
         this.nodes = [];
     }
 
-    insertNodeById(id) {
+    insertNode(id) {
         let rowNum = this.row(id);
         let column = this.column(id);
         if (!this.nodes[rowNum])
@@ -39,11 +35,11 @@ class Graph {
     }
 
     row(id) {
-        return Math.floor(id / this.m);
+        return Math.floor(id / this.xLength);
     }
 
     column(id) {
-        return id % this.m;
+        return id % this.xLength;
     }
 
     has(id) {
@@ -56,7 +52,7 @@ class Graph {
             let nextNode = randomWalk[i + 1];
             let row = this.row(currentNode);
             let column = this.column(currentNode);
-            this.insertNodeById(currentNode);
+            this.insertNode(currentNode);
             this.nodes[row][column].neighbors.push(nextNode);
             if (i > 0) {
                 let previousNode = randomWalk[i - 1];
@@ -66,14 +62,21 @@ class Graph {
         let utsNode = randomWalk[randomWalk.length - 1];
         this.nodes[this.row(utsNode)][this.column(utsNode)].neighbors.push(randomWalk[randomWalk.length - 2])
     }
+
+    getZLength(){
+        return this.zLength;
+    }
+    getXLength(){
+        return this.xLength;
+    }
 }
 
 Graph.prototype.toString = function graphToString() {
     let output = "";
-    for (let i = 0; i < this.n; i++) {
-        for (let j = 0; j < this.m; j++) {
+    for (let i = 0; i < this.zLength; i++) {
+        for (let j = 0; j < this.xLength; j++) {
             if (this.nodes[i] != null && this.nodes[i][j] != null) {
-                let id = i * this.n + j;
+                let id = i * this.zLength + j;
                 output += "  " + id + "  "
             } else {
                 output += "  X  ";

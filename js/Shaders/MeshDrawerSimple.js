@@ -214,7 +214,6 @@ class MeshDrawerSimple {
             gl.ARRAY_BUFFER,
             new Float32Array(colors),
             gl.STATIC_DRAW);
-
     }
 
     // Esta función se llama cada vez que el usuario cambia el estado del checkbox 'Intercambiar Y-Z'

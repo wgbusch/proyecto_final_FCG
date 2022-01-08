@@ -8,16 +8,16 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Labyrinth/Graph.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Labyrinth/LabyrinthGenerator.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/boxdrawer.js"></script>
+    <script type="text/javascript" id="includedscript" src="js/Shaders/boxdrawer.js"></script>
     <script type="text/javascript" id="includedscript" src="js/proyecto_final.js"></script>
     <script type="text/javascript" id="includedscript" src="js/MeshDrawer.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/MeshDrawerSimple.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/lightview.js"></script>
+    <script type="text/javascript" id="includedscript" src="js/Shaders/MeshDrawerSimple.js"></script>
+    <script type="text/javascript" id="includedscript" src="js/Shaders/lightview.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Geometry/Mesh.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Math.js"></script>
+    <script type="text/javascript" id="includedscript" src="js/Utils/Math.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Geometry/LabyrinthDrawer.js"></script>
-
-    <script type="text/javascript" src="js/objmesh.js"></script>
+    <script type="text/javascript" id="includedscript" src="js/Camera/CameraControl.js"></script>
+    <script type="text/javascript" src="js/Utils/objmesh.js"></script>
 
   </head>
   <body onresize="WindowResize()">
@@ -46,13 +46,47 @@
         <img id="texture-img" />
       </div>
       <div class="control-group">
-          <div class="control">Generar Laberinto:<br/><input id="laberynth" type="submit" onclick="GenerateLabyrinth(this)"/></div>
+          <div class="control">Generar Laberinto:<br/><input id="labyrinth" type="submit" onclick="GenerateLabyrinth(this)"/></div>
           <div class="control"><input id="columns" name="columns" type="number" /><label for="columns">columnas</label></div>
           <div class="control"><input id="rows" name="rows" type="number"/><label for="rows">filas</label></div>
         <div class="container">
           <div class="grid"></div>
         </div>
       </div>
+
+      <div class="control-group">
+        <button id="forward">
+          <img src = "img/up_arrow.svg" alt="Forward" width="20" height="20" onclick="MoveForward(this)"/>
+        </button>
+        <button id="right">
+          <img src = "img/right_arrow.svg" alt="Right" width="20" height="20" onclick="MoveRight(this)"/>
+        </button>
+        <button id="left">
+          <img src = "img/left_arrow.svg" alt="Left" width="20" height="20" onclick="MoveLeft(this)"/>
+        </button>
+        <button id="backward">
+          <img src = "img/down_arrow.svg" alt="Down" width="20" height="20" onclick="MoveBackward(this)"/>
+        </button>
+        <button id="clockwise">
+          <img src = "img/clockwise.svg" alt="Down" width="20" height="20" onclick="Rotate90DegreesClockwise(this)"/>
+        </button>
+        <button id="counterclockwise">
+          <img src = "img/counter_clockwise.svg" alt="Down" width="20" height="20" onclick="Rotate90DegreesCounterClockwise(this)"/>
+        </button>
+      </div>
+      <div>camera rotation: <p id="cameraRotationXY"></p></div>
+      <div class="control">
+        <div>x trans: <p id="transX"></p></div>
+        <input id="transX-manual" type="range" min="-1" max="1" value="0.99" step="0.001" oninput="SetTransX(this)"/>
+      </div>
+      <div>y trans: <p id="transY"></p></div>
+
+      <div class="control">
+        <div>z trans: <p id="transZ"></p></div>
+        <input id="transZ-manual" type="range" min="-1" max="1" value="0.99" step="0.001" oninput="SetTransZ(this)"/>
+      </div>
+
+      <div class="control">Generar ruta automática<br/><input id="automatic-route" type="submit" onclick="AutomaticRoute(this)"/></div>
     </div>
   </div>
   </body>

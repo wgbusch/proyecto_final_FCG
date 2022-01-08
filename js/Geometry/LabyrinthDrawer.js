@@ -10,21 +10,22 @@ class LabyrinthDrawer {
 
     constructor(abstractLabyrinth, height) {
         this.abstractLabyrinth = abstractLabyrinth;
-        this.N = abstractLabyrinth.n;
-        this.M = abstractLabyrinth.m;
+        this.N = abstractLabyrinth.getZLength();
+        this.M = abstractLabyrinth.getXLength();
         this.height = height;
     }
 
     draw() {
         let mesh = new Mesh();
 
-        //draw floor
-        this.wallFromStartToEndWithPoints(mesh,
-                                          new Vertex([-1.0, 0.0 - WALL_WIDTH / 2, -1.0]),
-                                          new Vertex([1.0, 0.0 - WALL_WIDTH / 2, -1.0]),
-                                          new Vertex([-1.0, 0.0 - WALL_WIDTH / 2, 1.0]),
-                                          1,
-                                          WALL_WIDTH);
+        this.wallFromStartToEndWithDirections(mesh,
+                                              new Vertex([-1.0, 0.0 - WALL_WIDTH / 2, -1.0]),
+                                              new Vertex([0.0, 0.0, 1.0]),
+                                              2,
+                                              new Vertex([1, 0, 0]),
+                                              2,
+                                              1,
+                                              WALL_WIDTH);
 
         let height = this.height;
 
@@ -32,31 +33,38 @@ class LabyrinthDrawer {
         this.wallFromStartToEndWithDirections(mesh,
                                               new Vertex([-1.0 + WALL_WIDTH / 2, 0.0, -1.0 + WALL_WIDTH]),
                                               new Vertex([0.0, 0.0, 1.0]), 2 - WALL_WIDTH,
-                                              new Vertex([0, 1, 0]), height,
+                                              new Vertex([0, 1, 0]),
+                                              height,
                                               1,
                                               WALL_WIDTH);
 
         //draw wall 2
         this.wallFromStartToEndWithDirections(mesh,
                                               new Vertex([-1.0 + WALL_WIDTH, 0.0, 1.0 - WALL_WIDTH / 2]),
-                                              new Vertex([1.0, 0.0, 0.0]), 2 - WALL_WIDTH,
-                                              new Vertex([0, 1, 0]), height,
+                                              new Vertex([1.0, 0.0, 0.0]),
+                                              2 - WALL_WIDTH,
+                                              new Vertex([0, 1, 0]),
+                                              height,
                                               1,
                                               WALL_WIDTH);
 
         //draw wall 3
         this.wallFromStartToEndWithDirections(mesh,
                                               new Vertex([1.0 - WALL_WIDTH / 2, 0.0, 1.0 - WALL_WIDTH]),
-                                              new Vertex([0.0, 0.0, -1.0]), 2 - WALL_WIDTH,
-                                              new Vertex([0, 1, 0]), height,
+                                              new Vertex([0.0, 0.0, -1.0]),
+                                              2 - WALL_WIDTH,
+                                              new Vertex([0, 1, 0]),
+                                              height,
                                               1,
                                               WALL_WIDTH);
 
         //draw wall 4
         this.wallFromStartToEndWithDirections(mesh,
                                               new Vertex([1.0 - WALL_WIDTH, 0.0, -1.0 + WALL_WIDTH / 2]),
-                                              new Vertex([-1.0, 0.0, 0.0]), 2 - WALL_WIDTH,
-                                              new Vertex([0, 1, 0]), height,
+                                              new Vertex([-1.0, 0.0, 0.0]),
+                                              2 - WALL_WIDTH,
+                                              new Vertex([0, 1, 0]),
+                                              height,
                                               1,
                                               WALL_WIDTH);
 
@@ -68,14 +76,18 @@ class LabyrinthDrawer {
 
     wallFromStartToEndWithDirections(mesh,
                                      startPoint,
-                                     endDirection, endScalar,
-                                     heightDirection, heightScalar,
-                                     numSubdivisions, width) {
+                                     endDirection,
+                                     endScalar,
+                                     heightDirection,
+                                     heightScalar,
+                                     numSubdivisions,
+                                     width) {
         let endPoint = sum(startPoint, endDirection.times(endScalar));
 
         let heightPoint = sum(startPoint, heightDirection.times(heightScalar));
 
-        mesh = this.wallFromStartToEndWithPoints(mesh, startPoint, endPoint, heightPoint, numSubdivisions, width);
+        mesh = this.wallFromStartToEndWithPoints(mesh, startPoint, endPoint,
+                                                 heightPoint, numSubdivisions, width);
         return mesh;
     }
 
@@ -148,10 +160,10 @@ class LabyrinthDrawer {
     createInnerWalls(mesh) {
         let labyrinth = this.abstractLabyrinth;
         let wallsToCreate = [];
-        for (let zIndex = 0; zIndex < labyrinth.m - 1; zIndex++) {
+        for (let zIndex = 0; zIndex < this.M - 1; zIndex++) {
             //TODO delete walls to create ?
             wallsToCreate[zIndex] = [];
-            for (let xIndex = 0; xIndex < labyrinth.n - 1; xIndex++) {
+            for (let xIndex = 0; xIndex < this.N - 1; xIndex++) {
                 let node1 = labyrinth.nodes[zIndex][xIndex];
                 let node2 = labyrinth.nodes[zIndex][xIndex + 1];
                 let node3 = labyrinth.nodes[zIndex + 1][xIndex + 1];
@@ -167,13 +179,13 @@ class LabyrinthDrawer {
     defineWallsToCreate(node1, node2, node3, node4) {
         let cross = [];
         if (!node1.neighbors.includes(node2.id))
-            cross.push("N");
-        if (!node2.neighbors.includes(node3.id))
-            cross.push("E");
-        if (!node3.neighbors.includes(node4.id))
             cross.push("S");
-        if (!node4.neighbors.includes(node1.id))
+        if (!node2.neighbors.includes(node3.id))
             cross.push("W");
+        if (!node3.neighbors.includes(node4.id))
+            cross.push("N");
+        if (!node4.neighbors.includes(node1.id))
+            cross.push("E");
         return cross;
     }
 
@@ -188,58 +200,96 @@ class LabyrinthDrawer {
         let startingPoint;
         let wallLength;
 
-        //TODO refactor and fix lengths
+        //TODO: FIX lengths
         if (zIndex === 0) {
-            if (cross.includes("N")) {
+            if (cross.includes("S")) {
                 startingPoint = [xCoord, 0.0, zCoord - WALL_WIDTH];
                 wallDirection = [0.0, 0.0, 1.0];
                 wallLength = baseWallLength + WALL_WIDTH;
                 mesh = this.wallFromStartToEndWithDirections(mesh,
                                                              new Vertex(startingPoint),
-                                                             new Vertex(wallDirection), wallLength,
-                                                             new Vertex([0, 1, 0]), height,
+                                                             new Vertex(wallDirection),
+                                                             wallLength,
+                                                             new Vertex([0, 1, 0]),
+                                                             height,
                                                              1,
                                                              WALL_WIDTH);
             }
         }
         if (xIndex === 0) {
-            if (cross.includes("W")) {
+            if (cross.includes("E")) {
                 startingPoint = [xCoord, 0.0, zCoord];
                 wallDirection = [-1.0, 0.0, 0.0];
                 wallLength = baseWallLength;
                 mesh = this.wallFromStartToEndWithDirections(mesh,
                                                              new Vertex(startingPoint),
-                                                             new Vertex(wallDirection), wallLength,
-                                                             new Vertex([0, 1, 0]), height,
+                                                             new Vertex(wallDirection),
+                                                             wallLength,
+                                                             new Vertex([0, 1, 0]),
+                                                             height,
                                                              1,
                                                              WALL_WIDTH);
             }
         }
-        if (cross.includes("E")) {
-            startingPoint = [xCoord - WALL_WIDTH / 2, 0.0, zCoord];
-            wallDirection = [1.0, 0.0, 0.0];
-            wallLength = baseWallLength + WALL_WIDTH;
-            avoidClipping = WALL_WIDTH / 2;
-            mesh = this.wallFromStartToEndWithDirections(mesh,
-                                                         new Vertex(startingPoint),
-                                                         new Vertex(wallDirection), wallLength,
-                                                         new Vertex([0, 1, 0]), height,
-                                                         1,
-                                                         WALL_WIDTH);
+
+        if (zIndex < this.M - 2 && xIndex < this.N - 2) {
+            if (cross.includes("W")) {
+                startingPoint = [xCoord - WALL_WIDTH / 2, 0.0, zCoord];
+                wallDirection = [1.0, 0.0, 0.0];
+                wallLength = baseWallLength + WALL_WIDTH * (1 + 2 / N);
+                avoidClipping = WALL_WIDTH / 2;
+                mesh = this.wallFromStartToEndWithDirections(mesh,
+                                                             new Vertex(startingPoint),
+                                                             new Vertex(wallDirection),
+                                                             wallLength,
+                                                             new Vertex([0, 1, 0]),
+                                                             height,
+                                                             1,
+                                                             WALL_WIDTH);
+            }
+            if (cross.includes("N")) {
+                startingPoint = [xCoord, 0.0, zCoord - avoidClipping];
+                wallDirection = [0.0, 0.0, -1.0];
+                wallLength = baseWallLength + WALL_WIDTH * (1 + 2 / N);
+                mesh = this.wallFromStartToEndWithDirections(mesh,
+                                                             new Vertex(startingPoint),
+                                                             new Vertex(wallDirection),
+                                                             wallLength,
+                                                             new Vertex([0, 1, 0]),
+                                                             height,
+                                                             1,
+                                                             WALL_WIDTH);
+            }
         }
 
-        if (cross.includes("S")) {
-            startingPoint = [xCoord, 0.0, zCoord - avoidClipping];
-            wallDirection = [0.0, 0.0, -1.0];
-            wallLength = baseWallLength;
-            mesh = this.wallFromStartToEndWithDirections(mesh,
-                                                         new Vertex(startingPoint),
-                                                         new Vertex(wallDirection), wallLength,
-                                                         new Vertex([0, 1, 0]), height,
-                                                         1,
-                                                         WALL_WIDTH);
+        if (zIndex === this.M - 2 || xIndex === this.N - 2 ) {
+            if (cross.includes("N")) {
+                startingPoint = [xCoord, 0.0, zCoord - avoidClipping];
+                wallDirection = [0.0, 0.0, -1.0];
+                wallLength = baseWallLength - WALL_WIDTH / 2;
+                mesh = this.wallFromStartToEndWithDirections(mesh,
+                                                             new Vertex(startingPoint),
+                                                             new Vertex(wallDirection),
+                                                             wallLength,
+                                                             new Vertex([0, 1, 0]),
+                                                             height,
+                                                             1,
+                                                             WALL_WIDTH);
+            }
+            if (cross.includes("W")) {
+                startingPoint = [xCoord - WALL_WIDTH / 2, 0.0, zCoord];
+                wallDirection = [1.0, 0.0, 0.0];
+                wallLength = baseWallLength;
+                mesh = this.wallFromStartToEndWithDirections(mesh,
+                                                             new Vertex(startingPoint),
+                                                             new Vertex(wallDirection),
+                                                             wallLength,
+                                                             new Vertex([0, 1, 0]),
+                                                             height,
+                                                             1,
+                                                             WALL_WIDTH);
+            }
         }
-
         return mesh;
     }
 
