@@ -10,13 +10,16 @@
     <script type="text/javascript" id="includedscript" src="js/Labyrinth/LabyrinthGenerator.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Shaders/boxdrawer.js"></script>
     <script type="text/javascript" id="includedscript" src="js/proyecto_final.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/MeshDrawer.js"></script>
+    <script type="text/javascript" id="includedscript" src="js/Shaders/MeshDrawer.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Shaders/MeshDrawerSimple.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Shaders/lightview.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Geometry/Mesh.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Utils/Math.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Geometry/LabyrinthDrawer.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Camera/CameraControl.js"></script>
+    <script type="text/javascript" id="includedscript" src="js/Controls/BrowserControls.js"></script>
+    <script type="text/javascript" id="includedscript" src="js/Camera/MazeTraversalLogic.js"></script>
+
     <script type="text/javascript" src="js/Utils/objmesh.js"></script>
 
   </head>
@@ -32,7 +35,6 @@
       <div class="control-group">
         <div class="control"><input id="show-box" name="show-box" type="checkbox" onchange="DrawScene()" checked /><label for="show-box"> Mostrar caja</label></div>
         <div class="control"><input id="show-texture" name="show-texture" type="checkbox" onchange="ShowTexture(this)" checked /><label for="show-texture"> Mostrar textura</label></div>
-        <div class="control"><input id="swap-yz" name="swap-yz" type="checkbox" onchange="SwapYZ(this)" /><label for="swap-yz"> Intercambiar Y-Z</label></div>
         <div class="control"><input id="auto-rotate" name="auto-rotate" type="checkbox" onchange="AutoRotate(this)"/><label for="auto-rotate"> Calesita</label></div>
         <div class="control"><input id="rotation-speed" type="range" min="1" max="100" value="50" disabled/></div>
         <div class="control"><span id="shininess-label">Intensidad:</span><span id="shininess-value">1</span><input id="shininess-exp" type="range" min="0" max="100" value="50" oninput="SetShininess(this)"/></div>
@@ -56,25 +58,25 @@
 
       <div class="control-group">
         <button id="forward">
-          <img src = "img/up_arrow.svg" alt="Forward" width="20" height="20" onclick="MoveForward(this)"/>
+          <img src = "img/controls/up_arrow.svg" alt="Forward" width="20" height="20" onclick="MoveForward(this)"/>
         </button>
         <button id="right">
-          <img src = "img/right_arrow.svg" alt="Right" width="20" height="20" onclick="MoveRight(this)"/>
+          <img src = "img/controls/right_arrow.svg" alt="Right" width="20" height="20" onclick="MoveRight(this)"/>
         </button>
         <button id="left">
-          <img src = "img/left_arrow.svg" alt="Left" width="20" height="20" onclick="MoveLeft(this)"/>
+          <img src = "img/controls/left_arrow.svg" alt="Left" width="20" height="20" onclick="MoveLeft(this)"/>
         </button>
         <button id="backward">
-          <img src = "img/down_arrow.svg" alt="Down" width="20" height="20" onclick="MoveBackward(this)"/>
+          <img src = "img/controls/down_arrow.svg" alt="Down" width="20" height="20" onclick="MoveBackward(this)"/>
         </button>
         <button id="clockwise">
-          <img src = "img/clockwise.svg" alt="Down" width="20" height="20" onclick="Rotate90DegreesClockwise(this)"/>
+          <img src = "img/controls/clockwise.svg" alt="Down" width="20" height="20" onclick="Rotate90DegreesClockwise(this)"/>
         </button>
         <button id="counterclockwise">
-          <img src = "img/counter_clockwise.svg" alt="Down" width="20" height="20" onclick="Rotate90DegreesCounterClockwise(this)"/>
+          <img src = "img/controls/counter_clockwise.svg" alt="Down" width="20" height="20" onclick="Rotate90DegreesCounterClockwise(this)"/>
         </button>
       </div>
-      <div>camera rotation: <p id="cameraRotationXY"></p></div>
+      <div display="inline"><div>camera rotation:</div> <p id="cameraRotationXY"></p></div>
       <div class="control">
         <div>x trans: <p id="transX"></p></div>
         <input id="transX-manual" type="range" min="-1" max="1" value="0.99" step="0.001" oninput="SetTransX(this)"/>
@@ -85,8 +87,12 @@
         <div>z trans: <p id="transZ"></p></div>
         <input id="transZ-manual" type="range" min="-1" max="1" value="0.99" step="0.001" oninput="SetTransZ(this)"/>
       </div>
+      <div >
+        <div><div>x coord:</div> <p id="xCoord"></p></div>
+        <div><div>z coord:</div> <p id="zCoord"></p></div>
+      </div>
 
-      <div class="control">Generar ruta automática<br/><input id="automatic-route" type="submit" onclick="AutomaticRoute(this)"/></div>
+      <div class="control">Generar ruta automática<br/><input id="automatic-route" type="submit" onclick="FindEscape(this)"/></div>
     </div>
   </div>
   </body>

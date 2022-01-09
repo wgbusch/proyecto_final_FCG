@@ -1,66 +1,3 @@
-// <============================================ EJERCICIOS ============================================>
-// a) Implementar la función:
-//
-//      GetModelViewMatrix( translationX, translationY, translationZ, rotationX, rotationY )
-//
-//    Si la implementación es correcta, podrán hacer rotar la caja correctamente (como en el video). Notar
-//    que esta función no es exactamente la misma que implementaron en el TP4, ya que no recibe por parámetro
-//    la matriz de proyección. Es decir, deberá retornar solo la transformación antes de la proyección model-view (MV)
-//    Es necesario completar esta implementación para que funcione el control de la luz en la interfaz.
-//    IMPORTANTE: No es recomendable avanzar con los ejercicios b) y c) si este no funciona correctamente.
-//
-// b) Implementar los métodos:
-//
-//      setMesh( vertPos, texCoords, normals )
-//      swapYZ( swap )
-//      draw( matrixMVP, matrixMV, matrixNormal )
-//
-//    Si la implementación es correcta, podrán visualizar el objeto 3D que hayan cargado, asi como también intercambiar
-//    sus coordenadas yz. Notar que es necesario pasar las normales como atributo al VertexShader.
-//    La función draw recibe ahora 3 matrices en column-major:
-//
-//       * model-view-projection (MVP de 4x4)
-//       * model-view (MV de 4x4)
-//       * normal transformation (MV_3x3)
-//
-//    Estas últimas dos matrices adicionales deben ser utilizadas para transformar las posiciones y las normales del
-//    espacio objeto al esapcio cámara.
-//
-// c) Implementar los métodos:
-//
-//      setTexture( img )
-//      showTexture( show )
-//
-//    Si la implementación es correcta, podrán visualizar el objeto 3D que hayan cargado y su textura.
-//    Notar que los shaders deberán ser modificados entre el ejercicio b) y el c) para incorporar las texturas.
-//
-// d) Implementar los métodos:
-//
-//      setLightDir(x,y,z)
-//      setShininess(alpha)
-//
-//    Estas funciones se llaman cada vez que se modifican los parámetros del modelo de iluminación en la
-//    interface. No es necesario transformar la dirección de la luz (x,y,z), ya viene en espacio cámara.
-//
-// Otras aclaraciones:
-//
-//      * Utilizaremos una sola fuente de luz direccional en toda la escena
-//      * La intensidad I para el modelo de iluminación debe ser seteada como blanca (1.0,1.0,1.0,1.0) en RGB
-//      * Es opcional incorporar la componente ambiental (Ka) del modelo de iluminación
-//      * Los coeficientes Kd y Ks correspondientes a las componentes difusa y especular del modelo
-//        deben ser seteados con el color blanco. En caso de que se active el uso de texturas, la
-//        componente difusa (Kd) será reemplazada por el valor de textura.
-//
-// <=====================================================================================================>
-
-// Esta función recibe la matriz de proyección (ya calculada), una
-// traslación y dos ángulos de rotación (en radianes). Cada una de
-// las rotaciones se aplican sobre el eje x e y, respectivamente.
-// La función debe retornar la combinación de las transformaciones
-// 3D (rotación, traslación y proyección) en una matriz de 4x4,
-// representada por un arreglo en formato column-major.
-
-
 function GetModelViewMatrix(translationX, translationY, translationZ,
                             rotationX, rotationY, rotationZ, cameraRotationXY) {
 
@@ -155,14 +92,14 @@ class MeshDrawerSimple {
 
         // 3. Obtenemos los IDs de los atributos de los vértices en los shaders
         this.vertPos = gl.getAttribLocation(this.prog, 'pos');
+        this.aTextureCoord = gl.getAttribLocation(this.prog, 'aTextureCoord');
 
         // 4. Obtenemos los IDs de los atributos de los vértices en los shaders
-        this.u_swapYZ = gl.getUniformLocation(this.prog, 'swapYZ');
-
-        this.color = gl.getAttribLocation(this.prog, 'clr');
 
         this.positionBuffer = gl.createBuffer();
         this.color_buffer = gl.createBuffer();
+        this.texCoordBuffer = gl.createBuffer();
+        this.aTexCoordBuffer = gl.createBuffer();
 
         gl.useProgram(this.prog);
     }
@@ -205,6 +142,11 @@ class MeshDrawerSimple {
                 colors.push(0, 0, 1, 1);
             }
         }
+        texCoords = [];
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
+        this.texCoords = texCoords;
 
         gl.bindBuffer(
             gl.ARRAY_BUFFER,
@@ -216,12 +158,6 @@ class MeshDrawerSimple {
             gl.STATIC_DRAW);
     }
 
-    // Esta función se llama cada vez que el usuario cambia el estado del checkbox 'Intercambiar Y-Z'
-    // El argumento es un boleano que indica si el checkbox está tildado
-    swapYZ(swap) {
-        gl.useProgram(this.prog);
-        gl.uniform1i(this.u_swapYZ, swap ? 1 : 0);
-    }
 
     // Esta función se llama para dibujar la malla de triángulos
     // El argumento es la matriz model-view-projection (matrixMVP),
@@ -238,6 +174,13 @@ class MeshDrawerSimple {
         // 2.  Setear matrix mv
         gl.uniformMatrix4fv(this.mv, false, matrixMV);
 
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
+        gl.vertexAttribPointer(this.texCoords, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(this.texCoords);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.aTexCoordBuffer);
+        gl.vertexAttribPointer(this.aTextureCoord, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(this.aTextureCoord);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
         gl.vertexAttribPointer(this.vertPos, 3, gl.FLOAT, false, 0, 0);
@@ -257,14 +200,29 @@ class MeshDrawerSimple {
     // Esta función se llama para setear una textura sobre la malla
     // El argumento es un componente <img> de html que contiene la textura.
     setTexture(img) {
-        // Pueden setear la textura utilizando esta función:
+        gl.useProgram(this.prog);
+        this.textura = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, this.textura);
+        gl.texImage2D(gl.TEXTURE_2D,
+                      0,
+                      gl.RGB,
+                      gl.RGB,
+                      gl.UNSIGNED_BYTE,
+                      img);
+        gl.generateMipmap(gl.TEXTURE_2D);
     }
 
     // Esta función se llama cada vez que el usuario cambia el estado del checkbox 'Mostrar textura'
     // El argumento es un boleano que indica si el checkbox está tildado
     showTexture(show) {
-        this.show = show;
-        // Setear variables uniformes en el fragment shader
+        // [COMPLETAR] Setear variables uniformes en el fragment shader
+        if (show) {
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, this.textura);
+            const sampler = gl.getUniformLocation(this.prog, 'texGPU');
+            gl.useProgram(this.prog);
+            gl.uniform1f(sampler, 0);
+        }
     }
 
     setLightDir(x, y, z) {
@@ -280,8 +238,6 @@ class MeshDrawerSimple {
     }
 }
 
-// [COMPLETAR] Calcular iluminación utilizando Blinn-Phong.
-
 // Recordar que:
 // Si declarás las variables pero no las usás, es como que no las declaraste
 // y va a tirar error. Siempre va punto y coma al finalizar la sentencia.
@@ -293,21 +249,15 @@ var meshVS = `
 	precision mediump float;
 
 	attribute vec3 pos;
-
 	uniform mat4 mvp;
-	uniform int swapYZ;
 	
-	attribute vec4 clr;
-    varying vec4 vcolor;
+    attribute vec2 aTextureCoord;
+    varying vec2 texCoord;
     
 	void main()
 	{
-	    vec3 drawPos = pos;
-	    if (swapYZ == 1) {
-            drawPos = vec3(pos[0],pos[2],pos[1]);
-        }
-        gl_Position = mvp * vec4(drawPos, 1.0);
-        vcolor = clr;
+        gl_Position = mvp * vec4(pos, 1.0);
+        texCoord = aTextureCoord;
 	}
 `;
 
@@ -321,9 +271,12 @@ var meshVS = `
 //        componente difusa (Kd) será reemplazada por el valor de textura.
 var meshFS = `
 	precision mediump float;
-	varying vec4 vcolor;
+
+	uniform sampler2D texGPU;
+	varying vec2 texCoord;
+	
 	void main()
 	{		        
-        gl_FragColor = vcolor;
+        gl_FragColor = texture2D(texGPU, texCoord);
 	}
 `

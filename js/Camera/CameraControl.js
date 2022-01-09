@@ -1,4 +1,4 @@
-TIME_TO_TRAVEL_ONE_BLOCK = 5000;
+TIME_TO_TRAVEL_ONE_BLOCK = 2000;
 TIME_TO_ROTATE_90_DEGREES = 1000;
 UPDATE_SPEED = 100;
 let SPEED = 0.006;
@@ -269,7 +269,6 @@ function get90DegreeAntiClockwiseRotationPromise() {
     return new PathInstruction(counterClockwisePromise);
 }
 
-
 /// 4,4
 /// [12 13  14 15 ]
 /// [8  9   10 11 ]
@@ -280,22 +279,24 @@ class Converter {
     finalList;
     zLength;
     xLength;
+    uts;
 
-    constructor(xLength, zLength) {
+    constructor(uts) {
         this.finalList = [];
-        this.zLength = zLength;
-        this.xLength = xLength;
+        this.uts = uts;
+        this.zLength = uts.getZLength();
+        this.xLength = uts.getXLength();
     }
 
-    calculateRelativeDirection(start_x, start_y, next_x, next_y) {
+    calculateRelativeDirection(start_x, start_z, next_x, next_z) {
         if (start_x === next_x) {
-            if (start_y + 1 === next_y) {
-                return new North();
-            }
-            if (start_y - 1 === next_y) {
+            if (start_z + 1 === next_z) {
                 return new South();
             }
-        } else if (start_y === next_y) {
+            if (start_z - 1 === next_z) {
+                return new North();
+            }
+        } else if (start_z === next_z) {
             if (start_x + 1 === next_x) {
                 return new East();
             }
@@ -307,73 +308,30 @@ class Converter {
         }
     }
 
-    calc(id) {
-        return [id % this.xLength, Math.floor(id / this.xLength)];
+    getCoordinates(id) {
+        return this.uts.getCoordinates(id);
     }
 
-    getNextDirection(starPoint, startDirection, endPoint){
-        let a = [];
-        let [start_x, start_y] = this.calc(starPoint);
-        let [next_x, next_y] = this.calc(endPoint);
+    getNextDirection(starPoint, startDirection, endPoint) {
+        let instructions = [];
+        let [start_x, start_z] = this.getCoordinates(starPoint);
+        let [next_x, next_z] = this.getCoordinates(endPoint);
 
-        let nextDirection = this.calculateRelativeDirection(start_x, start_y, next_x, next_y);
-        startDirection.rotateToNextDirection(nextDirection, a);
+        let nextDirection = this.calculateRelativeDirection(start_x, start_z, next_x, next_z);
+        startDirection.rotateToNextDirection(nextDirection, instructions);
 
-        nextDirection.move(a);
-        return [a, nextDirection];
+        nextDirection.move(instructions);
+        return [instructions, nextDirection];
     }
 
-    convertPathToMovementInstructions(path, startingDirection, endingDirection) {
-        let a = [];
-        let currentDirection = startingDirection;
-
-        for (let i = 0; i < path.length - 1; i++) {
-            let start_point = path[i];
-            let next_point = path[i + 1];
-            let [start_x, start_y] = this.calc(start_point);
-            let [next_x, next_y] = this.calc(next_point);
-
-            let nextDirection = this.calculateRelativeDirection(start_x, start_y, next_x, next_y);
-            currentDirection.rotateToNextDirection(nextDirection, a);
-
-            currentDirection = nextDirection;
-            currentDirection.move(a);
-        }
-
-        currentDirection.rotateToNextDirection(endingDirection, a);
-        return a;
+    calculateCenterCoordinates(id) {
+        let [xIndex, zIndex] = this.uts.getCoordinates(id);
+        return [(1 / this.xLength) * (2 * xIndex - 1) + 1,
+                (1 / this.zLength) * (2 * zIndex + 1) - 1];
     }
 
-    calculateCenterCoordinates(xCoordinate, zCoordinate) {
-        return [(1 / this.xLength) * (xCoordinate - 1) + 1,
-                (1 / this.zLength) * (zCoordinate - 1) + 1];
+    getRandomMovement(id) {
+        return this.uts.getRandomMovement(id);
     }
 }
 
-
-
-
-
-function MoveForward() {
-    getForwardPromise().evaluate();
-}
-
-function MoveRight() {
-    getRightPromise().evaluate();
-}
-
-function MoveLeft() {
-    getLeftPromise().evaluate();
-}
-
-function MoveBackward() {
-    getBackwardPromise().evaluate();
-}
-
-function Rotate90DegreesClockwise() {
-    get90DegreeClockwiseRotationPromise().evaluate();
-}
-
-function Rotate90DegreesCounterClockwise() {
-    get90DegreeAntiClockwiseRotationPromise().evaluate();
-}

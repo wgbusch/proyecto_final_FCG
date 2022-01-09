@@ -300,8 +300,8 @@ var meshVS = `
 	uniform mat4 mvp;
 	uniform int swapYZ;
 
-	varying vec2 texCoord;
     attribute vec2 aTextureCoord;
+	varying vec2 texCoord;
 
 	varying vec3 normCoord;
 	attribute vec3 aNormCoord;

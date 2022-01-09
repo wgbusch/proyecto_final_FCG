@@ -63,26 +63,22 @@ class Graph {
         this.nodes[this.row(utsNode)][this.column(utsNode)].neighbors.push(randomWalk[randomWalk.length - 2])
     }
 
-    getZLength(){
+    getZLength() {
         return this.zLength;
     }
-    getXLength(){
+
+    getXLength() {
         return this.xLength;
     }
-}
 
-Graph.prototype.toString = function graphToString() {
-    let output = "";
-    for (let i = 0; i < this.zLength; i++) {
-        for (let j = 0; j < this.xLength; j++) {
-            if (this.nodes[i] != null && this.nodes[i][j] != null) {
-                let id = i * this.zLength + j;
-                output += "  " + id + "  "
-            } else {
-                output += "  X  ";
-            }
-        }
-        output += "\n";
+    getCoordinates(id) {
+        return [this.column(id), this.row(id)];
     }
-    return output;
-};
+
+    getRandomMovement(id) {
+        let node = this.nodes[this.row(id)][this.column(id)];
+        let neighbors = node.neighbors;
+        let randomIndex = Math.floor(Math.random() * neighbors.length);
+        return neighbors[randomIndex];
+    }
+}
