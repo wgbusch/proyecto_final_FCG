@@ -89,6 +89,7 @@ class MeshDrawerSimple {
         // 2. Obtenemos los IDs de las variables uniformes en los shaders
         this.mvp = gl.getUniformLocation(this.prog, 'mvp');
         this.mv = gl.getUniformLocation(this.prog, 'mv');
+        // this.u_useTexture = gl.getUniformLocation(this.prog, 'useTexture');
 
         // 3. Obtenemos los IDs de los atributos de los vértices en los shaders
         this.vertPos = gl.getAttribLocation(this.prog, 'pos');
@@ -100,6 +101,9 @@ class MeshDrawerSimple {
         this.color_buffer = gl.createBuffer();
         this.texCoordBuffer = gl.createBuffer();
         this.aTexCoordBuffer = gl.createBuffer();
+
+        // this.color = gl.getAttribLocation(this.prog, 'clr');
+        // this.color_buffer = gl.createBuffer();
 
         gl.useProgram(this.prog);
     }
@@ -114,12 +118,19 @@ class MeshDrawerSimple {
     // normals [n0,n0,n0,n1,n1,n1,...]. De manera similar, las
     // cooredenadas de textura se componen de a 2 elementos
     // consecutivos y se  asocian a cada vértice en orden.
-    setMesh(vertPos, texCoords, normals) {
+    setMesh(vertPos, texCoords, normals, onlyFloor) {
 
         let labyrinthDrawer = new LabyrinthDrawer(this.abstractLabyrinth, 0.05);
-        let vertPos2 = labyrinthDrawer.draw();
 
-        this.numVertex = vertPos2.numTriangles * 3;
+        let mesh = new Mesh();
+        let vertPos2 = labyrinthDrawer.drawFloor(mesh);
+
+        if (!onlyFloor){
+            labyrinthDrawer.drawOutterWalls(mesh);
+            vertPos2 = labyrinthDrawer.drawInnerWalls(mesh);
+        }
+
+        this.numTriangles = vertPos2.numTriangles;
         this.vertPos = vertPos2.convertToArray();
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
@@ -142,28 +153,29 @@ class MeshDrawerSimple {
                 colors.push(0, 0, 1, 1);
             }
         }
-        texCoords = [];
+
+        texCoords = new Array(this.numTriangles*3*2);
+        for(let i = 0; i < texCoords.length; i++){
+            texCoords[i] = Math.random();
+        }
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
         this.texCoords = texCoords;
 
-        gl.bindBuffer(
-            gl.ARRAY_BUFFER,
-            this.color_buffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.aTexCoordBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
 
-        gl.bufferData(
-            gl.ARRAY_BUFFER,
-            new Float32Array(colors),
-            gl.STATIC_DRAW);
+        // gl.bindBuffer(
+        //     gl.ARRAY_BUFFER,
+        //     this.color_buffer);
+        //
+        // gl.bufferData(
+        //     gl.ARRAY_BUFFER,
+        //     new Float32Array(colors),
+        //     gl.STATIC_DRAW);
     }
 
-
-    // Esta función se llama para dibujar la malla de triángulos
-    // El argumento es la matriz model-view-projection (matrixMVP),
-    // la matriz model-view (matrixMV) que es retornada por
-    // GetModelViewProjection y la matriz de transformación de las
-    // normales (matrixNormal) que es la inversa transpuesta de matrixMV
     draw(matrixMVP, matrixMV, matrixNormal) {
         // 1. Seleccionamos el shader
         gl.useProgram(this.prog);
@@ -173,6 +185,8 @@ class MeshDrawerSimple {
 
         // 2.  Setear matrix mv
         gl.uniformMatrix4fv(this.mv, false, matrixMV);
+
+        gl.useProgram(this.prog);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
         gl.vertexAttribPointer(this.texCoords, 2, gl.FLOAT, false, 0, 0);
@@ -187,14 +201,14 @@ class MeshDrawerSimple {
         gl.enableVertexAttribArray(this.vertPos);
 
         // Link atributo color
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.color_buffer);
-        gl.vertexAttribPointer(this.color, 4, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(this.color);
+        // gl.bindBuffer(gl.ARRAY_BUFFER, this.color_buffer);
+        // gl.vertexAttribPointer(this.color, 4, gl.FLOAT, false, 0, 0);
+        // gl.enableVertexAttribArray(this.color);
 
         // Dibujamos
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.useProgram(this.prog);
-        gl.drawArrays(gl.TRIANGLES, 0, this.numVertex);
+        gl.drawArrays(gl.TRIANGLES, 0, this.numTriangles*3);
     }
 
     // Esta función se llama para setear una textura sobre la malla
@@ -212,10 +226,9 @@ class MeshDrawerSimple {
         gl.generateMipmap(gl.TEXTURE_2D);
     }
 
-    // Esta función se llama cada vez que el usuario cambia el estado del checkbox 'Mostrar textura'
-    // El argumento es un boleano que indica si el checkbox está tildado
     showTexture(show) {
-        // [COMPLETAR] Setear variables uniformes en el fragment shader
+        gl.useProgram(this.prog);
+        gl.uniform1i(this.u_useTexture, show ? 1 : 0);
         if (show) {
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, this.textura);
@@ -228,9 +241,7 @@ class MeshDrawerSimple {
     setLightDir(x, y, z) {
     }
 
-    // Este método se llama al actualizar el brillo del material
     setShininess(shininess) {
-        // [COMPLETAR] Setear variables uniformes en el fragment shader para especificar el brillo.
     }
 
     setAbstractLabyrinth(labyrinth) {
@@ -238,13 +249,6 @@ class MeshDrawerSimple {
     }
 }
 
-// Recordar que:
-// Si declarás las variables pero no las usás, es como que no las declaraste
-// y va a tirar error. Siempre va punto y coma al finalizar la sentencia.
-// Las constantes en punto flotante necesitan ser expresadas como x.y,
-// incluso si son enteros: ejemplo, para 4 escribimos 4.0.
-
-// Vertex Shader
 var meshVS = `
 	precision mediump float;
 
@@ -253,30 +257,32 @@ var meshVS = `
 	
     attribute vec2 aTextureCoord;
     varying vec2 texCoord;
+    	
+	// attribute vec4 clr;
+    // varying vec4 vcolor;
     
 	void main()
 	{
         gl_Position = mvp * vec4(pos, 1.0);
         texCoord = aTextureCoord;
+        // vcolor = clr;
 	}
 `;
 
-// Otras aclaraciones:
-//
-//      * Utilizaremos una sola fuente de luz direccional en toda la escena
-//      * La intensidad I para el modelo de iluminación debe ser seteada como blanca (1.0,1.0,1.0,1.0) en RGB
-//      * Es opcional incorporar la componente ambiental (Ka) del modelo de iluminación
-//      * Los coeficientes Kd y Ks correspondientes a las componentes difusa y especular del modelo
-//        deben ser seteados con el color blanco. En caso de que se active el uso de texturas, la
-//        componente difusa (Kd) será reemplazada por el valor de textura.
 var meshFS = `
 	precision mediump float;
 
 	uniform sampler2D texGPU;
 	varying vec2 texCoord;
-	
+	// uniform int useTexture;
+
+    // varying vec4 vcolor;
 	void main()
-	{		        
-        gl_FragColor = texture2D(texGPU, texCoord);
+	{   
+	    // if(useTexture== 1){
+            gl_FragColor = texture2D(texGPU, texCoord);
+        // } else{
+        //     gl_FragColor = vcolor;
+        // }
 	}
 `

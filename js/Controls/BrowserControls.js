@@ -1,5 +1,5 @@
 let timer;
-
+let onlyFloor;
 function AutoRotate(param) {
     // Si hay que girar...
     if (param.checked) {
@@ -18,6 +18,11 @@ function AutoRotate(param) {
         clearInterval(timer);
         document.getElementById('rotation-speed').disabled = true;
     }
+}
+
+function OnlyFloor(param) {
+    onlyFloor = param.checked;
+    DrawScene();
 }
 
 function ShowTexture(param) {
@@ -147,7 +152,8 @@ function GenerateLabyrinth() {
     }
     utsx = uts;
     meshDrawer.setAbstractLabyrinth(uts);
-    meshDrawer.setMesh([], [], []);
+    onlyFloor = document.getElementById("only-floor").checked? 1: 0;
+    meshDrawer.setMesh([], [], [], onlyFloor);
 
     start_id = getStartId();
     end_id = getEndId();

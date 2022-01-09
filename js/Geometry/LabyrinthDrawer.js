@@ -15,9 +15,7 @@ class LabyrinthDrawer {
         this.height = height;
     }
 
-    draw() {
-        let mesh = new Mesh();
-
+    drawFloor(mesh) {
         this.wallFromStartToEndWithDirections(mesh,
                                               new Vertex([-1.0, 0.0 - WALL_WIDTH / 2, -1.0]),
                                               new Vertex([0.0, 0.0, 1.0]),
@@ -26,7 +24,10 @@ class LabyrinthDrawer {
                                               2,
                                               1,
                                               WALL_WIDTH);
+        return mesh;
+    }
 
+    drawOutterWalls(mesh) {
         let height = this.height;
 
         //draw wall 1
@@ -67,10 +68,12 @@ class LabyrinthDrawer {
                                               height,
                                               1,
                                               WALL_WIDTH);
+        return mesh;
+    }
 
+    drawInnerWalls(mesh) {
         // draw inner walls
         this.createInnerWalls(mesh);
-
         return mesh;
     }
 
@@ -262,7 +265,7 @@ class LabyrinthDrawer {
             }
         }
 
-        if (zIndex === this.M - 2 || xIndex === this.N - 2 ) {
+        if (zIndex === this.M - 2 || xIndex === this.N - 2) {
             if (cross.includes("N")) {
                 startingPoint = [xCoord, 0.0, zCoord - avoidClipping];
                 wallDirection = [0.0, 0.0, -1.0];
