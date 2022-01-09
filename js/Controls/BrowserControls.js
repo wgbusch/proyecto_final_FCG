@@ -30,34 +30,6 @@ function ShowTexture(param) {
     DrawScene();
 }
 
-function LoadObj(param) {
-    if (param.files && param.files[0]) {
-        let reader = new FileReader();
-        reader.onload = function (e) {
-            let mesh = new ObjMesh;
-            mesh.parse(e.target.result);
-            let box = mesh.getBoundingBox();
-            let shift = [
-                -(box.min[0] + box.max[0]) / 2,
-                -(box.min[1] + box.max[1]) / 2,
-                -(box.min[2] + box.max[2]) / 2
-            ];
-            let size = [
-                (box.max[0] - box.min[0]) / 2,
-                (box.max[1] - box.min[1]) / 2,
-                (box.max[2] - box.min[2]) / 2
-            ];
-            let maxSize = Math.max(size[0], size[1], size[2]);
-            let scale = 1 / maxSize;
-            mesh.shiftAndScale(shift, scale);
-            let buffers = mesh.getVertexBuffers();
-            // meshDrawer.setMesh(buffers.positionBuffer, buffers.texCoordBuffer, buffers.normalBuffer);
-            // DrawScene();
-        }
-        reader.readAsText(param.files[0]);
-    }
-}
-
 function LoadTexture(param) {
     if (param.files && param.files[0]) {
         let reader = new FileReader();

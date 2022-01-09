@@ -1,6 +1,6 @@
 WALL_WIDTH = 0.01;
 FLOOR_WIDTH = 0.1;
-
+LABYRINTH_HEIGHT = 0.1
 class LabyrinthDrawer {
 
     abstractLabyrinth;
@@ -8,23 +8,11 @@ class LabyrinthDrawer {
     height;
     M;
 
-    constructor(abstractLabyrinth, height) {
+    constructor(abstractLabyrinth) {
         this.abstractLabyrinth = abstractLabyrinth;
         this.N = abstractLabyrinth.getZLength();
         this.M = abstractLabyrinth.getXLength();
-        this.height = height;
-    }
-
-    drawFloor(mesh) {
-        this.wallFromStartToEndWithDirections(mesh,
-                                              new Vertex([-1.0, 0.0 - WALL_WIDTH / 2, -1.0]),
-                                              new Vertex([0.0, 0.0, 1.0]),
-                                              2,
-                                              new Vertex([1, 0, 0]),
-                                              2,
-                                              1,
-                                              WALL_WIDTH);
-        return mesh;
+        this.height = LABYRINTH_HEIGHT;
     }
 
     drawOutterWalls(mesh) {
@@ -74,6 +62,31 @@ class LabyrinthDrawer {
     drawInnerWalls(mesh) {
         // draw inner walls
         this.createInnerWalls(mesh);
+        return mesh;
+    }
+
+
+    drawFloor(mesh){
+        this.wallFromStartToEndWithDirections(mesh,
+                                              new Vertex([-1.0, 0.0 - WALL_WIDTH / 2, -1.0]),
+                                              new Vertex([0.0, 0.0, 1.0]),
+                                              2,
+                                              new Vertex([1, 0, 0]),
+                                              2,
+                                              1,
+                                              WALL_WIDTH);
+        return mesh;
+    }
+
+    drawCeiling(mesh) {
+        this.wallFromStartToEndWithDirections(mesh,
+                                              new Vertex([-1.0, this.height + WALL_WIDTH / 2, -1.0]),
+                                              new Vertex([0.0, 0.0, 1.0]),
+                                              2,
+                                              new Vertex([1, 0, 0]),
+                                              2,
+                                              1,
+                                              WALL_WIDTH);
         return mesh;
     }
 

@@ -1,86 +1,4 @@
-function GetModelViewMatrix(translationX, translationY, translationZ,
-                            rotationX, rotationY, rotationZ, cameraRotationXY) {
-
-    const cosRotX = Math.cos(rotationX);
-    const sinRotX = Math.sin(rotationX);
-
-    const cosRotY = Math.cos(rotationY);
-    const sinRotY = Math.sin(rotationY);
-
-    const cosRotZ = Math.cos(rotationZ);
-    const sinRotZ = Math.sin(rotationZ);
-
-    let rotationMatrixX = [
-        1, 0, 0, 0,
-        0, cosRotX, sinRotX, 0,
-        0, -sinRotX, cosRotX, 0,
-        0, 0, 0, 1
-    ]
-
-    let rotationMatrixY = [
-        cosRotY, 0, -sinRotY, 0,
-        0, 1, 0, 0,
-        sinRotY, 0, cosRotY, 0,
-        0, 0, 0, 1
-    ]
-
-    let rotationMatrixZ = [
-        cosRotZ, sinRotZ, 0, 0,
-        -sinRotZ, cosRotZ, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
-    ]
-
-    let rotations = MatrixMult(rotationMatrixZ, MatrixMult(rotationMatrixX, rotationMatrixY));
-
-    let trans = [
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        translationX, translationY, translationZ, 1
-    ];
-
-    let mv = MatrixMult(trans, rotations);
-
-    let alpha = 0;
-    let theta = cameraRotationXY;
-
-    let w = new Vertex([
-                           Math.cos(alpha) * Math.sin(theta),
-                           Math.sin(alpha) * Math.sin(theta),
-                           Math.cos(theta)]);
-
-    let v2 = new Vertex([-w.z, 0, w.y]);
-    let p = proj(w, v2);
-    let u2 = new Vertex([v2.x - p.x, v2.y - p.y, v2.z - p.z]);
-
-    let u = Normalize(u2);
-
-    let u3 = crossProduct(w, u);
-    let v = Normalize(u3);
-
-    let direction = [
-        -u.x, -u.y, -u.z, 0,
-        -v.x, -v.y, -v.z, 0,
-        w.x, w.y, w.z, 0,
-        0, 0, 0, 1
-    ];
-
-    return MatrixMult(direction, mv);
-}
-
-colours = {
-    pink: [1, 0.8, 0.9, 1.0],
-    green: [0.3, 0.6, 0.3, 1.0],
-    orange: [1, 0.5, 0, 1.0],
-    gold: [1, 0.92, 0, 1.0],
-    tomato: [1, 0.35, 0.29, 1.0],
-    grey: [0.6, 0.6, 0.6, 1.0],
-    black: [0, 0, 0, 1.0]
-}
-coloursEnum = ["pink", "green", "orange", "gold", "tomato", "grey", "black"]
-
-class MeshDrawerSimple {
+class FloorDrawer {
     // El constructor es donde nos encargamos de realizar las inicializaciones necesarias.
     constructor() {
         // 1. Compilamos el programa de shaders
@@ -120,7 +38,7 @@ class MeshDrawerSimple {
     // consecutivos y se  asocian a cada vértice en orden.
     setMesh(vertPos, texCoords, normals, onlyFloor) {
 
-        let labyrinthDrawer = new LabyrinthDrawer(this.abstractLabyrinth, 0.05);
+        let labyrinthDrawer = new LabyrinthDrawer(this.abstractLabyrinth);
 
         let mesh = new Mesh();
         let vertPos2 = labyrinthDrawer.drawFloor(mesh);

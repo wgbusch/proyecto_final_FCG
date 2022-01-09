@@ -6,19 +6,22 @@
     <!-- estilo-->
     <link href="css/style.css" rel="stylesheet">
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+    <script type="text/javascript" id="includedscript" src="js/proyecto_final.js"></script>
+
     <script type="text/javascript" id="includedscript" src="js/Labyrinth/Graph.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Labyrinth/LabyrinthGenerator.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Shaders/boxdrawer.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/proyecto_final.js"></script>
+    <script type="text/javascript" id="includedscript" src="js/Shaders/CeilingDrawer.js"></script>
+    <script type="text/javascript" id="includedscript" src="js/Shaders/FloorDrawer.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Shaders/MeshDrawer.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Shaders/MeshDrawerSimple.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Shaders/lightview.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Geometry/Mesh.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Utils/Math.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Geometry/LabyrinthDrawer.js"></script>
+    <script type="text/javascript" id="includedscript" src="js/Utils/Math.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Camera/CameraControl.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Controls/BrowserControls.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Camera/MazeTraversalLogic.js"></script>
+    <script type="text/javascript" id="includedscript" src="js/Controls/BrowserControls.js"></script>
 
     <script type="text/javascript" src="js/Utils/objmesh.js"></script>
 
@@ -42,7 +45,6 @@
       </div>
       <div class="control-group">
         <pre id="file-content"></pre>
-        <div class="control">Modelo:<br/><input id="obj" type="file" onchange="LoadObj(this)" accept=".obj"/></div>
         <div class="control">Textura:<br/><input id="texture" type="file" onchange="LoadTexture(this)" accept="image/*"/></div>
       </div>
       <div class="control-group">

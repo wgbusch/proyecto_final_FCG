@@ -84,7 +84,7 @@ class MeshDrawerSimple {
     // El constructor es donde nos encargamos de realizar las inicializaciones necesarias.
     constructor() {
         // 1. Compilamos el programa de shaders
-        this.prog = InitShaderProgram(meshVS, meshFS);
+        this.prog = InitShaderProgram(this.meshVS, this.meshFS);
 
         // 2. Obtenemos los IDs de las variables uniformes en los shaders
         this.mvp = gl.getUniformLocation(this.prog, 'mvp');
@@ -120,7 +120,7 @@ class MeshDrawerSimple {
     // consecutivos y se  asocian a cada vértice en orden.
     setMesh(vertPos, texCoords, normals, onlyFloor) {
 
-        let labyrinthDrawer = new LabyrinthDrawer(this.abstractLabyrinth, 0.05);
+        let labyrinthDrawer = new LabyrinthDrawer(this.abstractLabyrinth);
 
         let mesh = new Mesh();
         let vertPos2 = labyrinthDrawer.drawFloor(mesh);
@@ -247,9 +247,9 @@ class MeshDrawerSimple {
     setAbstractLabyrinth(labyrinth) {
         this.abstractLabyrinth = labyrinth;
     }
-}
 
-var meshVS = `
+
+    meshVS = `
 	precision mediump float;
 
 	attribute vec3 pos;
@@ -269,7 +269,7 @@ var meshVS = `
 	}
 `;
 
-var meshFS = `
+    meshFS = `
 	precision mediump float;
 
 	uniform sampler2D texGPU;
@@ -286,3 +286,5 @@ var meshFS = `
         // }
 	}
 `
+}
+

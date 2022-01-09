@@ -1,5 +1,7 @@
 let boxDrawer;          // clase para contener el comportamiento de la caja
 let meshDrawer;         // clase para contener el comportamiento de la malla
+let floorDrawer;
+let ceilingDrawer;
 let canvas, gl;         // canvas y contexto WebGL
 let perspectiveMatrix;	// matriz de perspectiva
 let buttonsPressed;
@@ -97,13 +99,10 @@ window.onload = function () {
         }
     }
 
-    let objectLoaded = document.getElementById('obj');
     let textureLoaded = document.getElementById('texture')
-    LoadObj(objectLoaded);
     LoadTexture(textureLoaded);
 
     DrawScene();
-
 };
 
 function InitWebGL() {
@@ -127,7 +126,7 @@ function InitWebGL() {
     // Inicializar los shaders y buffers para renderizar
     boxDrawer = new BoxDrawer();
     meshDrawer = new MeshDrawerSimple();
-
+    ceilingDrawer = new CeilingDrawer();
     //mvp that has error
     // transX = 1.2000000000000015;
     // transY = -0.08959999999999997;
@@ -197,7 +196,11 @@ function DrawScene() {
 
     // 3. Le pedimos a cada objeto que se dibuje a si mismo
     let nrmTrans = [mv[0], mv[1], mv[2], mv[4], mv[5], mv[6], mv[8], mv[9], mv[10]];
+
     meshDrawer.draw(mvp, mv, nrmTrans);
+    ceilingDrawer.draw(mvp, mv, nrmTrans);
+    // floorDrawer.draw(mvp, mv, nrmTrans);
+
     if (showBox.checked) {
         boxDrawer.draw(mvp);
     }
