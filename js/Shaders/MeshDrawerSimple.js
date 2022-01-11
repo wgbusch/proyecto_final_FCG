@@ -69,17 +69,6 @@ function GetModelViewMatrix(translationX, translationY, translationZ,
     return MatrixMult(direction, mv);
 }
 
-colours = {
-    pink: [1, 0.8, 0.9, 1.0],
-    green: [0.3, 0.6, 0.3, 1.0],
-    orange: [1, 0.5, 0, 1.0],
-    gold: [1, 0.92, 0, 1.0],
-    tomato: [1, 0.35, 0.29, 1.0],
-    grey: [0.6, 0.6, 0.6, 1.0],
-    black: [0, 0, 0, 1.0]
-}
-coloursEnum = ["pink", "green", "orange", "gold", "tomato", "grey", "black"]
-
 class MeshDrawerSimple {
     // El constructor es donde nos encargamos de realizar las inicializaciones necesarias.
     constructor() {
@@ -89,7 +78,7 @@ class MeshDrawerSimple {
         // 2. Obtenemos los IDs de las variables uniformes en los shaders
         this.mvp = gl.getUniformLocation(this.prog, 'mvp');
         this.mv = gl.getUniformLocation(this.prog, 'mv');
-        // this.u_useTexture = gl.getUniformLocation(this.prog, 'useTexture');
+        this.texGPU = gl.getUniformLocation(this.prog, 'texGPU');
 
         // 3. Obtenemos los IDs de los atributos de los vértices en los shaders
         this.vertPos = gl.getAttribLocation(this.prog, 'pos');
@@ -98,26 +87,11 @@ class MeshDrawerSimple {
         // 4. Obtenemos los IDs de los atributos de los vértices en los shaders
 
         this.positionBuffer = gl.createBuffer();
-        this.color_buffer = gl.createBuffer();
         this.texCoordBuffer = gl.createBuffer();
         this.aTexCoordBuffer = gl.createBuffer();
-
-        // this.color = gl.getAttribLocation(this.prog, 'clr');
-        // this.color_buffer = gl.createBuffer();
-
-        gl.useProgram(this.prog);
     }
 
-    // Esta función se llama cada vez que el usuario carga un nuevo
-    // archivo OBJ. En los argumentos de esta función llegan un areglo
-    // con las posiciones 3D de los vértices, un arreglo 2D con las
-    // coordenadas de textura y las normales correspondientes a cada
-    // vértice. Todos los items en estos arreglos son del tipo float.
-    // Los vértices y normales se componen de a tres elementos
-    // consecutivos en el arreglo vertPos [x0,y0,z0,x1,y1,z1,..] y
-    // normals [n0,n0,n0,n1,n1,n1,...]. De manera similar, las
-    // cooredenadas de textura se componen de a 2 elementos
-    // consecutivos y se  asocian a cada vértice en orden.
+
     setMesh(vertPos, texCoords, normals, onlyFloor) {
 
         let labyrinthDrawer = new LabyrinthDrawer(this.abstractLabyrinth);
@@ -125,7 +99,7 @@ class MeshDrawerSimple {
         let mesh = new Mesh();
         let vertPos2 = labyrinthDrawer.drawFloor(mesh);
 
-        if (!onlyFloor){
+        if (!onlyFloor) {
             labyrinthDrawer.drawOutterWalls(mesh);
             vertPos2 = labyrinthDrawer.drawInnerWalls(mesh);
         }
@@ -136,26 +110,9 @@ class MeshDrawerSimple {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertPos), gl.STATIC_DRAW);
 
-        let numTriangles = vertPos2.numTriangles;
-        let colors = [];
-        for (let i = 0; i < numTriangles; i++) {
-            if (i % 3 === 0) {
-                colors.push(1, 0, 0, 1);
-                colors.push(1, 0, 0, 1);
-                colors.push(1, 0, 0, 1);
-            } else if (i % 3 === 1) {
-                colors.push(0, 1, 0, 1);
-                colors.push(0, 1, 0, 1);
-                colors.push(0, 1, 0, 1);
-            } else if (i % 3 === 2) {
-                colors.push(0, 0, 1, 1);
-                colors.push(0, 0, 1, 1);
-                colors.push(0, 0, 1, 1);
-            }
-        }
 
-        texCoords = new Array(this.numTriangles*3*2);
-        for(let i = 0; i < texCoords.length; i++){
+        texCoords = new Array(this.numTriangles * 3 * 2);
+        for (let i = 0; i < texCoords.length; i++) {
             texCoords[i] = Math.random();
         }
 
@@ -166,14 +123,73 @@ class MeshDrawerSimple {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.aTexCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
 
-        // gl.bindBuffer(
-        //     gl.ARRAY_BUFFER,
-        //     this.color_buffer);
-        //
-        // gl.bufferData(
-        //     gl.ARRAY_BUFFER,
-        //     new Float32Array(colors),
-        //     gl.STATIC_DRAW);
+        gl.useProgram(this.prog);
+
+        var img = new Image();
+        img.crossOrigin = "";
+        img.onload = test;
+        img.src = "https://i.imgur.com/a9bRtns.png";
+
+        function test() {
+
+            var ctx = document.getElementById("wall-img").getContext("2d");
+            ctx.drawImage(this, 64, 64);
+
+            // This will fail if no CORS support, otherwise all OK
+            try {
+                let texture_object = gl.createTexture();
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, texture_object);
+
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.REPEAT);
+                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+
+                gl.texImage2D(gl.TEXTURE_2D,
+                              0,
+                              gl.RGB,
+                              gl.RGB,
+                              gl.UNSIGNED_BYTE,
+                              this);
+                this.texture_object = texture_object;
+            } catch (err) {
+                alert(err);
+            }
+        }
+
+        // let img = new Image();
+        // img.onload = () => {
+        //     let texture_object = gl.createTexture();
+        //     gl.bindTexture(gl.TEXTURE_2D, texture_object);
+        //     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.REPEAT);
+        //     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        //     gl.texImage2D(gl.TEXTURE_2D,
+        //                   0,
+        //                   gl.RGB,
+        //                   gl.RGB,
+        //                   gl.UNSIGNED_BYTE,
+        //                   img);
+        //     gl.generateMipmap(gl.TEXTURE_2D);
+        //     this.texture_object = texture_object;
+        // }
+        // // img.crossOrigin = "*"
+        // img.src = 'img/maze/floor.bmp';
+
+        // let img = document.getElementById('texture-img');
+        // img.onload = function () {
+        //     let texture_object = gl.createTexture();
+        //     gl.bindTexture(gl.TEXTURE_2D, texture_object);
+        //     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.REPEAT);
+        //     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        //     gl.texImage2D(gl.TEXTURE_2D,
+        //                   0,
+        //                   gl.RGB,
+        //                   gl.RGB,
+        //                   gl.UNSIGNED_BYTE,
+        //                   img);
+        //     this.texture_object = texture_object;
+        // }
+        // img.src = 'img/maze/floor.bmp';
+
     }
 
     draw(matrixMVP, matrixMV, matrixNormal) {
@@ -200,23 +216,33 @@ class MeshDrawerSimple {
         gl.vertexAttribPointer(this.vertPos, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(this.vertPos);
 
-        // Link atributo color
-        // gl.bindBuffer(gl.ARRAY_BUFFER, this.color_buffer);
-        // gl.vertexAttribPointer(this.color, 4, gl.FLOAT, false, 0, 0);
-        // gl.enableVertexAttribArray(this.color);
+        // Make the "texture unit" 0 be the active texture unit.
+        gl.activeTexture(gl.TEXTURE0);
+
+        // Make the texture_object be the active texture. This binds the
+        // texture_object to "texture unit" 0.
+        gl.bindTexture(gl.TEXTURE_2D, this.texture_object);
+
+        // Tell the shader program to use "texture unit" 0
+        gl.uniform1i(this.texGPU, 0);
 
         // Dibujamos
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.useProgram(this.prog);
-        gl.drawArrays(gl.TRIANGLES, 0, this.numTriangles*3);
+        gl.drawArrays(gl.TRIANGLES, 0, this.numTriangles * 3);
     }
 
-    // Esta función se llama para setear una textura sobre la malla
-    // El argumento es un componente <img> de html que contiene la textura.
+    setLightDir(x, y, z) {
+    }
+
+    setShininess(shininess) {
+    }
+
     setTexture(img) {
         gl.useProgram(this.prog);
-        this.textura = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, this.textura);
+        gl.activeTexture(gl.TEXTURE0);
+        this.texture_object = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, this.texture_object);
         gl.texImage2D(gl.TEXTURE_2D,
                       0,
                       gl.RGB,
@@ -224,24 +250,6 @@ class MeshDrawerSimple {
                       gl.UNSIGNED_BYTE,
                       img);
         gl.generateMipmap(gl.TEXTURE_2D);
-    }
-
-    showTexture(show) {
-        gl.useProgram(this.prog);
-        gl.uniform1i(this.u_useTexture, show ? 1 : 0);
-        if (show) {
-            gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, this.textura);
-            const sampler = gl.getUniformLocation(this.prog, 'texGPU');
-            gl.useProgram(this.prog);
-            gl.uniform1f(sampler, 0);
-        }
-    }
-
-    setLightDir(x, y, z) {
-    }
-
-    setShininess(shininess) {
     }
 
     setAbstractLabyrinth(labyrinth) {
@@ -257,15 +265,11 @@ class MeshDrawerSimple {
 	
     attribute vec2 aTextureCoord;
     varying vec2 texCoord;
-    	
-	// attribute vec4 clr;
-    // varying vec4 vcolor;
     
 	void main()
 	{
         gl_Position = mvp * vec4(pos, 1.0);
         texCoord = aTextureCoord;
-        // vcolor = clr;
 	}
 `;
 
@@ -274,16 +278,10 @@ class MeshDrawerSimple {
 
 	uniform sampler2D texGPU;
 	varying vec2 texCoord;
-	// uniform int useTexture;
-
-    // varying vec4 vcolor;
+	
 	void main()
 	{   
-	    // if(useTexture== 1){
             gl_FragColor = texture2D(texGPU, texCoord);
-        // } else{
-        //     gl_FragColor = vcolor;
-        // }
 	}
 `
 }

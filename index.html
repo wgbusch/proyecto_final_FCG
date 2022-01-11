@@ -5,7 +5,6 @@
 
     <!-- estilo-->
     <link href="css/style.css" rel="stylesheet">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
     <script type="text/javascript" id="includedscript" src="js/proyecto_final.js"></script>
 
     <script type="text/javascript" id="includedscript" src="js/Labyrinth/Graph.js"></script>
@@ -22,7 +21,6 @@
     <script type="text/javascript" id="includedscript" src="js/Camera/CameraControl.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Camera/MazeTraversalLogic.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Controls/BrowserControls.js"></script>
-
     <script type="text/javascript" src="js/Utils/objmesh.js"></script>
 
   </head>
@@ -44,6 +42,13 @@
         <div class="control"><span id="shininess-label">Intensidad:</span><span id="shininess-value">1</span><input id="shininess-exp" type="range" min="0" max="100" value="50" oninput="SetShininess(this)"/></div>
       </div>
       <div class="control-group">
+        <pre id="file-content-ceiling"></pre>
+        <div class="control">Textura Ceiling:<br/><input id="texture-ceiling" type="file" onchange="LoadTextureCeiling(this)" accept="image/*"/></div>
+      </div>
+      <div class="control-group">
+        <img id="texture-img-ceiling" />
+      </div>
+      <div class="control-group">
         <pre id="file-content"></pre>
         <div class="control">Textura:<br/><input id="texture" type="file" onchange="LoadTexture(this)" accept="image/*"/></div>
       </div>
@@ -52,8 +57,8 @@
       </div>
       <div class="control-group">
           <div class="control">Generar Laberinto:<br/><input id="labyrinth" type="submit" onclick="GenerateLabyrinth(this)"/></div>
-          <div class="control"><input id="columns" name="columns" type="number" /><label for="columns">columnas</label></div>
-          <div class="control"><input id="rows" name="rows" type="number"/><label for="rows">filas</label></div>
+          <div class="control"><input id="columns" name="columns" type="number" value="5" /><label for="columns">columnas</label></div>
+          <div class="control"><input id="rows" name="rows" type="number" value="5"/><label for="rows">filas</label></div>
         <div class="container">
           <div class="grid"></div>
         </div>
@@ -98,5 +103,6 @@
       <div class="control">Generar ruta automática<br/><input id="automatic-route" type="submit" onclick="FindEscape(this)"/></div>
     </div>
   </div>
+  <canvas id="wall-img"></canvas>
   </body>
   </html>

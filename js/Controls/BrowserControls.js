@@ -25,6 +25,21 @@ function OnlyFloor(param) {
     DrawScene();
 }
 
+function LoadTextureCeiling(param) {
+    if (param.files && param.files[0]) {
+        let reader = new FileReader();
+        reader.onload = function (e) {
+            let img = document.getElementById('texture-img-ceiling');
+            img.onload = function () {
+                ceilingDrawer.setTexture(img);
+                DrawScene();
+            }
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(param.files[0]);
+    }
+}
+
 function ShowTexture(param) {
     meshDrawer.showTexture(param.checked);
     DrawScene();
