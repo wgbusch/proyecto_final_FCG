@@ -1,6 +1,6 @@
 class CeilingDrawer {
 
-    HEIGHT_CEILING = 0.25
+    HEIGHT_CEILING = 0.2
 
     // El constructor es donde nos encargamos de realizar las inicializaciones necesarias.
     constructor() {
@@ -11,6 +11,7 @@ class CeilingDrawer {
         // 2. Obtenemos los IDs de las variables uniformes en los shaders
         this.mvp = gl.getUniformLocation(this.prog, 'mvp');
         this.mv = gl.getUniformLocation(this.prog, 'mv');
+        this.texGPU = gl.getUniformLocation(this.prog, 'texGPU');
 
         // 3. Obtenemos los IDs de los atributos de los vértices en los shaders
         this.vertPos = gl.getAttribLocation(this.prog, 'pos');
@@ -47,39 +48,6 @@ class CeilingDrawer {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.aTexCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
 
-        // gl.useProgram(this.prog);
-        // gl.activeTexture(gl.TEXTURE1);
-        // this.textura = gl.createTexture();
-        // this.textura.image = new Image();
-        // this.textura.image.onload = function(){
-        //     gl.bindTexture(gl.TEXTURE_2D, this.textura);
-        //     gl.texImage2D(gl.TEXTURE_2D,
-        //                   0,
-        //                   gl.RGB,
-        //                   gl.RGB,
-        //                   gl.UNSIGNED_BYTE,
-        //                   this.textura.image);
-        //
-        //     gl.generateMipmap(gl.TEXTURE_2D);
-        //     gl.bindTexture(gl.TEXTURE_2D, null);
-        // }
-        // this.textura.image.src = "C:\\Users\\wgbus\\Downloads\\FCG\\proyecto_final\\img\\maze\\ceiling2.bmp";
-
-        // let img = new Image();
-        // img.src = "C:\\Users\\wgbus\\Downloads\\FCG\\proyecto_final\\img\\maze\\ceiling2.bmp";
-        //
-        // gl.useProgram(this.prog);
-        // this.textura = gl.createTexture();
-        // gl.bindTexture(gl.TEXTURE_2D, this.textura);
-        // gl.texImage2D(gl.TEXTURE_2D,
-        //               0,
-        //               gl.RGB,
-        //               gl.RGB,
-        //               gl.UNSIGNED_BYTE,
-        //               img);
-        //
-        // gl.generateMipmap(gl.TEXTURE_2D);
-
         gl.useProgram(this.prog);
     }
 
@@ -107,24 +75,25 @@ class CeilingDrawer {
         gl.vertexAttribPointer(this.vertPos, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(this.vertPos);
 
-        gl.useProgram(this.prog);
+        // Make the "texture unit" 1 be the active texture unit.
         gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, this.textura);
-        const sampler = gl.getUniformLocation(this.prog, 'texGPU');
-        gl.useProgram(this.prog);
-        gl.uniform1f(sampler, 1);
+
+        // Make the texture_object be the active texture. This binds the
+        // texture_object to "texture unit" 1.
+        gl.bindTexture(gl.TEXTURE_2D, this.texture_object);
+
+        // Tell the shader program to use "texture unit" 1
+        gl.uniform1i(this.texGPU, 1);
 
         // Dibujamos
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.useProgram(this.prog);
         gl.drawArrays(gl.TRIANGLES, 0, this.numTriangles * 3);
     }
 
     setTexture(img) {
         gl.useProgram(this.prog);
-        this.textura = gl.createTexture();
         gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, this.textura);
+        this.texture_object = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, this.texture_object);
         gl.texImage2D(gl.TEXTURE_2D,
                       0,
                       gl.RGB,
@@ -167,6 +136,5 @@ class CeilingDrawer {
         gl_FragColor = texture2D(texGPU, texCoord);
 	}
 `;
-
 }
 

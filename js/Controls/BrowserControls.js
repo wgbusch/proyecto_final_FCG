@@ -20,11 +20,6 @@ function AutoRotate(param) {
     }
 }
 
-function OnlyFloor(param) {
-    onlyFloor = param.checked;
-    DrawScene();
-}
-
 function LoadTextureCeiling(param) {
     if (param.files && param.files[0]) {
         let reader = new FileReader();
@@ -139,8 +134,7 @@ function GenerateLabyrinth() {
     }
     utsx = uts;
     meshDrawer.setAbstractLabyrinth(uts);
-    onlyFloor = document.getElementById("only-floor").checked? 1: 0;
-    meshDrawer.setMesh([], [], [], onlyFloor);
+    meshDrawer.setMesh([], [], []);
 
     start_id = getStartId();
     end_id = getEndId();
@@ -148,7 +142,7 @@ function GenerateLabyrinth() {
     let converter = new Converter(utsx);
 
     [transX, transZ] = converter.calculateCenterCoordinates(start_id);
-    transY = StartingPoint(uts.zLength);
+    transY = CAMERA_HEIGHT;
 
     UpdateCanvasSize();
     DrawScene();

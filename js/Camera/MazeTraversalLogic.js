@@ -7,10 +7,6 @@ function getEndId(){
     return utsx.getXLength() -1;
 }
 
-function StartingPoint(n) {
-    return -0.025;
-}
-
 function evaluatePath(list, callback) {
     if (list.length === 1) {
         list[0].evaluate().finally(() => {

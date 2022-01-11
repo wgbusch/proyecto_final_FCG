@@ -1,6 +1,8 @@
 WALL_WIDTH = 0.01;
 FLOOR_WIDTH = 0.1;
-LABYRINTH_HEIGHT = 0.1
+LABYRINTH_HEIGHT = 0.15;
+CAMERA_HEIGHT = -0.05;
+
 class LabyrinthDrawer {
 
     abstractLabyrinth;

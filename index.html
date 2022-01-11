@@ -36,7 +36,6 @@
       <div class="control-group">
         <div class="control"><input id="show-box" name="show-box" type="checkbox" onchange="DrawScene()" checked /><label for="show-box"> Mostrar caja</label></div>
         <div class="control"><input id="show-texture" name="show-texture" type="checkbox" onchange="ShowTexture(this)" checked /><label for="show-texture"> Mostrar textura</label></div>
-        <div class="control"><input id="only-floor" name="only-floor" type="checkbox" onchange="OnlyFloor(this)" checked /><label for="show-texture"> Only Floor</label></div>
         <div class="control"><input id="auto-rotate" name="auto-rotate" type="checkbox" onchange="AutoRotate(this)"/><label for="auto-rotate"> Calesita</label></div>
         <div class="control"><input id="rotation-speed" type="range" min="1" max="100" value="50" disabled/></div>
         <div class="control"><span id="shininess-label">Intensidad:</span><span id="shininess-value">1</span><input id="shininess-exp" type="range" min="0" max="100" value="50" oninput="SetShininess(this)"/></div>
@@ -57,8 +56,8 @@
       </div>
       <div class="control-group">
           <div class="control">Generar Laberinto:<br/><input id="labyrinth" type="submit" onclick="GenerateLabyrinth(this)"/></div>
-          <div class="control"><input id="columns" name="columns" type="number" value="5" /><label for="columns">columnas</label></div>
-          <div class="control"><input id="rows" name="rows" type="number" value="5"/><label for="rows">filas</label></div>
+          <div class="control"><input id="columns" name="columns" type="number" value="10" /><label for="columns">columnas</label></div>
+          <div class="control"><input id="rows" name="rows" type="number" value="10"/><label for="rows">filas</label></div>
         <div class="container">
           <div class="grid"></div>
         </div>

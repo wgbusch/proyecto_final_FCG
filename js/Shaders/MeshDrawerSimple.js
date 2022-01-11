@@ -92,17 +92,15 @@ class MeshDrawerSimple {
     }
 
 
-    setMesh(vertPos, texCoords, normals, onlyFloor) {
+    setMesh(vertPos, texCoords, normals) {
 
         let labyrinthDrawer = new LabyrinthDrawer(this.abstractLabyrinth);
 
         let mesh = new Mesh();
-        let vertPos2 = labyrinthDrawer.drawFloor(mesh);
+        labyrinthDrawer.drawFloor(mesh);
 
-        if (!onlyFloor) {
-            labyrinthDrawer.drawOutterWalls(mesh);
-            vertPos2 = labyrinthDrawer.drawInnerWalls(mesh);
-        }
+        labyrinthDrawer.drawOutterWalls(mesh);
+        let vertPos2 = labyrinthDrawer.drawInnerWalls(mesh);
 
         this.numTriangles = vertPos2.numTriangles;
         this.vertPos = vertPos2.convertToArray();
@@ -125,10 +123,10 @@ class MeshDrawerSimple {
 
         gl.useProgram(this.prog);
 
-        var img = new Image();
-        img.crossOrigin = "";
-        img.onload = test;
-        img.src = "https://i.imgur.com/a9bRtns.png";
+        // var img = new Image();
+        // img.crossOrigin = "";
+        // img.onload = test;
+        // img.src = "https://i.imgur.com/a9bRtns.png";
 
         function test() {
 
@@ -146,10 +144,10 @@ class MeshDrawerSimple {
 
                 gl.texImage2D(gl.TEXTURE_2D,
                               0,
-                              gl.RGB,
-                              gl.RGB,
+                              gl.RGBA,
+                              gl.RGBA,
                               gl.UNSIGNED_BYTE,
-                              this);
+                              ctx);
                 this.texture_object = texture_object;
             } catch (err) {
                 alert(err);
