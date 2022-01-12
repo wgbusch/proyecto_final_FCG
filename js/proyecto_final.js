@@ -13,13 +13,12 @@ let end_id = 9;
 let rotX = 0, rotY = 0, rotZ = 0, transX = 0, transY = 0, transZ = 3, autorot = 0, cameraRotationXY = 0;
 let movementSpeed = 25;
 
-let WALLS_URL_SMALL="https://i.imgur.com/nKQZ60l.jpg";
-let FLOOR_URL_SMALL="https://i.imgur.com/xChDZVr.png";
-let CEILING_URL_SMALL="https://i.imgur.com/ghE9cGA.png";
+let WALLS_URL_SMALL = "https://i.imgur.com/nKQZ60l.jpg";
+let FLOOR_URL_SMALL = "https://i.imgur.com/xChDZVr.png";
+let CEILING_URL_SMALL = "https://i.imgur.com/ghE9cGA.png";
 
 //TODO add controls for speed and position of camera.
 window.onload = function () {
-    showBox = document.getElementById('show-box');
     InitWebGL();
 
     buttonsPressed = {};
@@ -208,9 +207,8 @@ function DrawScene() {
     ceilingDrawer.draw(mvp, mv, nrmTrans);
     floorDrawer.draw(mvp, mv, nrmTrans);
 
-    if (showBox.checked) {
-        boxDrawer.draw(mvp);
-    }
+    boxDrawer.draw(mvp);
+
     document.getElementById("cameraRotationXY").innerText = cameraRotationXY + "";
     document.getElementById("transX").innerText = transX + "";
     document.getElementById("transY").innerText = transY + "";
@@ -256,8 +254,6 @@ function CompileShader(type, source, wgl = gl) {
 
     return shader;
 }
-
-let showBox;  // boleano para determinar si se debe o no mostrar la caja
 
 // Evento resize
 function WindowResize() {
