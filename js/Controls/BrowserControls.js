@@ -1,30 +1,3 @@
-let timer;
-
-function AutoRotate(param) {
-    // Si hay que girar...
-    if (param.checked) {
-        // Vamos rotando una cantiad constante cada 30 ms
-        timer = setInterval(function () {
-                                let v = document.getElementById('rotation-speed').value;
-                                autorot += 0.0005 * v;
-                                if (autorot > 2 * Math.PI) autorot -= 2 * Math.PI;
-
-                                // Reenderizamos
-                                DrawScene();
-                            }, 30
-        );
-        document.getElementById('rotation-speed').disabled = false;
-    } else {
-        clearInterval(timer);
-        document.getElementById('rotation-speed').disabled = true;
-    }
-}
-
-
-function ShowTexture(param) {
-    meshDrawer.showTexture(param.checked);
-    DrawScene();
-}
 
 function LoadTextureWalls() {
     LoadTexture(WALLS_URL_SMALL, 'texture-img-walls', meshDrawer);

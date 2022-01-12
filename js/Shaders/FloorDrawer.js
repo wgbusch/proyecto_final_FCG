@@ -31,7 +31,6 @@ class FloorDrawer {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertPos), gl.STATIC_DRAW);
 
-
         let texCoords = [0, 0,
                          0, 13,
                          13, 0,

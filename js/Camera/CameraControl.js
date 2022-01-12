@@ -1,8 +1,6 @@
 TIME_TO_TRAVEL_ONE_BLOCK = 2000;
 TIME_TO_ROTATE_90_DEGREES = 1000;
 UPDATE_SPEED = 100;
-let SPEED = 0.006;
-
 
 class North {
 
@@ -269,12 +267,6 @@ function get90DegreeAntiClockwiseRotationPromise() {
     return new PathInstruction(counterClockwisePromise);
 }
 
-/// 4,4
-/// [12 13  14 15 ]
-/// [8  9   10 11 ]
-/// [4  5   6   7 ]
-/// [0  1   2   3 ]
-/// [2, 6, 5, 1, 0, 4, 8, 12]
 class Converter {
     finalList;
     zLength;

@@ -203,7 +203,6 @@ class MeshDrawerSimple {
         this.abstractLabyrinth = labyrinth;
     }
 
-
     meshVS = `
 	precision mediump float;
 

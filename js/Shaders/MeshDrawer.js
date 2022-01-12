@@ -261,15 +261,6 @@ class MeshDrawer {
         gl.uniform1i(this.u_useTexture, 1);
     }
 
-    // Esta función se llama cada vez que el usuario cambia el estado del checkbox 'Mostrar textura'
-    // El argumento es un boleano que indica si el checkbox está tildado
-    showTexture(show) {
-        this.show = show;
-        // Setear variables uniformes en el fragment shader
-        gl.useProgram(this.prog);
-        gl.uniform1i(this.u_useTexture, show ? 1 : 0);
-    }
-
     setLightDir(x, y, z) {
         gl.useProgram(this.prog);
         gl.uniform3f(this.light, x, y, z);
