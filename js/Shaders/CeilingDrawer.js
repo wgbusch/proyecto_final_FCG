@@ -39,7 +39,6 @@ class CeilingDrawer {
         let texCoords = [0, 0,
                          0, 13,
                          13, 0,
-
                          13, 13,
                          0, 13,
                          13, 0];

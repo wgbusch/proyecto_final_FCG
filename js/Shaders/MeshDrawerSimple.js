@@ -108,8 +108,24 @@ class MeshDrawerSimple {
 
 
         texCoords = new Array(this.numTriangles * 3 * 2);
-        for (let i = 0; i < texCoords.length; i++) {
-            texCoords[i] = Math.random();
+        for (let i = 0; i < texCoords.length; i+=12) {
+            texCoords[i] = 0;
+            texCoords[i+1] = 0;
+
+            texCoords[i+2] = 1;
+            texCoords[i+3] = 0;
+
+            texCoords[i+4] = 0;
+            texCoords[i+5] = 1;
+
+            texCoords[i+6] = 1;
+            texCoords[i+7] = 1;
+
+            texCoords[i+8] = 0;
+            texCoords[i+9] = 1;
+
+            texCoords[i+10] = 1;
+            texCoords[i+11] = 0;
         }
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
@@ -120,72 +136,6 @@ class MeshDrawerSimple {
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
 
         gl.useProgram(this.prog);
-
-        // var img = new Image();
-        // img.crossOrigin = "";
-        // img.onload = test;
-        // img.src = "https://i.imgur.com/a9bRtns.png";
-
-        function test() {
-
-            var ctx = document.getElementById("wall-img").getContext("2d");
-            ctx.drawImage(this, 64, 64);
-
-            // This will fail if no CORS support, otherwise all OK
-            try {
-                let texture_object = gl.createTexture();
-                gl.activeTexture(gl.TEXTURE0);
-                gl.bindTexture(gl.TEXTURE_2D, texture_object);
-
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.REPEAT);
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-
-                gl.texImage2D(gl.TEXTURE_2D,
-                              0,
-                              gl.RGBA,
-                              gl.RGBA,
-                              gl.UNSIGNED_BYTE,
-                              ctx);
-                this.texture_object = texture_object;
-            } catch (err) {
-                alert(err);
-            }
-        }
-
-        // let img = new Image();
-        // img.onload = () => {
-        //     let texture_object = gl.createTexture();
-        //     gl.bindTexture(gl.TEXTURE_2D, texture_object);
-        //     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.REPEAT);
-        //     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-        //     gl.texImage2D(gl.TEXTURE_2D,
-        //                   0,
-        //                   gl.RGB,
-        //                   gl.RGB,
-        //                   gl.UNSIGNED_BYTE,
-        //                   img);
-        //     gl.generateMipmap(gl.TEXTURE_2D);
-        //     this.texture_object = texture_object;
-        // }
-        // // img.crossOrigin = "*"
-        // img.src = 'img/maze/floor.bmp';
-
-        // let img = document.getElementById('texture-img');
-        // img.onload = function () {
-        //     let texture_object = gl.createTexture();
-        //     gl.bindTexture(gl.TEXTURE_2D, texture_object);
-        //     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.REPEAT);
-        //     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-        //     gl.texImage2D(gl.TEXTURE_2D,
-        //                   0,
-        //                   gl.RGB,
-        //                   gl.RGB,
-        //                   gl.UNSIGNED_BYTE,
-        //                   img);
-        //     this.texture_object = texture_object;
-        // }
-        // img.src = 'img/maze/floor.bmp';
-
     }
 
     draw(matrixMVP, matrixMV, matrixNormal) {
@@ -238,6 +188,7 @@ class MeshDrawerSimple {
         gl.useProgram(this.prog);
         gl.activeTexture(gl.TEXTURE0);
         this.texture_object = gl.createTexture();
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         gl.bindTexture(gl.TEXTURE_2D, this.texture_object);
         gl.texImage2D(gl.TEXTURE_2D,
                       0,
