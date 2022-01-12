@@ -42,17 +42,27 @@
       </div>
       <div class="control-group">
         <pre id="file-content-ceiling"></pre>
-        <div class="control">Textura Ceiling:<br/><input id="texture-ceiling" type="file" onchange="LoadTextureCeiling(this)" accept="image/*"/></div>
+        <div class="control">Textura Ceiling:<br/><input id="texture-ceiling" type="file"
+                                                         onchange="LoadTextureCeiling(this)" accept="image/*"/></div>
       </div>
       <div class="control-group">
-        <img id="texture-img-ceiling" />
+        <img id="texture-img-ceiling" height="200px" width="200px"/>
       </div>
       <div class="control-group">
         <pre id="file-content"></pre>
-        <div class="control">Textura:<br/><input id="texture" type="file" onchange="LoadTexture(this)" accept="image/*"/></div>
+        <div class="control">Textura Walls:<br/><input id="texture-walls" type="file" onchange="LoadTextureWalls(this)"
+                                                 accept="image/*"/></div>
       </div>
       <div class="control-group">
-        <img id="texture-img" />
+        <img id="texture-img-walls" height="200px" width="200px"/>
+      </div>
+      <div class="control-group">
+        <pre id="file-content-floor"></pre>
+        <div class="control">Textura Floor:<br/><input id="texture-floor" type="file"
+                                                       onchange="LoadTextureFloor(this)" accept="image/*"/></div>
+      </div>
+      <div class="control-group">
+        <img id="texture-img-floor" height="200px" width="200px"/>
       </div>
       <div class="control-group">
           <div class="control">Generar Laberinto:<br/><input id="labyrinth" type="submit" onclick="GenerateLabyrinth(this)"/></div>

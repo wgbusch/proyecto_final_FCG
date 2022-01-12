@@ -1,5 +1,5 @@
 let timer;
-let onlyFloor;
+
 function AutoRotate(param) {
     // Si hay que girar...
     if (param.checked) {
@@ -20,39 +20,32 @@ function AutoRotate(param) {
     }
 }
 
-function LoadTextureCeiling(param) {
-    if (param.files && param.files[0]) {
-        let reader = new FileReader();
-        reader.onload = function (e) {
-            let img = document.getElementById('texture-img-ceiling');
-            img.onload = function () {
-                ceilingDrawer.setTexture(img);
-                DrawScene();
-            }
-            img.src = e.target.result;
-        };
-        reader.readAsDataURL(param.files[0]);
-    }
-}
 
 function ShowTexture(param) {
     meshDrawer.showTexture(param.checked);
     DrawScene();
 }
 
-function LoadTexture(param) {
-    if (param.files && param.files[0]) {
-        let reader = new FileReader();
-        reader.onload = function (e) {
-            let img = document.getElementById('texture-img');
-            img.onload = function () {
-                meshDrawer.setTexture(img);
-                DrawScene();
-            }
-            img.src = e.target.result;
-        };
-        reader.readAsDataURL(param.files[0]);
+function LoadTextureWalls() {
+    LoadTexture(WALLS_URL_SMALL, 'texture-img-walls', meshDrawer);
+}
+
+function LoadTextureFloor() {
+    LoadTexture(FLOOR_URL_SMALL, 'texture-img-floor', floorDrawer);
+}
+
+function LoadTextureCeiling(param) {
+    LoadTexture(CEILING_URL_SMALL, 'texture-img-ceiling', ceilingDrawer);
+}
+
+function LoadTexture(url, id, drawer) {
+    let img = document.getElementById(id);
+    img.onload = () => {
+        drawer.setTexture(img);
+        DrawScene();
     }
+    img.crossOrigin = "";
+    img.src = url;
 }
 
 function SetShininess(param) {
@@ -143,7 +136,4 @@ function GenerateLabyrinth() {
 
     [transX, transZ] = converter.calculateCenterCoordinates(start_id);
     transY = CAMERA_HEIGHT;
-
-    UpdateCanvasSize();
-    DrawScene();
 }

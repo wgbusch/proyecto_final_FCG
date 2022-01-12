@@ -1,6 +1,6 @@
 class CeilingDrawer {
 
-    HEIGHT_CEILING = 0.2
+    HEIGHT_CEILING = LABYRINTH_HEIGHT + 0.001
 
     // El constructor es donde nos encargamos de realizar las inicializaciones necesarias.
     constructor() {
@@ -24,22 +24,25 @@ class CeilingDrawer {
         this.positionBuffer = gl.createBuffer();
 
         let HEIGHT_CEILING = this.HEIGHT_CEILING;
-        this.vertPos = [-2, HEIGHT_CEILING, -2,
-                        -2, HEIGHT_CEILING, 2,
-                        2, HEIGHT_CEILING, -2,
-                        2, HEIGHT_CEILING, 2,
-                        -2, HEIGHT_CEILING, 2,
-                        2, HEIGHT_CEILING, -2];
+        this.vertPos = [-1, HEIGHT_CEILING, -1,
+                        -1, HEIGHT_CEILING, 1,
+                        1, HEIGHT_CEILING, -1,
+                        1, HEIGHT_CEILING, 1,
+                        -1, HEIGHT_CEILING, 1,
+                        1, HEIGHT_CEILING, -1];
 
         this.numTriangles = this.vertPos.length / 9;
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertPos), gl.STATIC_DRAW);
 
-        let texCoords = new Array(this.numTriangles*3*2);
-        for(let i = 0; i < texCoords.length; i++){
-            texCoords[i] = Math.random();
-        }
+        let texCoords = [0, 0,
+                         0, 13,
+                         13, 0,
+
+                         13, 13,
+                         0, 13,
+                         13, 0];
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
@@ -48,6 +51,8 @@ class CeilingDrawer {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.aTexCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
 
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.useProgram(this.prog);
     }
 
@@ -94,6 +99,7 @@ class CeilingDrawer {
         gl.activeTexture(gl.TEXTURE1);
         this.texture_object = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, this.texture_object);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         gl.texImage2D(gl.TEXTURE_2D,
                       0,
                       gl.RGB,

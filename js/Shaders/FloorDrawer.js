@@ -2,80 +2,43 @@ class FloorDrawer {
     // El constructor es donde nos encargamos de realizar las inicializaciones necesarias.
     constructor() {
         // 1. Compilamos el programa de shaders
-        this.prog = InitShaderProgram(meshVS, meshFS);
+        this.prog = InitShaderProgram(this.floorVS, this.floorFS);
 
         // 2. Obtenemos los IDs de las variables uniformes en los shaders
         this.mvp = gl.getUniformLocation(this.prog, 'mvp');
         this.mv = gl.getUniformLocation(this.prog, 'mv');
-        // this.u_useTexture = gl.getUniformLocation(this.prog, 'useTexture');
+        this.texGPU = gl.getUniformLocation(this.prog, 'texGPU');
 
         // 3. Obtenemos los IDs de los atributos de los vértices en los shaders
         this.vertPos = gl.getAttribLocation(this.prog, 'pos');
         this.aTextureCoord = gl.getAttribLocation(this.prog, 'aTextureCoord');
 
-        // 4. Obtenemos los IDs de los atributos de los vértices en los shaders
-
-        this.positionBuffer = gl.createBuffer();
-        this.color_buffer = gl.createBuffer();
         this.texCoordBuffer = gl.createBuffer();
         this.aTexCoordBuffer = gl.createBuffer();
 
-        // this.color = gl.getAttribLocation(this.prog, 'clr');
-        // this.color_buffer = gl.createBuffer();
+        // 4. Obtenemos los IDs de los atributos de los vértices en los shaders
+        this.positionBuffer = gl.createBuffer();
 
-        gl.useProgram(this.prog);
-    }
+        this.vertPos = [-1, -0.0001, -1,
+                        -1, -0.0001, 1,
+                        1, -0.0001, -1,
+                        1, -0.0001, 1,
+                        -1, -0.0001, 1,
+                        1, -0.0001, -1];
 
-    // Esta función se llama cada vez que el usuario carga un nuevo
-    // archivo OBJ. En los argumentos de esta función llegan un areglo
-    // con las posiciones 3D de los vértices, un arreglo 2D con las
-    // coordenadas de textura y las normales correspondientes a cada
-    // vértice. Todos los items en estos arreglos son del tipo float.
-    // Los vértices y normales se componen de a tres elementos
-    // consecutivos en el arreglo vertPos [x0,y0,z0,x1,y1,z1,..] y
-    // normals [n0,n0,n0,n1,n1,n1,...]. De manera similar, las
-    // cooredenadas de textura se componen de a 2 elementos
-    // consecutivos y se  asocian a cada vértice en orden.
-    setMesh(vertPos, texCoords, normals, onlyFloor) {
-
-        let labyrinthDrawer = new LabyrinthDrawer(this.abstractLabyrinth);
-
-        let mesh = new Mesh();
-        let vertPos2 = labyrinthDrawer.drawFloor(mesh);
-
-        if (!onlyFloor){
-            labyrinthDrawer.drawOutterWalls(mesh);
-            vertPos2 = labyrinthDrawer.drawInnerWalls(mesh);
-        }
-
-        this.numTriangles = vertPos2.numTriangles;
-        this.vertPos = vertPos2.convertToArray();
+        this.numTriangles = this.vertPos.length / 9;
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertPos), gl.STATIC_DRAW);
 
-        let numTriangles = vertPos2.numTriangles;
-        let colors = [];
-        for (let i = 0; i < numTriangles; i++) {
-            if (i % 3 === 0) {
-                colors.push(1, 0, 0, 1);
-                colors.push(1, 0, 0, 1);
-                colors.push(1, 0, 0, 1);
-            } else if (i % 3 === 1) {
-                colors.push(0, 1, 0, 1);
-                colors.push(0, 1, 0, 1);
-                colors.push(0, 1, 0, 1);
-            } else if (i % 3 === 2) {
-                colors.push(0, 0, 1, 1);
-                colors.push(0, 0, 1, 1);
-                colors.push(0, 0, 1, 1);
-            }
-        }
 
-        texCoords = new Array(16*6);
-        for(let i = 0; i < texCoords.length; i++){
-            texCoords[i] = Math.random();
-        }
+        let texCoords = [0, 0,
+                         0, 13,
+                         13, 0,
+
+                         13, 13,
+                         0, 13,
+                         13, 0];
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
@@ -84,14 +47,7 @@ class FloorDrawer {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.aTexCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
 
-        // gl.bindBuffer(
-        //     gl.ARRAY_BUFFER,
-        //     this.color_buffer);
-        //
-        // gl.bufferData(
-        //     gl.ARRAY_BUFFER,
-        //     new Float32Array(colors),
-        //     gl.STATIC_DRAW);
+        gl.useProgram(this.prog);
     }
 
     draw(matrixMVP, matrixMV, matrixNormal) {
@@ -118,23 +74,28 @@ class FloorDrawer {
         gl.vertexAttribPointer(this.vertPos, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(this.vertPos);
 
-        // Link atributo color
-        // gl.bindBuffer(gl.ARRAY_BUFFER, this.color_buffer);
-        // gl.vertexAttribPointer(this.color, 4, gl.FLOAT, false, 0, 0);
-        // gl.enableVertexAttribArray(this.color);
+        // Make the "texture unit" 1 be the active texture unit.
+        gl.activeTexture(gl.TEXTURE2);
+
+        // Make the texture_object be the active texture. This binds the
+        // texture_object to "texture unit" 1.
+        gl.bindTexture(gl.TEXTURE_2D, this.texture_object);
+
+        // Tell the shader program to use "texture unit" 1
+        gl.uniform1i(this.texGPU, 2);
 
         // Dibujamos
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.useProgram(this.prog);
-        gl.drawArrays(gl.TRIANGLES, 0, this.numTriangles*3);
+        gl.drawArrays(gl.TRIANGLES, 0, this.numTriangles * 3);
     }
 
     // Esta función se llama para setear una textura sobre la malla
     // El argumento es un componente <img> de html que contiene la textura.
     setTexture(img) {
         gl.useProgram(this.prog);
-        this.textura = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, this.textura);
+        gl.activeTexture(gl.TEXTURE2);
+        this.texture_object = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, this.texture_object);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         gl.texImage2D(gl.TEXTURE_2D,
                       0,
                       gl.RGB,
@@ -142,18 +103,6 @@ class FloorDrawer {
                       gl.UNSIGNED_BYTE,
                       img);
         gl.generateMipmap(gl.TEXTURE_2D);
-    }
-
-    showTexture(show) {
-        gl.useProgram(this.prog);
-        gl.uniform1i(this.u_useTexture, show ? 1 : 0);
-        if (show) {
-            gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, this.textura);
-            const sampler = gl.getUniformLocation(this.prog, 'texGPU');
-            gl.useProgram(this.prog);
-            gl.uniform1f(sampler, 0);
-        }
     }
 
     setLightDir(x, y, z) {
@@ -165,42 +114,34 @@ class FloorDrawer {
     setAbstractLabyrinth(labyrinth) {
         this.abstractLabyrinth = labyrinth;
     }
-}
 
-var meshVS = `
+    floorVS = `
 	precision mediump float;
 
 	attribute vec3 pos;
 	uniform mat4 mvp;
 	
-    attribute vec2 aTextureCoord;
+	attribute vec2 aTextureCoord;
     varying vec2 texCoord;
-    	
-	// attribute vec4 clr;
-    // varying vec4 vcolor;
     
 	void main()
 	{
         gl_Position = mvp * vec4(pos, 1.0);
         texCoord = aTextureCoord;
-        // vcolor = clr;
 	}
 `;
 
-var meshFS = `
+    floorFS = `
 	precision mediump float;
 
-	uniform sampler2D texGPU;
+    uniform sampler2D texGPU;
 	varying vec2 texCoord;
-	// uniform int useTexture;
 
-    // varying vec4 vcolor;
 	void main()
 	{   
-	    // if(useTexture== 1){
-            gl_FragColor = texture2D(texGPU, texCoord);
-        // } else{
-        //     gl_FragColor = vcolor;
-        // }
+        gl_FragColor = texture2D(texGPU, texCoord);
 	}
 `
+}
+
+

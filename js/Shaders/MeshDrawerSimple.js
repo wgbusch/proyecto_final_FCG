@@ -97,8 +97,6 @@ class MeshDrawerSimple {
         let labyrinthDrawer = new LabyrinthDrawer(this.abstractLabyrinth);
 
         let mesh = new Mesh();
-        labyrinthDrawer.drawFloor(mesh);
-
         labyrinthDrawer.drawOutterWalls(mesh);
         let vertPos2 = labyrinthDrawer.drawInnerWalls(mesh);
 

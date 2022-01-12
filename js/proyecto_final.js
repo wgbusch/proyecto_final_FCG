@@ -11,7 +11,11 @@ let utsx;
 let start_id = 20;
 let end_id = 9;
 let rotX = 0, rotY = 0, rotZ = 0, transX = 0, transY = 0, transZ = 3, autorot = 0, cameraRotationXY = 0;
-let movementSpeed = 100;
+let movementSpeed = 25;
+
+let WALLS_URL_SMALL="https://i.imgur.com/nKQZ60l.jpg";
+let FLOOR_URL_SMALL="https://i.imgur.com/xChDZVr.png";
+let CEILING_URL_SMALL="https://i.imgur.com/ghE9cGA.png";
 
 //TODO add controls for speed and position of camera.
 window.onload = function () {
@@ -99,9 +103,11 @@ window.onload = function () {
         }
     }
 
-    let textureLoaded = document.getElementById('texture')
-    // LoadTexture(textureLoaded);
-
+    LoadTextureFloor();
+    LoadTextureWalls();
+    LoadTextureCeiling();
+    GenerateLabyrinth();
+    UpdateCanvasSize();
     DrawScene();
 };
 
@@ -127,6 +133,7 @@ function InitWebGL() {
     boxDrawer = new BoxDrawer();
     meshDrawer = new MeshDrawerSimple();
     ceilingDrawer = new CeilingDrawer();
+    floorDrawer = new FloorDrawer();
     //mvp that has error
     // transX = 1.2000000000000015;
     // transY = -0.08959999999999997;
@@ -199,7 +206,7 @@ function DrawScene() {
 
     meshDrawer.draw(mvp, mv, nrmTrans);
     ceilingDrawer.draw(mvp, mv, nrmTrans);
-    // floorDrawer.draw(mvp, mv, nrmTrans);
+    floorDrawer.draw(mvp, mv, nrmTrans);
 
     if (showBox.checked) {
         boxDrawer.draw(mvp);
