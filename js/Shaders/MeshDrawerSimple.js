@@ -97,8 +97,8 @@ class MeshDrawerSimple {
         let labyrinthDrawer = new LabyrinthDrawer(this.abstractLabyrinth);
 
         let mesh = new Mesh();
-        labyrinthDrawer.drawOutterWalls(mesh);
-        let vertPos2 = labyrinthDrawer.drawInnerWalls(mesh);
+        let vertPos2 = labyrinthDrawer.drawOuterWalls(mesh);
+        vertPos2 = labyrinthDrawer.drawInnerWalls(mesh);
 
         this.numTriangles = vertPos2.numTriangles;
         this.vertPos = vertPos2.convertToArray();
@@ -106,27 +106,9 @@ class MeshDrawerSimple {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertPos), gl.STATIC_DRAW);
 
-
         texCoords = new Array(this.numTriangles * 3 * 2);
-        for (let i = 0; i < texCoords.length; i+=12) {
-            texCoords[i] = 0;
-            texCoords[i+1] = 0;
-
-            texCoords[i+2] = 1;
-            texCoords[i+3] = 0;
-
-            texCoords[i+4] = 0;
-            texCoords[i+5] = 1;
-
-            texCoords[i+6] = 1;
-            texCoords[i+7] = 1;
-
-            texCoords[i+8] = 0;
-            texCoords[i+9] = 1;
-
-            texCoords[i+10] = 1;
-            texCoords[i+11] = 0;
-        }
+        constructOuterWallsTexture(texCoords);
+        constructInnerWallsTexture(texCoords, 48, this.numTriangles);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);

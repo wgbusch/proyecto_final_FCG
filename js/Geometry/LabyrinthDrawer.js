@@ -17,78 +17,61 @@ class LabyrinthDrawer {
         this.height = LABYRINTH_HEIGHT;
     }
 
-    drawOutterWalls(mesh) {
-        let height = this.height;
-
-        //draw wall 1
-        this.wallFromStartToEndWithDirections(mesh,
-                                              new Vertex([-1.0 + WALL_WIDTH / 2, 0.0, -1.0 + WALL_WIDTH]),
-                                              new Vertex([0.0, 0.0, 1.0]), 2 - WALL_WIDTH,
-                                              new Vertex([0, 1, 0]),
-                                              height,
-                                              1,
-                                              WALL_WIDTH);
-
-        //draw wall 2
-        this.wallFromStartToEndWithDirections(mesh,
-                                              new Vertex([-1.0 + WALL_WIDTH, 0.0, 1.0 - WALL_WIDTH / 2]),
-                                              new Vertex([1.0, 0.0, 0.0]),
-                                              2 - WALL_WIDTH,
-                                              new Vertex([0, 1, 0]),
-                                              height,
-                                              1,
-                                              WALL_WIDTH);
-
-        //draw wall 3
-        this.wallFromStartToEndWithDirections(mesh,
-                                              new Vertex([1.0 - WALL_WIDTH / 2, 0.0, 1.0 - WALL_WIDTH]),
-                                              new Vertex([0.0, 0.0, -1.0]),
-                                              2 - WALL_WIDTH,
-                                              new Vertex([0, 1, 0]),
-                                              height,
-                                              1,
-                                              WALL_WIDTH);
-
-        //draw wall 4
-        this.wallFromStartToEndWithDirections(mesh,
-                                              new Vertex([1.0 - WALL_WIDTH, 0.0, -1.0 + WALL_WIDTH / 2]),
-                                              new Vertex([-1.0, 0.0, 0.0]),
-                                              2 - WALL_WIDTH,
-                                              new Vertex([0, 1, 0]),
-                                              height,
-                                              1,
-                                              WALL_WIDTH);
-        return mesh;
-    }
-
     drawInnerWalls(mesh) {
-        // draw inner walls
-        this.createInnerWalls(mesh);
+        let labyrinth = this.abstractLabyrinth;
+        let wallsToCreate = [];
+        for (let zIndex = 0; zIndex < this.M - 1; zIndex++) {
+            //TODO delete walls to create ?
+            wallsToCreate[zIndex] = [];
+            for (let xIndex = 0; xIndex < this.N - 1; xIndex++) {
+                let node1 = labyrinth.nodes[zIndex][xIndex];
+                let node2 = labyrinth.nodes[zIndex][xIndex + 1];
+                let node3 = labyrinth.nodes[zIndex + 1][xIndex + 1];
+                let node4 = labyrinth.nodes[zIndex + 1][xIndex];
+                let cross = this.defineWallsToCreate(node1, node2, node3, node4);
+                wallsToCreate[zIndex][xIndex] = cross;
+                mesh = this.drawCrossing(mesh, cross, xIndex, zIndex);
+            }
+        }
         return mesh;
     }
 
+    drawOuterWalls(mesh) {
+        let negative_x_triangle_1_a = new Vertex([-1, 0, -1]);
+        let negative_x_triangle_1_b = new Vertex([-1, LABYRINTH_HEIGHT, -1]);
+        let negative_x_triangle_1_c = new Vertex([-1, 0, 1]);
 
-    drawFloor(mesh){
-        this.wallFromStartToEndWithDirections(mesh,
-                                              new Vertex([-1.0, 0.0 - WALL_WIDTH / 2, -1.0]),
-                                              new Vertex([0.0, 0.0, 1.0]),
-                                              2,
-                                              new Vertex([1, 0, 0]),
-                                              2,
-                                              1,
-                                              WALL_WIDTH);
-        return mesh;
-    }
+        let negative_x_triangle_2_d = new Vertex([-1, LABYRINTH_HEIGHT, -1]);
+        let negative_x_triangle_2_e = new Vertex([-1, LABYRINTH_HEIGHT, 1]);
+        let negative_x_triangle_2_f = new Vertex([-1, 0, 1]);
 
-    drawCeiling(mesh) {
-        this.wallFromStartToEndWithDirections(mesh,
-                                              new Vertex([-1.0, this.height + WALL_WIDTH / 2, -1.0]),
-                                              new Vertex([0.0, 0.0, 1.0]),
-                                              2,
-                                              new Vertex([1, 0, 0]),
-                                              2,
-                                              1,
-                                              WALL_WIDTH);
+        let negative_x_triangle_1 = new Triangle(negative_x_triangle_1_a, negative_x_triangle_1_b, negative_x_triangle_1_c);
+        let negative_x_triangle_2 = new Triangle(negative_x_triangle_2_d, negative_x_triangle_2_e, negative_x_triangle_2_f);
+        let positive_x_triangle_1 = negative_x_triangle_1.translateAlongNormal(+2);
+        let positive_x_triangle_2 = negative_x_triangle_2.translateAlongNormal(+2);
+
+        let negative_z_triangle_1_a = new Vertex([-1, 0, -1]);
+        let negative_z_triangle_1_b = new Vertex([-1, LABYRINTH_HEIGHT, -1]);
+        let negative_z_triangle_1_c = new Vertex([1, 0, -1]);
+
+        let negative_z_triangle_2_d = new Vertex([-1, LABYRINTH_HEIGHT, -1]);
+        let negative_z_triangle_2_e = new Vertex([1, LABYRINTH_HEIGHT, -1]);
+        let negative_z_triangle_2_f = new Vertex([1, 0, -1]);
+
+        let negative_z_triangle_1 = new Triangle(negative_z_triangle_1_a, negative_z_triangle_1_b, negative_z_triangle_1_c);
+        let negative_z_triangle_2 = new Triangle(negative_z_triangle_2_d, negative_z_triangle_2_e, negative_z_triangle_2_f);
+        let positive_z_triangle_1 = negative_z_triangle_1.translateAlongNormal(+2);
+        let positive_z_triangle_2 = negative_z_triangle_2.translateAlongNormal(+2);
+
+        mesh.insert(negative_x_triangle_1);
+        mesh.insert(negative_x_triangle_2);
+        mesh.insert(positive_x_triangle_1);
+        mesh.insert(positive_x_triangle_2);
+
+        mesh.insert(negative_z_triangle_1);
+        mesh.insert(negative_z_triangle_2);
+        mesh.insert(positive_z_triangle_1);
+        mesh.insert(positive_z_triangle_2);
         return mesh;
     }
 
@@ -118,25 +101,11 @@ class LabyrinthDrawer {
 
         let initialTriangle = new Triangle(start, translatedPoint, height);
 
-        mesh = this.drawWall(mesh, numOfSubdivisions, initialTriangle, direction, width);
+        mesh = this.drawRectangularBox(mesh, initialTriangle, width);
         return mesh;
     }
 
-    drawWall(mesh, numOfSubdivisions, triangle, direction, width) {
-        mesh = this.drawRectangle(mesh, triangle, width);
-
-        let triangleBaseLength = calculateBaseLengthOfTriangle(triangle, direction);
-
-        let translatedTriangle = triangle;
-        for (let i = 0; i < numOfSubdivisions - 1; i++) {
-            translatedTriangle = translatedTriangle.trans(direction.times(triangleBaseLength));
-
-            mesh = this.drawRectangle(mesh, translatedTriangle, width);
-        }
-        return mesh;
-    }
-
-    drawRectangle(mesh, triangle, alpha) {
+    drawRectangularBox(mesh, triangle, alpha) {
         mesh = this.extrude(mesh, triangle, alpha);
 
         let [orthogonalAngle, P1, P2] = triangle.orthogonalVertex();
@@ -172,25 +141,6 @@ class LabyrinthDrawer {
         mesh.insert(translatedShape2);
 
         mesh.insert(translatedShape1.fill(translatedShape2));
-        return mesh;
-    }
-
-    createInnerWalls(mesh) {
-        let labyrinth = this.abstractLabyrinth;
-        let wallsToCreate = [];
-        for (let zIndex = 0; zIndex < this.M - 1; zIndex++) {
-            //TODO delete walls to create ?
-            wallsToCreate[zIndex] = [];
-            for (let xIndex = 0; xIndex < this.N - 1; xIndex++) {
-                let node1 = labyrinth.nodes[zIndex][xIndex];
-                let node2 = labyrinth.nodes[zIndex][xIndex + 1];
-                let node3 = labyrinth.nodes[zIndex + 1][xIndex + 1];
-                let node4 = labyrinth.nodes[zIndex + 1][xIndex];
-                let cross = this.defineWallsToCreate(node1, node2, node3, node4);
-                wallsToCreate[zIndex][xIndex] = cross;
-                mesh = this.drawCrossing(mesh, cross, xIndex, zIndex);
-            }
-        }
         return mesh;
     }
 
