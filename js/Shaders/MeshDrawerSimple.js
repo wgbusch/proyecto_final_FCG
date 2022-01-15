@@ -107,8 +107,9 @@ class MeshDrawerSimple {
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertPos), gl.STATIC_DRAW);
 
         texCoords = new Array(this.numTriangles * 3 * 2);
-        constructOuterWallsTexture(texCoords);
-        constructInnerWallsTexture(texCoords, 48, this.numTriangles);
+
+        constructOuterWallsTexture(texCoords, TOTAL_X_LENGTH);
+        constructInnerWallsTexture(texCoords, 48, this.numTriangles, labyrinthDrawer.wallXLength);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
