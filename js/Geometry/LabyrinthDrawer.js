@@ -93,54 +93,19 @@ class LabyrinthDrawer {
     }
 
     //TODO delete method
-    wallFromStartToEndWithPoints(mesh, start, end, height, numOfSubdivisions, width) {
-        let direction = directionOfLine(start, end);
+    wallFromStartToEndWithPoints(mesh, startPoint, endPoint, heightPoint, numOfSubdivisions, width) {
+        let fourthPoint = sum(heightPoint, minus(endPoint, startPoint));
 
-        let baseLength = Norm(minus(start, end)) / numOfSubdivisions;
-        let translatedPoint = sum(start, direction.times(baseLength));
+        let rectangle = new Rectangle(new Triangle(startPoint, heightPoint, endPoint),
+                                      new Triangle(heightPoint, fourthPoint, endPoint));
 
-        let initialTriangle = new Triangle(start, translatedPoint, height);
+        let rectangle2= rectangle.translateAlongNormal(width/2);
+        let rectangle3= rectangle.translateAlongNormal(-width/2);
+        let border = rectangle2.fill(rectangle3);
+        mesh.insert(rectangle2);
+        mesh.insert(rectangle3);
+        mesh.insert(border);
 
-        mesh = this.drawRectangularBox(mesh, initialTriangle, width);
-        return mesh;
-    }
-
-    drawRectangularBox(mesh, triangle, alpha) {
-        mesh = this.extrude(mesh, triangle, alpha);
-
-        let [orthogonalAngle, P1, P2] = triangle.orthogonalVertex();
-
-        let oppositeOrthogonalVertexTemp = sum(minus(P1, orthogonalAngle), minus(P2, orthogonalAngle));
-        let oppositeOrthogonalVertex = sum(oppositeOrthogonalVertexTemp, orthogonalAngle);
-
-        let triangle2 = new Triangle(P1, P2, oppositeOrthogonalVertex);
-        //TODO skip hypothenuse from rectangle. Use only
-        mesh = this.extrude(mesh, triangle2, alpha);
-        return mesh;
-    }
-
-    drawRectangle2(mesh, triangle1, alpha) {
-
-        let [orthogonalAngle, P1, P2] = triangle1.orthogonalVertex();
-
-        let oppositeOrthogonalVertexTemp = sum(minus(P1, orthogonalAngle), minus(P2, orthogonalAngle));
-        let oppositeOrthogonalVertex = sum(oppositeOrthogonalVertexTemp, orthogonalAngle);
-
-        let triangle2 = new Triangle(P1, P2, oppositeOrthogonalVertex);
-        let rectangle = new Rectangle(triangle1, triangle2);
-
-        mesh = this.extrude(mesh, rectangle, alpha);
-        return mesh;
-    }
-
-    extrude(mesh, shape, width) {
-        let translatedShape1 = shape.translateAlongNormal(width / 2);
-        mesh.insert(translatedShape1);
-
-        let translatedShape2 = shape.translateAlongNormal(-width / 2);
-        mesh.insert(translatedShape2);
-
-        mesh.insert(translatedShape1.fill(translatedShape2));
         return mesh;
     }
 
