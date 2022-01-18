@@ -19,24 +19,19 @@ class FloorDrawer {
         // 4. Obtenemos los IDs de los atributos de los vértices en los shaders
         this.positionBuffer = gl.createBuffer();
 
-        this.vertPos = [-1, -0.0001, -1,
-                        -1, -0.0001, 1,
-                        1, -0.0001, -1,
-                        1, -0.0001, 1,
-                        -1, -0.0001, 1,
-                        1, -0.0001, -1];
+        this.vertPos = [-TOTAL_X_LENGTH / 2, -0.0001, -TOTAL_Z_LENGTH / 2,
+                        -TOTAL_X_LENGTH / 2, -0.0001, TOTAL_Z_LENGTH / 2,
+                        TOTAL_X_LENGTH / 2, -0.0001, -TOTAL_Z_LENGTH / 2,
+                        TOTAL_X_LENGTH / 2, -0.0001, TOTAL_Z_LENGTH / 2,
+                        -TOTAL_X_LENGTH / 2, -0.0001, TOTAL_Z_LENGTH / 2,
+                        TOTAL_X_LENGTH / 2, -0.0001, -TOTAL_Z_LENGTH / 2];
 
         this.numTriangles = this.vertPos.length / 9;
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertPos), gl.STATIC_DRAW);
 
-        let texCoords = [0, 0,
-                         0, 13,
-                         13, 0,
-                         13, 13,
-                         0, 13,
-                         13, 0];
+        let texCoords = getSquareTexture(TOTAL_X_LENGTH, TOTAL_Z_LENGTH);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
@@ -107,10 +102,6 @@ class FloorDrawer {
     }
 
     setShininess(shininess) {
-    }
-
-    setAbstractLabyrinth(labyrinth) {
-        this.abstractLabyrinth = labyrinth;
     }
 
     floorVS = `

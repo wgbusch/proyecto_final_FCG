@@ -28,6 +28,18 @@ class North {
     rotateToNextDirection(nextDirection, list) {
         nextDirection.rotateFromNorth(list);
     }
+
+    rightSide() {
+        return new East();
+    }
+
+    getIdOfMovingOneStepFrom(id, uts) {
+        return uts.getIdOfMovingOneStepInNorthDirection(id);
+    }
+
+    opposite() {
+        return new South();
+    }
 }
 
 class East {
@@ -55,6 +67,18 @@ class East {
 
     rotateToNextDirection(nextDirection, list) {
         nextDirection.rotateFromEast(list);
+    }
+
+    rightSide() {
+        return new South();
+    }
+
+    getIdOfMovingOneStepFrom(id, uts) {
+        return uts.getIdOfMovingOneStepInEastDirection(id);
+    }
+
+    opposite() {
+        return new West();
     }
 }
 
@@ -84,6 +108,18 @@ class West {
     rotateToNextDirection(nextDirection, list) {
         nextDirection.rotateFromWest(list);
     }
+
+    rightSide() {
+        return new North();
+    }
+
+    getIdOfMovingOneStepFrom(id, uts) {
+        return uts.getIdOfMovingOneStepInWestDirection(id);
+    }
+
+    opposite() {
+        return new East();
+    }
 }
 
 class South {
@@ -111,6 +147,18 @@ class South {
 
     rotateToNextDirection(nextDirection, list) {
         nextDirection.rotateFromSouth(list);
+    }
+
+    rightSide() {
+        return new West();
+    }
+
+    getIdOfMovingOneStepFrom(id, uts) {
+        return uts.getIdOfMovingOneStepInSouthDirection(id);
+    }
+
+    opposite() {
+        return new North();
     }
 }
 
@@ -322,8 +370,91 @@ class Converter {
                 (1 / this.zLength) * (2 * zIndex + 1) - 1];
     }
 
-    getRandomMovement(id) {
-        return this.uts.getRandomMovement(id);
+    moveRightSide(id, direction) {
+        let rightSide = direction.rightSide();
+        if (this.uts.areNeighbors(id, this.uts.getIdOfMovingOneStepInThatDirection(id, rightSide))) {
+            return this.uts.getIdOfMovingOneStepInThatDirection(id, rightSide);
+
+        }
+        if (this.uts.areNeighbors(id, this.uts.getIdOfMovingOneStepInThatDirection(id, direction))) {
+            return this.uts.getIdOfMovingOneStepInThatDirection(id, direction);
+        }
+
+        if (this.uts.areNeighbors(id, this.uts.getIdOfMovingOneStepInThatDirection(id, rightSide.opposite()))) {
+            return this.uts.getIdOfMovingOneStepInThatDirection(id, rightSide.opposite());
+        }
+        return this.uts.getIdOfMovingOneStepInThatDirection(id, direction.opposite());
     }
+}
+
+function GetModelViewMatrix(translationX, translationY, translationZ,
+                            rotationX, rotationY, rotationZ, cameraRotationXY) {
+
+    const cosRotX = Math.cos(rotationX);
+    const sinRotX = Math.sin(rotationX);
+
+    const cosRotY = Math.cos(rotationY);
+    const sinRotY = Math.sin(rotationY);
+
+    const cosRotZ = Math.cos(rotationZ);
+    const sinRotZ = Math.sin(rotationZ);
+
+    let rotationMatrixX = [
+        1, 0, 0, 0,
+        0, cosRotX, sinRotX, 0,
+        0, -sinRotX, cosRotX, 0,
+        0, 0, 0, 1
+    ]
+
+    let rotationMatrixY = [
+        cosRotY, 0, -sinRotY, 0,
+        0, 1, 0, 0,
+        sinRotY, 0, cosRotY, 0,
+        0, 0, 0, 1
+    ]
+
+    let rotationMatrixZ = [
+        cosRotZ, sinRotZ, 0, 0,
+        -sinRotZ, cosRotZ, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    ]
+
+    let rotations = MatrixMult(rotationMatrixZ, MatrixMult(rotationMatrixX, rotationMatrixY));
+
+    let trans = [
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        translationX, translationY, translationZ, 1
+    ];
+
+    let mv = MatrixMult(trans, rotations);
+
+    let alpha = 0;
+    let theta = cameraRotationXY;
+
+    let w = new Vertex([
+                           Math.cos(alpha) * Math.sin(theta),
+                           Math.sin(alpha) * Math.sin(theta),
+                           Math.cos(theta)]);
+
+    let v2 = new Vertex([-w.z, 0, w.y]);
+    let p = proj(w, v2);
+    let u2 = new Vertex([v2.x - p.x, v2.y - p.y, v2.z - p.z]);
+
+    let u = Normalize(u2);
+
+    let u3 = crossProduct(w, u);
+    let v = Normalize(u3);
+
+    let direction = [
+        -u.x, -u.y, -u.z, 0,
+        -v.x, -v.y, -v.z, 0,
+        w.x, w.y, w.z, 0,
+        0, 0, 0, 1
+    ];
+
+    return MatrixMult(direction, mv);
 }
 

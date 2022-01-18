@@ -48,3 +48,12 @@ function constructInnerWallsTexture(textureCoordinates,
         textureCoordinates[i + 11] = 0;
     }
 }
+
+function getSquareTexture(xLength, zLength) {
+    return [0, 0,
+            0, 13 * zLength / 2,
+            13 * xLength / 2, 0,
+            13 * xLength / 2, 13 * zLength / 2,
+            0, 13 * zLength / 2,
+            13 * xLength / 2, 0];
+}

@@ -1,6 +1,7 @@
 let boxDrawer;          // clase para contener el comportamiento de la caja
 let meshDrawer;         // clase para contener el comportamiento de la malla
 let floorDrawer;
+let floorDrawer2;
 let ceilingDrawer;
 let canvas, gl;         // canvas y contexto WebGL
 let perspectiveMatrix;	// matriz de perspectiva
@@ -8,16 +9,15 @@ let buttonsPressed;
 let labyrinthGenerator;
 let utsx;
 
-let start_id = 20;
-let end_id = 9;
+let start_id;
+let end_id;
 let rotX = 0, rotY = 0, rotZ = 0, transX = 0, transY = 0, transZ = 3, autorot = 0, cameraRotationXY = 0;
-let movementSpeed = 25;
+let movementSpeed = 10;
 
 let WALLS_URL_SMALL = "https://i.imgur.com/nKQZ60l.jpg";
 let FLOOR_URL_SMALL = "https://i.imgur.com/xChDZVr.png";
 let CEILING_URL_SMALL = "https://i.imgur.com/ghE9cGA.png";
 
-//TODO add controls for speed and position of camera.
 window.onload = function () {
     InitWebGL();
 
@@ -102,8 +102,8 @@ window.onload = function () {
         }
     }
 
-    LoadTextureFloor();
     LoadTextureWalls();
+    LoadTextureFloor();
     LoadTextureCeiling();
     GenerateLabyrinth();
     UpdateCanvasSize();
@@ -113,7 +113,6 @@ window.onload = function () {
 function InitWebGL() {
     // Inicializamos el canvas WebGL
     canvas = document.getElementById("canvas");
-    canvasDiv = document.getElementById("canvas-div");
     canvas.oncontextmenu = function () {
         return false;
     };
@@ -133,6 +132,7 @@ function InitWebGL() {
     meshDrawer = new MeshDrawerSimple();
     ceilingDrawer = new CeilingDrawer();
     floorDrawer = new FloorDrawer();
+    floorDrawer2 = new FloorDrawer2();
     //mvp that has error
     // transX = 1.2000000000000015;
     // transY = -0.08959999999999997;

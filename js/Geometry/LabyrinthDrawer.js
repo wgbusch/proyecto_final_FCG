@@ -2,8 +2,8 @@ WALL_WIDTH = 0;
 FLOOR_WIDTH = 0.1;
 LABYRINTH_HEIGHT = 0.15;
 CAMERA_HEIGHT = -0.05;
-TOTAL_X_LENGTH = 4;
-TOTAL_Z_LENGTH = 4;
+TOTAL_X_LENGTH = 2;
+TOTAL_Z_LENGTH = 2;
 
 class LabyrinthDrawer {
 
@@ -70,8 +70,8 @@ class LabyrinthDrawer {
                                                  negative_z_triangle_1_c);
         let negative_z_triangle_2 = new Triangle(negative_z_triangle_2_d, negative_z_triangle_2_e,
                                                  negative_z_triangle_2_f);
-        let positive_z_triangle_1 = negative_z_triangle_1.translateAlongNormal(+TOTAL_X_LENGTH);
-        let positive_z_triangle_2 = negative_z_triangle_2.translateAlongNormal(+TOTAL_X_LENGTH);
+        let positive_z_triangle_1 = negative_z_triangle_1.translateAlongNormal(TOTAL_X_LENGTH);
+        let positive_z_triangle_2 = negative_z_triangle_2.translateAlongNormal(TOTAL_X_LENGTH);
 
         mesh.insert(negative_x_triangle_1);
         mesh.insert(negative_x_triangle_2);

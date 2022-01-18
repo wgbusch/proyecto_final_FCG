@@ -24,24 +24,19 @@ class CeilingDrawer {
         this.positionBuffer = gl.createBuffer();
 
         let HEIGHT_CEILING = this.HEIGHT_CEILING;
-        this.vertPos = [-1, HEIGHT_CEILING, -1,
-                        -1, HEIGHT_CEILING, 1,
-                        1, HEIGHT_CEILING, -1,
-                        1, HEIGHT_CEILING, 1,
-                        -1, HEIGHT_CEILING, 1,
-                        1, HEIGHT_CEILING, -1];
+        this.vertPos = [-TOTAL_X_LENGTH / 2, HEIGHT_CEILING, -TOTAL_Z_LENGTH / 2,
+                        -TOTAL_X_LENGTH / 2, HEIGHT_CEILING, TOTAL_Z_LENGTH / 2,
+                        TOTAL_X_LENGTH / 2, HEIGHT_CEILING, -TOTAL_Z_LENGTH / 2,
+                        TOTAL_X_LENGTH / 2, HEIGHT_CEILING, TOTAL_Z_LENGTH / 2,
+                        -TOTAL_X_LENGTH / 2, HEIGHT_CEILING, TOTAL_Z_LENGTH / 2,
+                        TOTAL_X_LENGTH / 2, HEIGHT_CEILING, -TOTAL_Z_LENGTH / 2];
 
         this.numTriangles = this.vertPos.length / 9;
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertPos), gl.STATIC_DRAW);
 
-        let texCoords = [0, 0,
-                         0, 13,
-                         13, 0,
-                         13, 13,
-                         0, 13,
-                         13, 0];
+        let texCoords = getSquareTexture(TOTAL_X_LENGTH, TOTAL_Z_LENGTH);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);

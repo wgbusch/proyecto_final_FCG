@@ -6,6 +6,8 @@ class Node {
         this.id = id;
         this.neighbors = [];
     }
+
+
 }
 
 class Graph {
@@ -80,5 +82,35 @@ class Graph {
         let neighbors = node.neighbors;
         let randomIndex = Math.floor(Math.random() * neighbors.length);
         return neighbors[randomIndex];
+    }
+
+    areNeighbors(id1, id2) {
+        return this.getNode(id1).neighbors.includes(id2);
+    }
+
+    getIdOfMovingOneStepInThatDirection(id, direction) {
+        return direction.getIdOfMovingOneStepFrom(id, this);
+    }
+
+    getIdOfMovingOneStepInSouthDirection(id) {
+        return id + this.xLength;
+    }
+
+    getIdOfMovingOneStepInEastDirection(id) {
+        return id + 1;
+    }
+
+    getIdOfMovingOneStepInNorthDirection(id) {
+        return id - this.xLength;
+    }
+
+    getIdOfMovingOneStepInWestDirection(id) {
+        return id - 1;
+    }
+
+    getNode(id) {
+        if (this.has(id)) {
+            return this.nodes[this.row(id)][this.column(id)];
+        }
     }
 }

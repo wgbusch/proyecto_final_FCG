@@ -22,6 +22,7 @@
     <script type="text/javascript" id="includedscript" src="js/Camera/MazeTraversalLogic.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Controls/BrowserControls.js"></script>
     <script type="text/javascript" id="includedscript" src="js/Texture/TextureConstructor.js"></script>
+    <script type="text/javascript" id="includedscript" src="js/Shaders/FloorDrawer2.js"></script>
 
     <script type="text/javascript" src="js/Utils/objmesh.js"></script>
 
@@ -44,7 +45,7 @@
                                                          onchange="LoadTextureCeiling(this)" accept="image/*"/></div>
       </div>
       <div class="control-group">
-        <img id="texture-img-ceiling" height="50px" width="50px"/>
+        <img hidden id="texture-img-ceiling" height="50px" width="50px"/>
       </div>
       <div class="control-group">
         <pre id="file-content"></pre>
@@ -52,7 +53,7 @@
                                                  accept="image/*"/></div>
       </div>
       <div class="control-group">
-        <img id="texture-img-walls" height="50px" width="50px"/>
+        <img hidden id="texture-img-walls" height="50px" width="50px"/>
       </div>
       <div class="control-group">
         <pre id="file-content-floor"></pre>
@@ -60,7 +61,7 @@
                                                        onchange="LoadTextureFloor(this)" accept="image/*"/></div>
       </div>
       <div class="control-group">
-        <img id="texture-img-floor" height="50px" width="50px"/>
+        <img hidden id="texture-img-floor" height="50px" width="50px"/>
       </div>
       <div class="control-group">
           <div class="control">Generar Laberinto:<br/><input id="labyrinth" type="submit" onclick="GenerateLabyrinth(this)"/></div>

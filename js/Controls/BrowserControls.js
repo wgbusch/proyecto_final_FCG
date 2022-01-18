@@ -7,7 +7,7 @@ function LoadTextureFloor() {
     LoadTexture(FLOOR_URL_SMALL, 'texture-img-floor', floorDrawer);
 }
 
-function LoadTextureCeiling(param) {
+function LoadTextureCeiling() {
     LoadTexture(CEILING_URL_SMALL, 'texture-img-ceiling', ceilingDrawer);
 }
 
