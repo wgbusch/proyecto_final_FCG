@@ -42,14 +42,14 @@
       <div class="control-group">
         <pre id="file-content-ceiling"></pre>
         <div class="control">Textura Ceiling:<br/><input id="texture-ceiling" type="file"
-                                                         onchange="LoadTextureCeiling(this)" accept="image/*"/></div>
+                                                         onchange="LoadTextureCeilingFromFile(this)" accept="image/*"/></div>
       </div>
       <div class="control-group">
         <img hidden id="texture-img-ceiling" height="50px" width="50px"/>
       </div>
       <div class="control-group">
         <pre id="file-content"></pre>
-        <div class="control">Textura Walls:<br/><input id="texture-walls" type="file" onchange="LoadTextureWalls(this)"
+        <div class="control">Textura Walls:<br/><input id="texture-walls" type="file" onchange="LoadTextureWallsFromFile(this)"
                                                  accept="image/*"/></div>
       </div>
       <div class="control-group">
@@ -58,40 +58,19 @@
       <div class="control-group">
         <pre id="file-content-floor"></pre>
         <div class="control">Textura Floor:<br/><input id="texture-floor" type="file"
-                                                       onchange="LoadTextureFloor(this)" accept="image/*"/></div>
+                                                       onchange="LoadTextureFloorFromFile(this)" accept="image/*"/></div>
       </div>
       <div class="control-group">
         <img hidden id="texture-img-floor" height="50px" width="50px"/>
       </div>
       <div class="control-group">
-          <div class="control">Generar Laberinto:<br/><input id="labyrinth" type="submit" onclick="GenerateLabyrinth(this)"/></div>
-          <div class="control"><input id="columns" name="columns" type="number" value="2" /><label for="columns">columnas</label></div>
-          <div class="control"><input id="rows" name="rows" type="number" value="2"/><label for="rows">filas</label></div>
+          <div class="control">Generar Laberinto:<br/><input id="labyrinth" type="submit" onclick="StartScreensaver(this)"/></div>
+          <div class="control"><input id="labyrinth-size" name="labyrinth-size" type="number" value="10" /></div>
         <div class="container">
           <div class="grid"></div>
         </div>
       </div>
 
-      <div class="control-group">
-        <button id="forward">
-          <img src = "img/controls/up_arrow.svg" alt="Forward" width="20" height="20" onclick="MoveForward(this)"/>
-        </button>
-        <button id="right">
-          <img src = "img/controls/right_arrow.svg" alt="Right" width="20" height="20" onclick="MoveRight(this)"/>
-        </button>
-        <button id="left">
-          <img src = "img/controls/left_arrow.svg" alt="Left" width="20" height="20" onclick="MoveLeft(this)"/>
-        </button>
-        <button id="backward">
-          <img src = "img/controls/down_arrow.svg" alt="Down" width="20" height="20" onclick="MoveBackward(this)"/>
-        </button>
-        <button id="clockwise">
-          <img src = "img/controls/clockwise.svg" alt="Down" width="20" height="20" onclick="Rotate90DegreesClockwise(this)"/>
-        </button>
-        <button id="counterclockwise">
-          <img src = "img/controls/counter_clockwise.svg" alt="Down" width="20" height="20" onclick="Rotate90DegreesCounterClockwise(this)"/>
-        </button>
-      </div>
       <div display="inline"><div>camera rotation:</div> <p id="cameraRotationXY"></p></div>
       <div class="control">
         <div>x trans: <p id="transX"></p></div>
@@ -107,8 +86,6 @@
         <div><div>x coord:</div> <p id="xCoord"></p></div>
         <div><div>z coord:</div> <p id="zCoord"></p></div>
       </div>
-
-      <div class="control">Generar ruta automática<br/><input id="automatic-route" type="submit" onclick="FindEscape(this)"/></div>
     </div>
   </div>
   <canvas id="wall-img"></canvas>

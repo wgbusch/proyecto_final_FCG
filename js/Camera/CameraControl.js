@@ -177,7 +177,7 @@ class PathInstruction {
 function getForwardPromise() {
     let forwardPromise = () => {
         return new Promise((resolve, reject) => {
-            let length = 2 / utsx.getZLength();
+            let length = 2 / zLength;
             let speed = UPDATE_SPEED * length / TIME_TO_TRAVEL_ONE_BLOCK;
             let original = transZ;
             let forward = () => {
@@ -200,7 +200,7 @@ function getLeftPromise() {
     let leftPromise = () => {
         return new Promise((resolve, reject) => {
 
-            let length = 2 / utsx.getXLength();
+            let length = 2 / xLength;
             let speed = UPDATE_SPEED * length / TIME_TO_TRAVEL_ONE_BLOCK;
             let original = transX;
 
@@ -223,7 +223,7 @@ function getLeftPromise() {
 function getRightPromise() {
     let rightPromise = () => {
         return new Promise((resolve, reject) => {
-            let length = 2 / utsx.getXLength();
+            let length = 2 / xLength;
             let speed = UPDATE_SPEED * length / TIME_TO_TRAVEL_ONE_BLOCK;
             let original = transX;
 
@@ -245,7 +245,7 @@ function getRightPromise() {
 function getBackwardPromise() {
     let backwardPromise = () => {
         return new Promise((resolve, reject) => {
-            let length = 2 / utsx.getZLength();
+            let length = 2 / zLength;
             let speed = UPDATE_SPEED * length / TIME_TO_TRAVEL_ONE_BLOCK;
             let original = transZ;
 
@@ -315,32 +315,30 @@ function get90DegreeAntiClockwiseRotationPromise() {
     return new PathInstruction(counterClockwisePromise);
 }
 
-class Converter {
-    finalList;
+class LabyrinthMovement {
     zLength;
     xLength;
-    uts;
+    labyrinth;
 
-    constructor(uts) {
-        this.finalList = [];
-        this.uts = uts;
-        this.zLength = uts.getZLength();
-        this.xLength = uts.getXLength();
+    constructor(labyrinth) {
+        this.labyrinth = labyrinth;
+        this.zLength = labyrinth.getZLength();
+        this.xLength = labyrinth.getXLength();
     }
 
-    calculateRelativeDirection(start_x, start_z, next_x, next_z) {
-        if (start_x === next_x) {
-            if (start_z + 1 === next_z) {
+    calculateRelativeDirection(startX, startZ, nextX, nextZ) {
+        if (startX === nextX) {
+            if (startZ + 1 === nextZ) {
                 return new South();
             }
-            if (start_z - 1 === next_z) {
+            if (startZ - 1 === nextZ) {
                 return new North();
             }
-        } else if (start_z === next_z) {
-            if (start_x + 1 === next_x) {
+        } else if (startZ === nextZ) {
+            if (startX + 1 === nextX) {
                 return new East();
             }
-            if (start_x - 1 === next_x) {
+            if (startX - 1 === nextX) {
                 return new West();
             }
         } else {
@@ -349,15 +347,15 @@ class Converter {
     }
 
     getCoordinates(id) {
-        return this.uts.getCoordinates(id);
+        return this.labyrinth.getCoordinates(id);
     }
 
     getNextDirection(starPoint, startDirection, endPoint) {
         let instructions = [];
-        let [start_x, start_z] = this.getCoordinates(starPoint);
-        let [next_x, next_z] = this.getCoordinates(endPoint);
+        let [startX, startZ] = this.getCoordinates(starPoint);
+        let [nextX, nextZ] = this.getCoordinates(endPoint);
 
-        let nextDirection = this.calculateRelativeDirection(start_x, start_z, next_x, next_z);
+        let nextDirection = this.calculateRelativeDirection(startX, startZ, nextX, nextZ);
         startDirection.rotateToNextDirection(nextDirection, instructions);
 
         nextDirection.move(instructions);
@@ -365,96 +363,35 @@ class Converter {
     }
 
     calculateCenterCoordinates(id) {
-        let [xIndex, zIndex] = this.uts.getCoordinates(id);
+        let [xIndex, zIndex] = this.labyrinth.getCoordinates(id);
         return [(1 / this.xLength) * (2 * xIndex - 1) + 1,
                 (1 / this.zLength) * (2 * zIndex + 1) - 1];
     }
 
     moveRightSide(id, direction) {
         let rightSide = direction.rightSide();
-        if (this.uts.areNeighbors(id, this.uts.getIdOfMovingOneStepInThatDirection(id, rightSide))) {
-            return this.uts.getIdOfMovingOneStepInThatDirection(id, rightSide);
+        if (this.labyrinth.areNeighbors(id, this.labyrinth.getIdOfMovingOneStepInThatDirection(id, rightSide))) {
+            return this.labyrinth.getIdOfMovingOneStepInThatDirection(id, rightSide);
 
         }
-        if (this.uts.areNeighbors(id, this.uts.getIdOfMovingOneStepInThatDirection(id, direction))) {
-            return this.uts.getIdOfMovingOneStepInThatDirection(id, direction);
+        if (this.labyrinth.areNeighbors(id, this.labyrinth.getIdOfMovingOneStepInThatDirection(id, direction))) {
+            return this.labyrinth.getIdOfMovingOneStepInThatDirection(id, direction);
         }
 
-        if (this.uts.areNeighbors(id, this.uts.getIdOfMovingOneStepInThatDirection(id, rightSide.opposite()))) {
-            return this.uts.getIdOfMovingOneStepInThatDirection(id, rightSide.opposite());
+        if (this.labyrinth.areNeighbors(id, this.labyrinth.getIdOfMovingOneStepInThatDirection(id, rightSide.opposite()))) {
+            return this.labyrinth.getIdOfMovingOneStepInThatDirection(id, rightSide.opposite());
         }
-        return this.uts.getIdOfMovingOneStepInThatDirection(id, direction.opposite());
+        return this.labyrinth.getIdOfMovingOneStepInThatDirection(id, direction.opposite());
     }
+
+    getStartId() {
+        return this.xLength * (this.zLength - 1);
+    }
+
+    getEndId() {
+        return this.xLength - 1;
+    }
+
 }
 
-function GetModelViewMatrix(translationX, translationY, translationZ,
-                            rotationX, rotationY, rotationZ, cameraRotationXY) {
-
-    const cosRotX = Math.cos(rotationX);
-    const sinRotX = Math.sin(rotationX);
-
-    const cosRotY = Math.cos(rotationY);
-    const sinRotY = Math.sin(rotationY);
-
-    const cosRotZ = Math.cos(rotationZ);
-    const sinRotZ = Math.sin(rotationZ);
-
-    let rotationMatrixX = [
-        1, 0, 0, 0,
-        0, cosRotX, sinRotX, 0,
-        0, -sinRotX, cosRotX, 0,
-        0, 0, 0, 1
-    ]
-
-    let rotationMatrixY = [
-        cosRotY, 0, -sinRotY, 0,
-        0, 1, 0, 0,
-        sinRotY, 0, cosRotY, 0,
-        0, 0, 0, 1
-    ]
-
-    let rotationMatrixZ = [
-        cosRotZ, sinRotZ, 0, 0,
-        -sinRotZ, cosRotZ, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
-    ]
-
-    let rotations = MatrixMult(rotationMatrixZ, MatrixMult(rotationMatrixX, rotationMatrixY));
-
-    let trans = [
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        translationX, translationY, translationZ, 1
-    ];
-
-    let mv = MatrixMult(trans, rotations);
-
-    let alpha = 0;
-    let theta = cameraRotationXY;
-
-    let w = new Vertex([
-                           Math.cos(alpha) * Math.sin(theta),
-                           Math.sin(alpha) * Math.sin(theta),
-                           Math.cos(theta)]);
-
-    let v2 = new Vertex([-w.z, 0, w.y]);
-    let p = proj(w, v2);
-    let u2 = new Vertex([v2.x - p.x, v2.y - p.y, v2.z - p.z]);
-
-    let u = Normalize(u2);
-
-    let u3 = crossProduct(w, u);
-    let v = Normalize(u3);
-
-    let direction = [
-        -u.x, -u.y, -u.z, 0,
-        -v.x, -v.y, -v.z, 0,
-        w.x, w.y, w.z, 0,
-        0, 0, 0, 1
-    ];
-
-    return MatrixMult(direction, mv);
-}
 

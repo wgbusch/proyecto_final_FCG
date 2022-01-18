@@ -6,8 +6,9 @@ let ceilingDrawer;
 let canvas, gl;         // canvas y contexto WebGL
 let perspectiveMatrix;	// matriz de perspectiva
 let buttonsPressed;
-let labyrinthGenerator;
-let utsx;
+let labyrinthMovement;
+let xLength;
+let zLength;
 
 let start_id;
 let end_id;
@@ -259,4 +260,51 @@ function CompileShader(type, source, wgl = gl) {
 function WindowResize() {
     UpdateCanvasSize();
     DrawScene();
+}
+
+function GenerateLabyrinth(){
+    let columns = parseInt(document.getElementById("labyrinth-size").value);
+    let rows = columns;
+    let labyrinthGenerator = new LabyrinthGenerator(rows, columns);
+
+    //draw in right side bar
+    let grid = document.getElementsByClassName("grid").item(0);
+    grid.innerHTML = '';
+    grid.style.gridTemplateColumns = `repeat(${columns}, 10px)`;
+    grid.style.gridTemplateRows = `repeat(${rows}, 10px)`;
+
+    let labyrinth = labyrinthGenerator.wilsonAlgorithm();
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < columns; j++) {
+            let node = labyrinth.nodes[i][j];
+            let id = node.id;
+
+            let cell = document.createElement("div");
+            cell.setAttribute("class", "cell");
+            cell.setAttribute("id", id + "");
+
+            if (i > 0 && node.neighbors.includes(id - columns))
+                cell.style.borderTop = "hidden";
+            if (i < rows - 1 && node.neighbors.includes(id + columns))
+                cell.style.borderBottom = "hidden";
+            if (j > 0 && node.neighbors.includes(id - 1))
+                cell.style.borderLeft = "hidden";
+            if (j < columns - 1 && node.neighbors.includes(id + 1))
+                cell.style.borderRight = "hidden";
+            grid.appendChild(cell)
+        }
+    }
+    xLength = labyrinth.xLength;
+    zLength = labyrinth.zLength;
+    meshDrawer.setAbstractLabyrinth(labyrinth);
+    meshDrawer.setMesh([], [], []);
+
+
+    labyrinthMovement = new LabyrinthMovement(labyrinth);
+
+    start_id = labyrinthMovement.getStartId();
+    end_id = labyrinthMovement.getEndId();
+
+    [transX, transZ] = labyrinthMovement.calculateCenterCoordinates(start_id);
+    transY = CAMERA_HEIGHT;
 }

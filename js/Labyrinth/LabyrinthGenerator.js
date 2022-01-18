@@ -2,9 +2,9 @@ class LabyrinthGenerator {
     zLength;
     xLength;
 
-    constructor(n, m) {
-        this.zLength = n;
-        this.xLength = m;
+    constructor(zLength, xLength) {
+        this.zLength = zLength;
+        this.xLength = xLength;
     }
 
     wilsonAlgorithm() {
