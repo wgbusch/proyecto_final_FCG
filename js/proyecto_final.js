@@ -210,6 +210,8 @@ function DrawScene() {
 
     boxDrawer.draw(mvp);
 
+    configureUIScoreText();
+
     document.getElementById("cameraRotationXY").innerText = cameraRotationXY + "";
     document.getElementById("transX").innerText = transX + "";
     document.getElementById("transY").innerText = transY + "";
@@ -262,7 +264,7 @@ function WindowResize() {
     DrawScene();
 }
 
-function GenerateLabyrinth(){
+function GenerateLabyrinth() {
     let columns = parseInt(document.getElementById("labyrinth-size").value);
     let rows = columns;
     let labyrinthGenerator = new LabyrinthGenerator(rows, columns);
@@ -274,6 +276,8 @@ function GenerateLabyrinth(){
     grid.style.gridTemplateRows = `repeat(${rows}, 10px)`;
 
     let labyrinth = labyrinthGenerator.wilsonAlgorithm();
+    labyrinthGenerator.addGems(labyrinth, Proportion.Large);
+
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < columns; j++) {
             let node = labyrinth.nodes[i][j];
@@ -291,6 +295,10 @@ function GenerateLabyrinth(){
                 cell.style.borderLeft = "hidden";
             if (j < columns - 1 && node.neighbors.includes(id + 1))
                 cell.style.borderRight = "hidden";
+            if (labyrinth.gems.includes(i * labyrinth.getZLength() + j)) {
+                cell.style.backgroundImage = "radial-gradient(circle closest-side, red 0%, red 50%, transparent 50%, transparent 100%)";
+                cell.style.backgroundPosition = "center center";
+            }
             grid.appendChild(cell)
         }
     }
@@ -307,4 +315,15 @@ function GenerateLabyrinth(){
 
     [transX, transZ] = labyrinthMovement.calculateCenterCoordinates(start_id);
     transY = CAMERA_HEIGHT;
+}
+
+function configureUIScoreText() {
+    let scoreDiv = document.getElementById("score-ui");
+    scoreDiv.style.position = "absolute";
+    scoreDiv.style.zIndex = "1";
+    scoreDiv.style.right = "3%";
+    scoreDiv.style.top = "3%"
+    scoreDiv.style.color = "black";
+    scoreDiv.style.fontWeight = "900";
+    scoreDiv.style.fontSize = "larger";
 }

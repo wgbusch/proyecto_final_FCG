@@ -19,24 +19,40 @@ class LabyrinthGenerator {
         return uniform_spanning_tree;
     }
 
-    pickNodeNotInUts(uts) {
-        let zIndex = this.zLength;
-        let xIndex = this.xLength;
-        let randomNumber = this.random(zIndex * xIndex);
-        while (uts.has(randomNumber)) {
-            randomNumber = this.random(zIndex * xIndex);
-        }
-        return randomNumber;
-    }
-
     random(range) {
         return Math.floor(Math.random() * range);
     }
 
     generateRandomWalk(uts) {
+
+        let pickNodeNotInUts = (uts) => {
+            let zIndex = this.zLength;
+            let xIndex = this.xLength;
+            let randomNumber = this.random(zIndex * xIndex);
+            while (uts.has(randomNumber)) {
+                randomNumber = this.random(zIndex * xIndex);
+            }
+            return randomNumber;
+        }
+
+        let makesALoop = (nextEdge, randomWalk) => {
+            return randomWalk.includes(nextEdge);
+        }
+
+        let removeLoop = (nextEdge, randomWalk) => {
+            for (let i = randomWalk.length - 1; i >= 0; i--) {
+                if (randomWalk[i] === nextEdge) {
+                    randomWalk = randomWalk.slice(0, i);
+                    randomWalk.push(nextEdge);
+                    break;
+                }
+            }
+            return randomWalk;
+        }
+
         let randomWalk = [];
         let previousNode = -1;
-        let currentNode = this.pickNodeNotInUts(uts);
+        let currentNode = pickNodeNotInUts(uts);
         randomWalk.push(currentNode);
         let zIndex = this.zLength;
         let xIndex = this.xLength;
@@ -55,10 +71,10 @@ class LabyrinthGenerator {
                 possibleMovementDirections.push(currentNode + 1)
             let nextNode = possibleMovementDirections[this.random(possibleMovementDirections.length)];
 
-            if (!this.makesALoop(nextNode, randomWalk)) {
+            if (!makesALoop(nextNode, randomWalk)) {
                 randomWalk.push(nextNode);
             } else {
-                randomWalk = this.removeLoop(nextNode, randomWalk);
+                randomWalk = removeLoop(nextNode, randomWalk);
             }
             previousNode = currentNode;
             currentNode = nextNode;
@@ -66,18 +82,18 @@ class LabyrinthGenerator {
         return randomWalk;
     }
 
-    makesALoop(nextEdge, randomWalk) {
-        return randomWalk.includes(nextEdge);
-    }
-
-    removeLoop(nextEdge, randomWalk) {
-        for (let i = randomWalk.length - 1; i >= 0; i--) {
-            if (randomWalk[i] === nextEdge) {
-                randomWalk = randomWalk.slice(0, i);
-                randomWalk.push(nextEdge);
-                break;
-            }
+    addGems(labyrinth, proportion) {
+        let size = labyrinth.size;
+        let numberOfGems = Math.floor(size * proportion / 100);
+        for (let i = 0; i < numberOfGems; i++) {
+            labyrinth.addGem(Math.floor(Math.random() * size));
         }
-        return randomWalk;
     }
+}
+
+class Proportion {
+    // Create new instances of the same class as static attributes
+    static Large = 20;
+    static Medium = 10;
+    static Small = 5;
 }

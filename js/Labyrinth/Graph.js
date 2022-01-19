@@ -15,6 +15,7 @@ class Graph {
     zLength;
     nodes;
     size = 0;
+    gems = [];
 
     constructor(xLength, zLength) {
         this.xLength = zLength;
@@ -77,13 +78,6 @@ class Graph {
         return [this.column(id), this.row(id)];
     }
 
-    getRandomMovement(id) {
-        let node = this.nodes[this.row(id)][this.column(id)];
-        let neighbors = node.neighbors;
-        let randomIndex = Math.floor(Math.random() * neighbors.length);
-        return neighbors[randomIndex];
-    }
-
     areNeighbors(id1, id2) {
         return this.getNode(id1).neighbors.includes(id2);
     }
@@ -112,5 +106,9 @@ class Graph {
         if (this.has(id)) {
             return this.nodes[this.row(id)][this.column(id)];
         }
+    }
+
+    addGem(id) {
+        this.gems.push(id);
     }
 }

@@ -1,93 +1,109 @@
 <doctype html>
-  <html>
-  <head>
-    <title> FCG 2021 - TP5</title>
+    <html>
+    <head>
+        <title> FCG 2021 - TP5</title>
 
-    <!-- estilo-->
-    <link href="css/style.css" rel="stylesheet">
-    <script type="text/javascript" id="includedscript" src="js/proyecto_final.js"></script>
+        <!-- estilo-->
+        <link href="css/style.css" rel="stylesheet">
+        <script type="text/javascript" id="includedscript" src="js/proyecto_final.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Labyrinth/Graph.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Labyrinth/LabyrinthGenerator.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Shaders/boxdrawer.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Shaders/CeilingDrawer.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Shaders/FloorDrawer.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Shaders/MeshDrawer.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Shaders/MeshDrawerSimple.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Shaders/lightview.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Geometry/Mesh.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Geometry/LabyrinthDrawer.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Utils/Math.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Camera/CameraControl.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Camera/MazeTraversalLogic.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Controls/BrowserControls.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Texture/TextureConstructor.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Shaders/FloorDrawer2.js"></script>
 
-    <script type="text/javascript" id="includedscript" src="js/Labyrinth/Graph.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Labyrinth/LabyrinthGenerator.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Shaders/boxdrawer.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Shaders/CeilingDrawer.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Shaders/FloorDrawer.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Shaders/MeshDrawer.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Shaders/MeshDrawerSimple.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Shaders/lightview.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Geometry/Mesh.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Geometry/LabyrinthDrawer.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Utils/Math.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Camera/CameraControl.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Camera/MazeTraversalLogic.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Controls/BrowserControls.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Texture/TextureConstructor.js"></script>
-    <script type="text/javascript" id="includedscript" src="js/Shaders/FloorDrawer2.js"></script>
+        <script type="text/javascript" src="js/Utils/objmesh.js"></script>
 
-    <script type="text/javascript" src="js/Utils/objmesh.js"></script>
-
-  </head>
-  <body onresize="WindowResize()">
-  <!-- canvas (WebGL)-->
-  <div id="canvas-div"><canvas id="canvas" tabindex='1'></canvas></div><div id="controls-div">
-    <!-- menu y controles-->
-    <div id="controls">
-      <div class="control-group">
-        <canvas id="lightcontrol"></canvas>
-        <div id="lightcontrol-label">Dirección de la Luz</div>
-      </div>
-      <div class="control-group">
-        <div class="control"><span id="shininess-label">Intensidad:</span><span id="shininess-value">1</span><input id="shininess-exp" type="range" min="0" max="100" value="50" oninput="SetShininess(this)"/></div>
-      </div>
-      <div class="control-group">
-        <pre id="file-content-ceiling"></pre>
-        <div class="control">Textura Ceiling:<br/><input id="texture-ceiling" type="file"
-                                                         onchange="LoadTextureCeilingFromFile(this)" accept="image/*"/></div>
-      </div>
-      <div class="control-group">
-        <img hidden id="texture-img-ceiling" height="50px" width="50px"/>
-      </div>
-      <div class="control-group">
-        <pre id="file-content"></pre>
-        <div class="control">Textura Walls:<br/><input id="texture-walls" type="file" onchange="LoadTextureWallsFromFile(this)"
-                                                 accept="image/*"/></div>
-      </div>
-      <div class="control-group">
-        <img hidden id="texture-img-walls" height="50px" width="50px"/>
-      </div>
-      <div class="control-group">
-        <pre id="file-content-floor"></pre>
-        <div class="control">Textura Floor:<br/><input id="texture-floor" type="file"
-                                                       onchange="LoadTextureFloorFromFile(this)" accept="image/*"/></div>
-      </div>
-      <div class="control-group">
-        <img hidden id="texture-img-floor" height="50px" width="50px"/>
-      </div>
-      <div class="control-group">
-          <div class="control">Generar Laberinto:<br/><input id="labyrinth" type="submit" onclick="StartScreensaver(this)"/></div>
-          <div class="control"><input id="labyrinth-size" name="labyrinth-size" type="number" value="10" /></div>
-        <div class="container">
-          <div class="grid"></div>
-        </div>
-      </div>
-
-      <div display="inline"><div>camera rotation:</div> <p id="cameraRotationXY"></p></div>
-      <div class="control">
-        <div>x trans: <p id="transX"></p></div>
-        <input id="transX-manual" type="range" min="-1" max="1" value="0.99" step="0.001" oninput="SetTransX(this)"/>
-      </div>
-      <div>y trans: <p id="transY"></p></div>
-
-      <div class="control">
-        <div>z trans: <p id="transZ"></p></div>
-        <input id="transZ-manual" type="range" min="-1" max="1" value="0.99" step="0.001" oninput="SetTransZ(this)"/>
-      </div>
-      <div >
-        <div><div>x coord:</div> <p id="xCoord"></p></div>
-        <div><div>z coord:</div> <p id="zCoord"></p></div>
-      </div>
+    </head>
+    <body onresize="WindowResize()">
+    <!-- canvas (WebGL)-->
+    <div id="canvas-div">
+        <div id="score-ui" ><span>SCORE: </span><span id="score-number">0</span></div>
+        <canvas id="canvas" tabindex='1'></canvas>
     </div>
-  </div>
-  <canvas id="wall-img"></canvas>
-  </body>
-  </html>
+    <div id="controls-div" style="position: absolute">
+        <!-- menu y controles-->
+        <div id="controls">
+            <div class="control-group">
+                <canvas id="lightcontrol"></canvas>
+                <div id="lightcontrol-label">Dirección de la Luz</div>
+            </div>
+            <div class="control-group">
+                <div class="control"><span id="shininess-label">Intensidad:</span><span
+                        id="shininess-value">1</span><input id="shininess-exp" type="range" min="0" max="100" value="50"
+                                                            oninput="SetShininess(this)"/></div>
+            </div>
+            <div class="control-group">
+                <pre id="file-content-ceiling"></pre>
+                <div class="control">Textura Ceiling:<br/><input id="texture-ceiling" type="file"
+                                                                 onchange="LoadTextureCeilingFromFile(this)"
+                                                                 accept="image/*"/></div>
+            </div>
+            <div class="control-group">
+                <img hidden id="texture-img-ceiling" height="50px" width="50px"/>
+            </div>
+            <div class="control-group">
+                <pre id="file-content"></pre>
+                <div class="control">Textura Walls:<br/><input id="texture-walls" type="file"
+                                                               onchange="LoadTextureWallsFromFile(this)"
+                                                               accept="image/*"/></div>
+            </div>
+            <div class="control-group">
+                <img hidden id="texture-img-walls" height="50px" width="50px"/>
+            </div>
+            <div class="control-group">
+                <pre id="file-content-floor"></pre>
+                <div class="control">Textura Floor:<br/><input id="texture-floor" type="file"
+                                                               onchange="LoadTextureFloorFromFile(this)"
+                                                               accept="image/*"/></div>
+            </div>
+            <div class="control-group">
+                <img hidden id="texture-img-floor" height="50px" width="50px"/>
+            </div>
+            <div class="control-group">
+                <div class="control">Generar Laberinto:<br/><input id="labyrinth" type="submit"
+                                                                   onclick="StartScreensaver(this)"/></div>
+                <div class="control"><input id="labyrinth-size" name="labyrinth-size" type="number" value="10"/></div>
+                <div class="container">
+                    <div class="grid"></div>
+                </div>
+            </div>
+
+            <div display="inline">
+                <div>camera rotation:</div>
+                <p id="cameraRotationXY"></p></div>
+            <div class="control">
+                <div>x trans: <p id="transX"></p></div>
+                <input id="transX-manual" type="range" min="-1" max="1" value="0.99" step="0.001"
+                       oninput="SetTransX(this)"/>
+            </div>
+            <div>y trans: <p id="transY"></p></div>
+
+            <div class="control">
+                <div>z trans: <p id="transZ"></p></div>
+                <input id="transZ-manual" type="range" min="-1" max="1" value="0.99" step="0.001"
+                       oninput="SetTransZ(this)"/>
+            </div>
+            <div>
+                <div>
+                    <div>x coord:</div>
+                    <p id="xCoord"></p></div>
+                <div>
+                    <div>z coord:</div>
+                    <p id="zCoord"></p></div>
+            </div>
+        </div>
+    </div>
+    </body>
+    </html>

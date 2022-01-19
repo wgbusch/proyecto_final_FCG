@@ -2,32 +2,32 @@
 function GetModelViewMatrix(translationX, translationY, translationZ,
                             rotationX, rotationY, rotationZ, cameraRotationXY) {
 
-    const cosRotX = Math.cos(rotationX);
-    const sinRotX = Math.sin(rotationX);
+    const cosRotationX = Math.cos(rotationX);
+    const sinRotationX = Math.sin(rotationX);
 
-    const cosRotY = Math.cos(rotationY);
-    const sinRotY = Math.sin(rotationY);
+    const cosRotationY = Math.cos(rotationY);
+    const sinRotationY = Math.sin(rotationY);
 
-    const cosRotZ = Math.cos(rotationZ);
-    const sinRotZ = Math.sin(rotationZ);
+    const cosRotationZ = Math.cos(rotationZ);
+    const sinRotationZ = Math.sin(rotationZ);
 
     let rotationMatrixX = [
         1, 0, 0, 0,
-        0, cosRotX, sinRotX, 0,
-        0, -sinRotX, cosRotX, 0,
+        0, cosRotationX, sinRotationX, 0,
+        0, -sinRotationX, cosRotationX, 0,
         0, 0, 0, 1
     ]
 
     let rotationMatrixY = [
-        cosRotY, 0, -sinRotY, 0,
+        cosRotationY, 0, -sinRotationY, 0,
         0, 1, 0, 0,
-        sinRotY, 0, cosRotY, 0,
+        sinRotationY, 0, cosRotationY, 0,
         0, 0, 0, 1
     ]
 
     let rotationMatrixZ = [
-        cosRotZ, sinRotZ, 0, 0,
-        -sinRotZ, cosRotZ, 0, 0,
+        cosRotationZ, sinRotationZ, 0, 0,
+        -sinRotationZ, cosRotationZ, 0, 0,
         0, 0, 1, 0,
         0, 0, 0, 1
     ]

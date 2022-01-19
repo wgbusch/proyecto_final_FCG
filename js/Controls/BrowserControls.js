@@ -87,7 +87,8 @@ function SetTransX(param) {
 
 function StartScreensaver() {
     GenerateLabyrinth();
-    StartMovement();
+    UpdateCanvasSize();
+    DrawScene();
 }
 
 function StartMovement(){

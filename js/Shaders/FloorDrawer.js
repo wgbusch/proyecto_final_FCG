@@ -32,6 +32,7 @@ class FloorDrawer {
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertPos), gl.STATIC_DRAW);
 
         let texCoords = getSquareTexture(TOTAL_X_LENGTH, TOTAL_Z_LENGTH);
+        texCoords = texCoords.concat(getSquareTexture(TOTAL_X_LENGTH, TOTAL_Z_LENGTH));
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
