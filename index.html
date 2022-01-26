@@ -8,14 +8,11 @@
         <script type="text/javascript" id="includedscript" src="js/proyecto_final.js"></script>
         <script type="text/javascript" id="includedscript" src="js/Labyrinth/Graph.js"></script>
         <script type="text/javascript" id="includedscript" src="js/Labyrinth/LabyrinthGenerator.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Shaders/boxdrawer.js"></script>
         <script type="text/javascript" id="includedscript" src="js/Shaders/CeilingDrawer.js"></script>
         <script type="text/javascript" id="includedscript" src="js/Shaders/FloorDrawer.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Shaders/MeshDrawer.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Shaders/MeshDrawerSimple.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Shaders/lightview.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Shaders/LabyrinthDrawer.js"></script>
         <script type="text/javascript" id="includedscript" src="js/Geometry/Mesh.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Geometry/LabyrinthDrawer.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/Geometry/LabyrinthMeshConstructor.js"></script>
         <script type="text/javascript" id="includedscript" src="js/Utils/Math.js"></script>
         <script type="text/javascript" id="includedscript" src="js/Camera/CameraControl.js"></script>
         <script type="text/javascript" id="includedscript" src="js/Camera/MazeTraversalLogic.js"></script>
@@ -23,7 +20,7 @@
         <script type="text/javascript" id="includedscript" src="js/Texture/TextureConstructor.js"></script>
         <script type="text/javascript" id="includedscript" src="js/Shaders/FloorDrawer2.js"></script>
 
-        <script type="text/javascript" src="js/Utils/objmesh.js"></script>
+        <script type="text/javascript" src="js/Utils/ObjToMeshConverter.js"></script>
 
     </head>
     <body onresize="WindowResize()">
@@ -38,11 +35,6 @@
             <div class="control-group">
                 <canvas id="lightcontrol"></canvas>
                 <div id="lightcontrol-label">Dirección de la Luz</div>
-            </div>
-            <div class="control-group">
-                <div class="control"><span id="shininess-label">Intensidad:</span><span
-                        id="shininess-value">1</span><input id="shininess-exp" type="range" min="0" max="100" value="50"
-                                                            oninput="SetShininess(this)"/></div>
             </div>
             <div class="control-group">
                 <pre id="file-content-ceiling"></pre>
@@ -72,7 +64,7 @@
                 <img hidden id="texture-img-floor" height="50px" width="50px"/>
             </div>
             <div class="control-group">
-                <div class="control">Generar Laberinto:<br/><input id="labyrinth" type="submit"
+                <div class="control">Generate Labyrinth:<br/><input id="labyrinth" type="submit"
                                                                    onclick="StartScreensaver(this)"/></div>
                 <div class="control"><input id="labyrinth-size" name="labyrinth-size" type="number" value="10"/></div>
                 <div class="container">
@@ -80,9 +72,6 @@
                 </div>
             </div>
 
-            <div display="inline">
-                <div>camera rotation:</div>
-                <p id="cameraRotationXY"></p></div>
             <div class="control">
                 <div>x trans: <p id="transX"></p></div>
                 <input id="transX-manual" type="range" min="-1" max="1" value="0.99" step="0.001"
@@ -103,6 +92,8 @@
                     <div>z coord:</div>
                     <p id="zCoord"></p></div>
             </div>
+            <div class="control">Find exit route:<br/><input id="find-exit-route" type="submit"
+                                                               onclick="StartMovement(this)"/></div>
         </div>
     </div>
     </body>

@@ -1,11 +1,9 @@
 WALL_WIDTH = 0;
 FLOOR_WIDTH = 0.1;
 LABYRINTH_HEIGHT = 0.15;
-CAMERA_HEIGHT = -0.05;
-TOTAL_X_LENGTH = 2;
-TOTAL_Z_LENGTH = 2;
 
-class LabyrinthDrawer {
+
+class LabyrinthMeshConstructor {
 
     abstractLabyrinth;
     zSquares;
@@ -23,7 +21,7 @@ class LabyrinthDrawer {
         this.wallZLength = TOTAL_Z_LENGTH / this.zSquares;
     }
 
-    drawInnerWalls(mesh) {
+    constructInnerWallsMesh(mesh) {
         let labyrinth = this.abstractLabyrinth;
         let wallsToCreate = [];
         for (let zIndex = 0; zIndex < this.xSquares - 1; zIndex++) {
@@ -36,13 +34,13 @@ class LabyrinthDrawer {
                 let node4 = labyrinth.nodes[zIndex + 1][xIndex];
                 let cross = this.defineWallsToCreate(node1, node2, node3, node4);
                 wallsToCreate[zIndex][xIndex] = cross;
-                mesh = this.drawCrossing(mesh, cross, xIndex, zIndex);
+                mesh = this.constructCrossings(mesh, cross, xIndex, zIndex);
             }
         }
         return mesh;
     }
 
-    drawOuterWalls(mesh) {
+    constructOuterWallsMesh(mesh) {
         let negative_x_triangle_1_a = new Vertex([-TOTAL_X_LENGTH / 2, 0, -TOTAL_Z_LENGTH / 2]);
         let negative_x_triangle_1_b = new Vertex([-TOTAL_X_LENGTH / 2, LABYRINTH_HEIGHT, -TOTAL_Z_LENGTH / 2]);
         let negative_x_triangle_1_c = new Vertex([-TOTAL_X_LENGTH / 2, 0, TOTAL_Z_LENGTH / 2]);
@@ -68,8 +66,10 @@ class LabyrinthDrawer {
 
         let negative_z_triangle_1 = new Triangle(negative_z_triangle_1_a, negative_z_triangle_1_b,
                                                  negative_z_triangle_1_c);
+
         let negative_z_triangle_2 = new Triangle(negative_z_triangle_2_d, negative_z_triangle_2_e,
                                                  negative_z_triangle_2_f);
+
         let positive_z_triangle_1 = negative_z_triangle_1.translateAlongNormal(TOTAL_X_LENGTH);
         let positive_z_triangle_2 = negative_z_triangle_2.translateAlongNormal(TOTAL_X_LENGTH);
 
@@ -133,7 +133,7 @@ class LabyrinthDrawer {
         return cross;
     }
 
-    drawCrossing(mesh, cross, xIndex, zIndex) {
+    constructCrossings(mesh, cross, xIndex, zIndex) {
         let xCoord = this.calculateXCoordinate(xIndex);
         let zCoord = this.calculateZCoordinate(zIndex);
         let height = this.height;

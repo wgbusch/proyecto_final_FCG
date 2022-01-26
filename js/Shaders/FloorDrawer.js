@@ -44,7 +44,7 @@ class FloorDrawer {
         gl.useProgram(this.prog);
     }
 
-    draw(matrixMVP, matrixMV, matrixNormal) {
+    draw(matrixMVP, matrixMV) {
         // 1. Seleccionamos el shader
         gl.useProgram(this.prog);
 
@@ -97,12 +97,6 @@ class FloorDrawer {
                       gl.UNSIGNED_BYTE,
                       img);
         gl.generateMipmap(gl.TEXTURE_2D);
-    }
-
-    setLightDir(x, y, z) {
-    }
-
-    setShininess(shininess) {
     }
 
     floorVS = `

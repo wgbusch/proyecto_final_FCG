@@ -1,5 +1,5 @@
 function LoadTextureWalls() {
-    LoadTexture(WALLS_URL_SMALL, 'texture-img-walls', meshDrawer);
+    LoadTexture(WALLS_URL_SMALL, 'texture-img-walls', labyrinthDrawer);
 }
 
 function LoadTextureFloor() {
@@ -63,14 +63,6 @@ function LoadTexture(url, id, drawer) {
     }
     img.crossOrigin = "";
     img.src = url;
-}
-
-function SetShininess(param) {
-    let exp = param.value;
-    let s = Math.pow(10, exp / 25);
-    document.getElementById('shininess-value').innerText = s.toFixed(s < 10 ? 2 : 0);
-    meshDrawer.setShininess(s);
-    DrawScene();
 }
 
 function SetTransZ(param) {

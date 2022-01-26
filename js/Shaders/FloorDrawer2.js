@@ -173,12 +173,6 @@ class FloorDrawer2 {
         gl.generateMipmap(gl.TEXTURE_2D);
     }
 
-    setLightDir(x, y, z) {
-    }
-
-    setShininess(shininess) {
-    }
-
     floorVS = `
 	precision mediump float;
 

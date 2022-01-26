@@ -1,4 +1,4 @@
-class ObjMesh
+class ObjToMeshConverter
 {
 	constructor()
 	{

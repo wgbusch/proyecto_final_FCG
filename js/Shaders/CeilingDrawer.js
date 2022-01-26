@@ -50,15 +50,15 @@ class CeilingDrawer {
         gl.useProgram(this.prog);
     }
 
-    draw(matrixMVP, matrixMV, matrixNormal) {
+    draw(mvp, mv) {
         // 1. Seleccionamos el shader
         gl.useProgram(this.prog);
 
         // 2. Setear matriz de transformacion
-        gl.uniformMatrix4fv(this.mvp, false, matrixMVP);
+        gl.uniformMatrix4fv(this.mvp, false, mvp);
 
         // 2.  Setear matrix mv
-        gl.uniformMatrix4fv(this.mv, false, matrixMV);
+        gl.uniformMatrix4fv(this.mv, false, mv);
 
         gl.useProgram(this.prog);
 
@@ -101,12 +101,6 @@ class CeilingDrawer {
                       gl.UNSIGNED_BYTE,
                       img);
         gl.generateMipmap(gl.TEXTURE_2D);
-    }
-
-    setLightDir(x, y, z) {
-    }
-
-    setShininess(shininess) {
     }
 
     ceilingVS = `

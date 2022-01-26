@@ -5,7 +5,6 @@ UPDATE_SPEED = 100;
 class North {
 
     rotateFromNorth(list) {
-        return;
     }
 
     rotateFromWest(list) {
@@ -54,7 +53,6 @@ class East {
     }
 
     rotateFromEast(list) {
-        return;
     }
 
     rotateFromSouth(list) {
@@ -89,7 +87,6 @@ class West {
     }
 
     rotateFromWest(list) {
-        return;
     }
 
     rotateFromEast(list) {
@@ -138,7 +135,6 @@ class South {
     }
 
     rotateFromSouth(list) {
-        return;
     }
 
     move(list) {
@@ -271,7 +267,6 @@ function get90DegreeClockwiseRotationPromise() {
             let speed = UPDATE_SPEED * (Math.PI / 2) / TIME_TO_ROTATE_90_DEGREES;
 
             let rotationClockwise = () => {
-                console.log("rotate clockwise!!");
                 cameraRotationXY -= speed;
                 DrawScene();
                 if (cameraRotationXY <= original - Math.PI / 2) {
@@ -297,7 +292,6 @@ function get90DegreeAntiClockwiseRotationPromise() {
             let speed = UPDATE_SPEED * (Math.PI / 2) / TIME_TO_ROTATE_90_DEGREES;
 
             let rotationAntiClockwise = () => {
-                console.log("rotate counter clockwise!!");
                 cameraRotationXY += speed;
                 DrawScene();
                 if (cameraRotationXY >= original + Math.PI / 2) {
@@ -350,7 +344,7 @@ class LabyrinthMovement {
         return this.labyrinth.getCoordinates(id);
     }
 
-    getNextDirection(starPoint, startDirection, endPoint) {
+    getMovementInstructionsAndNextDirection(starPoint, startDirection, endPoint) {
         let instructions = [];
         let [startX, startZ] = this.getCoordinates(starPoint);
         let [nextX, nextZ] = this.getCoordinates(endPoint);
@@ -368,7 +362,7 @@ class LabyrinthMovement {
                 (1 / this.zLength) * (2 * zIndex + 1) - 1];
     }
 
-    moveRightSide(id, direction) {
+    getNextIdBasedOnRightSideAlgorithm(id, direction) {
         let rightSide = direction.rightSide();
         if (this.labyrinth.areNeighbors(id, this.labyrinth.getIdOfMovingOneStepInThatDirection(id, rightSide))) {
             return this.labyrinth.getIdOfMovingOneStepInThatDirection(id, rightSide);
@@ -390,6 +384,10 @@ class LabyrinthMovement {
 
     getEndId() {
         return this.xLength - 1;
+    }
+
+    consumeGemIfAny(id){
+        this.labyrinth.consumeGemIfAny
     }
 
 }

@@ -1,6 +1,6 @@
 
 
-class MeshDrawerSimple {
+class LabyrinthDrawer {
     // El constructor es donde nos encargamos de realizar las inicializaciones necesarias.
     constructor() {
         // 1. Compilamos el programa de shaders
@@ -25,11 +25,11 @@ class MeshDrawerSimple {
 
     setMesh(vertPos, texCoords, normals) {
 
-        let labyrinthDrawer = new LabyrinthDrawer(this.abstractLabyrinth);
+        let labyrinthDrawer = new LabyrinthMeshConstructor(this.abstractLabyrinth);
 
         let mesh = new Mesh();
-        let vertPos2 = labyrinthDrawer.drawOuterWalls(mesh);
-        vertPos2 = labyrinthDrawer.drawInnerWalls(mesh);
+        let vertPos2 = labyrinthDrawer.constructOuterWallsMesh(mesh);
+        vertPos2 = labyrinthDrawer.constructInnerWallsMesh(mesh);
 
         this.numTriangles = vertPos2.numTriangles;
         this.vertPos = vertPos2.convertToArray();
@@ -52,7 +52,7 @@ class MeshDrawerSimple {
         gl.useProgram(this.prog);
     }
 
-    draw(matrixMVP, matrixMV, matrixNormal) {
+    draw(matrixMVP, matrixMV) {
         // 1. Seleccionamos el shader
         gl.useProgram(this.prog);
 
@@ -90,12 +90,6 @@ class MeshDrawerSimple {
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.useProgram(this.prog);
         gl.drawArrays(gl.TRIANGLES, 0, this.numTriangles * 3);
-    }
-
-    setLightDir(x, y, z) {
-    }
-
-    setShininess(shininess) {
     }
 
     setTexture(img) {

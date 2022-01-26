@@ -1,5 +1,4 @@
-let boxDrawer;          // clase para contener el comportamiento de la caja
-let meshDrawer;         // clase para contener el comportamiento de la malla
+let labyrinthDrawer;         // clase para contener el comportamiento de la malla
 let floorDrawer;
 let floorDrawer2;
 let ceilingDrawer;
@@ -14,6 +13,10 @@ let start_id;
 let end_id;
 let rotX = 0, rotY = 0, rotZ = 0, transX = 0, transY = 0, transZ = 3, autorot = 0, cameraRotationXY = 0;
 let movementSpeed = 10;
+let FAR_CLIPPING_PLANE;
+let CAMERA_HEIGHT = -0.05;
+let TOTAL_X_LENGTH = 2;
+let TOTAL_Z_LENGTH = 2;
 
 let WALLS_URL_SMALL = "https://i.imgur.com/nKQZ60l.jpg";
 let FLOOR_URL_SMALL = "https://i.imgur.com/xChDZVr.png";
@@ -23,8 +26,7 @@ window.onload = function () {
     InitWebGL();
 
     buttonsPressed = {};
-
-    lightView = new LightView();
+    FAR_CLIPPING_PLANE = Math.floor(Math.sqrt(TOTAL_X_LENGTH ^ 2 + TOTAL_Z_LENGTH ^ 2)) + 1
 
     canvas.zoom = function (s) {
         transZ *= s / canvas.height + 1;
@@ -129,17 +131,10 @@ function InitWebGL() {
     gl.enable(gl.DEPTH_TEST); // habilitar test de profundidad
 
     // Inicializar los shaders y buffers para renderizar
-    boxDrawer = new BoxDrawer();
-    meshDrawer = new MeshDrawerSimple();
+    labyrinthDrawer = new LabyrinthDrawer();
     ceilingDrawer = new CeilingDrawer();
     floorDrawer = new FloorDrawer();
     floorDrawer2 = new FloorDrawer2();
-    //mvp that has error
-    // transX = 1.2000000000000015;
-    // transY = -0.08959999999999997;
-    // transZ = 0.4559999999999461;
-    // rotX =rotY =rotZ= 0;
-    // cameraRotationXY = -2.0616701789183027;
 
     // Setear el tamaño del viewport
     UpdateCanvasSize();
@@ -175,13 +170,10 @@ function UpdateProjectionMatrix() {
 
 // Calcula la matriz de perspectiva (column-major)
 function ProjectionMatrix(c, z, fov_angle = 60) {
-    const magia_z = 1.74;
 
     let r = c.width / c.height;
-    let n = (z - magia_z);
-    const min_n = 0.001;
-    if (n < min_n) n = min_n;
-    let f = (z + magia_z);
+    let n = 0.001;
+    let f = FAR_CLIPPING_PLANE;
     let fov = Math.PI * fov_angle / 180;
     let s = 1 / Math.tan(fov / 2);
 
@@ -198,21 +190,17 @@ function DrawScene() {
     // 1. Obtenemos las matrices de transformación
     let mv = GetModelViewMatrix(transX, transY, transZ, rotX, autorot + rotY, rotZ, cameraRotationXY);
     let mvp = MatrixMult(perspectiveMatrix, mv);
+
     // 2. Limpiamos la escena
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // 3. Le pedimos a cada objeto que se dibuje a si mismo
-    let nrmTrans = [mv[0], mv[1], mv[2], mv[4], mv[5], mv[6], mv[8], mv[9], mv[10]];
-
-    meshDrawer.draw(mvp, mv, nrmTrans);
-    ceilingDrawer.draw(mvp, mv, nrmTrans);
-    floorDrawer.draw(mvp, mv, nrmTrans);
-
-    boxDrawer.draw(mvp);
+    labyrinthDrawer.draw(mvp, mv);
+    ceilingDrawer.draw(mvp, mv);
+    floorDrawer.draw(mvp, mv);
 
     configureUIScoreText();
 
-    document.getElementById("cameraRotationXY").innerText = cameraRotationXY + "";
     document.getElementById("transX").innerText = transX + "";
     document.getElementById("transY").innerText = transY + "";
     document.getElementById("transZ").innerText = transZ + "";
@@ -295,7 +283,7 @@ function GenerateLabyrinth() {
                 cell.style.borderLeft = "hidden";
             if (j < columns - 1 && node.neighbors.includes(id + 1))
                 cell.style.borderRight = "hidden";
-            if (labyrinth.gems.includes(i * labyrinth.getZLength() + j)) {
+            if (labyrinth.gems.includes(labyrinth.getIdFromCoordinates(i,j))) {
                 cell.style.backgroundImage = "radial-gradient(circle closest-side, red 0%, red 50%, transparent 50%, transparent 100%)";
                 cell.style.backgroundPosition = "center center";
             }
@@ -304,8 +292,8 @@ function GenerateLabyrinth() {
     }
     xLength = labyrinth.xLength;
     zLength = labyrinth.zLength;
-    meshDrawer.setAbstractLabyrinth(labyrinth);
-    meshDrawer.setMesh([], [], []);
+    labyrinthDrawer.setAbstractLabyrinth(labyrinth);
+    labyrinthDrawer.setMesh([], [], []);
 
 
     labyrinthMovement = new LabyrinthMovement(labyrinth);

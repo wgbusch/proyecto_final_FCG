@@ -111,4 +111,8 @@ class Graph {
     addGem(id) {
         this.gems.push(id);
     }
+
+    getIdFromCoordinates(xIndex, zIndex) {
+        return xIndex * this.getZLength() + zIndex;
+    }
 }
