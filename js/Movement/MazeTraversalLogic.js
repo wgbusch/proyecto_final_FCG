@@ -23,7 +23,6 @@ function FindEscapeRecursion(labyrinthMovement, start_id, start_direction, next_
         }
     }
     executeListOfInstructions(movementInstructions, callback);
-    score += Number.parseInt(labyrinthMovement.consumeGemIfAny(start_id));
  }
 
 function FindEscape(labyrinthMovement) {

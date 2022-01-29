@@ -113,7 +113,7 @@ class Graph {
     }
 
     getIdFromCoordinates(xIndex, zIndex) {
-        return xIndex * this.getNumberOfZSquares() + zIndex;
+        return zIndex * this.getNumberOfZSquares() + xIndex;
     }
 
     consumeGemIfAny(id) {
@@ -124,7 +124,7 @@ class Graph {
         return 0;
     }
 
-    hasGem(i,j){
-        return this.gems.has(this.getIdFromCoordinates(i, j));
+    hasGem(xIndex, zIndex) {
+        return this.gems.has(this.getIdFromCoordinates(xIndex, zIndex));
     }
 }

@@ -68,43 +68,33 @@ window.onload = function () {
     }
 
     canvas.onkeyup = canvas.onkeydown = function () {
-        let validKey = false;
+
         buttonsPressed[event.key] = event.type !== 'keyup';
 
         if (event.type === 'keyup') return;
         if (buttonsPressed['w'] === true) {
-            transZ += -movementSpeed / canvas.height;
-            validKey = true;
+            moveZ(-movementSpeed / canvas.height);
         } else if (buttonsPressed['s'] === true) {
-            transZ += movementSpeed / canvas.height;
-            validKey = true;
+            moveZ(movementSpeed / canvas.height);
         }
         if (buttonsPressed['a'] === true) {
-            transX += movementSpeed / canvas.height;
-            validKey = true;
+            moveX(movementSpeed / canvas.height);
         }
         if (buttonsPressed['d'] === true) {
-            transX += -movementSpeed / canvas.height;
-            validKey = true;
+            moveX(-movementSpeed / canvas.height);
         }
         if (buttonsPressed['q'] === true) {
-            transY += movementSpeed / canvas.height;
-            validKey = true;
+            moveY(movementSpeed / canvas.height);
         }
         if (buttonsPressed['e'] === true) {
-            transY += -movementSpeed / canvas.height;
-            validKey = true;
+            moveY(-movementSpeed / canvas.height);
         }
         if (event.code === 'ArrowRight') {
             cameraRotationXY -= Math.PI / 32;
-            validKey = true;
+            DrawScene();
         }
         if (event.code === 'ArrowLeft') {
             cameraRotationXY += Math.PI / 32;
-            validKey = true;
-        }
-        if (validKey && (event.type === 'keydown')) {
-            UpdateProjectionMatrix();
             DrawScene();
         }
     }
@@ -113,6 +103,7 @@ window.onload = function () {
     LoadTextureFloor();
     LoadTextureCeiling();
     GenerateLabyrinth();
+    CreateSmallLabyrinth();
     UpdateCanvasSize();
     DrawScene();
 };
@@ -169,19 +160,15 @@ function UpdateCanvasSize() {
 
 // Devuelve la matriz de perspectiva (column-major)
 function UpdateProjectionMatrix() {
-    perspectiveMatrix = ProjectionMatrix(canvas, transZ);
-}
 
-// Calcula la matriz de perspectiva (column-major)
-function ProjectionMatrix(c, z, fov_angle = 60) {
-
-    let r = c.width / c.height;
+    let fov_angle = 60;
+    let r = canvas.width / canvas.height;
     let n = 0.001;
     let f = FAR_CLIPPING_PLANE;
     let fov = Math.PI * fov_angle / 180;
     let s = 1 / Math.tan(fov / 2);
 
-    return [
+    perspectiveMatrix = [
         s / r, 0, 0, 0,
         0, s, 0, 0,
         0, 0, (n + f) / (f - n), 1,
@@ -209,8 +196,7 @@ function DrawScene() {
     document.getElementById("transY").innerText = transY + "";
     document.getElementById("transZ").innerText = transZ + "";
 
-    updateScore(score);
-    updateSmallLabyrinth(labyrinthMovement.labyrinth);
+    updateScore();
 }
 
 // Función que compila los shaders que se le pasan por parámetro (vertex & fragment shaders)
@@ -284,33 +270,34 @@ function GenerateLabyrinth() {
     transY = CAMERA_HEIGHT;
 }
 
-function updateSmallLabyrinth(labyrinth) {
+function CreateSmallLabyrinth() {
+    let labyrinth = labyrinthMovement.labyrinth;
 
-    let rows = labyrinth.getNumberOfZSquares();
-    let columns = labyrinth.getNumberOfXSquares();
+    let zSquares = labyrinth.getNumberOfZSquares();
+    let xSquares = labyrinth.getNumberOfXSquares();
 
     grid.innerHTML = '';
-    grid.style.gridTemplateColumns = `repeat(${columns}, 10px)`;
-    grid.style.gridTemplateRows = `repeat(${rows}, 10px)`;
+    grid.style.gridTemplateColumns = `repeat(${xSquares}, 10px)`;
+    grid.style.gridTemplateRows = `repeat(${zSquares}, 10px)`;
 
-    for (let i = 0; i < rows; i++) {
-        for (let j = 0; j < columns; j++) {
-            let node = labyrinth.nodes[i][j];
+    for (let zIndex = 0; zIndex < zSquares; zIndex++) {
+        for (let xIndex = 0; xIndex < xSquares; xIndex++) {
+            let node = labyrinth.nodes[zIndex][xIndex];
             let id = node.id;
 
             let cell = document.createElement("div");
             cell.setAttribute("class", "cell");
-            cell.setAttribute("id", id + "");
+            cell.setAttribute("id", "cell-" + xIndex + "-" + zIndex);
 
-            if (i > 0 && node.neighbors.includes(id - columns))
+            if (zIndex > 0 && node.neighbors.includes(id - xSquares))
                 cell.style.borderTop = "hidden";
-            if (i < rows - 1 && node.neighbors.includes(id + columns))
+            if (zIndex < zSquares - 1 && node.neighbors.includes(id + xSquares))
                 cell.style.borderBottom = "hidden";
-            if (j > 0 && node.neighbors.includes(id - 1))
+            if (xIndex > 0 && node.neighbors.includes(id - 1))
                 cell.style.borderLeft = "hidden";
-            if (j < columns - 1 && node.neighbors.includes(id + 1))
+            if (xIndex < xSquares - 1 && node.neighbors.includes(id + 1))
                 cell.style.borderRight = "hidden";
-            if (labyrinth.hasGem(i, j)) {
+            if (labyrinth.hasGem(xIndex, zIndex)) {
                 cell.style.backgroundImage = "radial-gradient(circle closest-side, red 0%, red 50%, transparent 50%, transparent 100%)";
                 cell.style.backgroundPosition = "center center";
             }
@@ -319,7 +306,16 @@ function updateSmallLabyrinth(labyrinth) {
     }
 }
 
-function updateScore(increment){
+function updateSmallLabyrinth(labyrinth, xIndex, zIndex) {
+
+    let cell = document.getElementById("cell-" + xIndex + "-" + zIndex);
+
+    if (!labyrinth.hasGem(xIndex, zIndex)) {
+        cell.style.backgroundImage = "";
+    }
+}
+
+function updateScore() {
     document.getElementById("score-number").innerText = score;
 }
 

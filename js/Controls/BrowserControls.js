@@ -85,6 +85,6 @@ function StartScreensaver() {
 
 function StartMovement(){
     FindEscape(labyrinthMovement);
-    UpdateCanvasSize();
-    DrawScene();
+    // UpdateCanvasSize();
+    // DrawScene();
 }

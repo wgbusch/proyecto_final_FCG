@@ -177,9 +177,7 @@ function getForwardPromise() {
             let speed = UPDATE_SPEED * length / TIME_TO_TRAVEL_ONE_BLOCK;
             let original = transZ;
             let forward = () => {
-                // transZ -= speed;
                 moveZ(-speed);
-                // DrawScene();
                 if (transZ <= original - length) {
                     resolve();
                     return;
@@ -201,8 +199,7 @@ function getLeftPromise() {
             let original = transX;
 
             let left = () => {
-                transX += speed;
-                DrawScene();
+                moveX(speed);
                 if (transX >= original + length) {
                     resolve();
                     return;
@@ -210,7 +207,6 @@ function getLeftPromise() {
                 setTimeout(left, UPDATE_SPEED);
             }
             left();
-
         });
     };
     return new PathInstruction(leftPromise);
@@ -224,8 +220,7 @@ function getRightPromise() {
             let original = transX;
 
             let right = () => {
-                transX -= speed;
-                DrawScene();
+                moveX(-speed);
                 if (transX <= original - length) {
                     resolve();
                     return;
@@ -247,8 +242,6 @@ function getBackwardPromise() {
 
             let backwards = () => {
                 moveZ(speed);
-                // transZ += speed;
-                // DrawScene();
                 if (transZ >= original + length) {
                     resolve();
                     return;
@@ -311,10 +304,13 @@ function get90DegreeAntiClockwiseRotationPromise() {
 }
 
 function moveX(change) {
-    let id = calculateIdFromCoordinates(transX, transZ);
+    let [xIndex, zIndex] = labyrinthMovement.calculateIdFromCoordinates(transX, transZ);
+    let id = labyrinthMovement.getIdFromCoordinates(xIndex, zIndex);
+
     transX += change;
     score += Number.parseInt(labyrinthMovement.consumeGemIfAny(id));
     DrawScene();
+    updateSmallLabyrinth(labyrinthMovement.labyrinth, xIndex, zIndex);
 }
 
 function moveY(change) {
@@ -325,14 +321,11 @@ function moveY(change) {
 }
 
 function moveZ(change) {
-    let id = calculateIdFromCoordinates(transX, transZ);
+    let [xIndex, zIndex] = labyrinthMovement.calculateIdFromCoordinates(transX, transZ);
+    let id = labyrinthMovement.getIdFromCoordinates(xIndex, zIndex);
+
     transZ += change;
     score += Number.parseInt(labyrinthMovement.consumeGemIfAny(id));
     DrawScene();
-}
-
-function calculateIdFromCoordinates(x, z) {
-    let xIndex = Math.floor((numberOfXSquares / TOTAL_X_LENGTH) * (1 - x) - 1);
-    let zIndex = Math.floor(5 * (z + 1));
-    return [xIndex, zIndex];
+    updateSmallLabyrinth(labyrinthMovement.labyrinth, xIndex, zIndex);
 }
