@@ -14,8 +14,8 @@ class LabyrinthMeshConstructor {
 
     constructor(abstractLabyrinth) {
         this.abstractLabyrinth = abstractLabyrinth;
-        this.zSquares = abstractLabyrinth.getZLength();
-        this.xSquares = abstractLabyrinth.getXLength();
+        this.zSquares = abstractLabyrinth.getNumberOfZSquares();
+        this.xSquares = abstractLabyrinth.getNumberOfXSquares();
         this.height = LABYRINTH_HEIGHT;
         this.wallXLength = TOTAL_X_LENGTH / this.xSquares;
         this.wallZLength = TOTAL_Z_LENGTH / this.zSquares;

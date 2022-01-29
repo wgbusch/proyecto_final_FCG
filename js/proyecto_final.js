@@ -6,8 +6,10 @@ let canvas, gl;         // canvas y contexto WebGL
 let perspectiveMatrix;	// matriz de perspectiva
 let buttonsPressed;
 let labyrinthMovement;
-let xLength;
-let zLength;
+let numberOfXSquares;
+let numberOfZSquares;
+
+let grid;
 
 let start_id;
 let end_id;
@@ -21,6 +23,8 @@ let TOTAL_Z_LENGTH = 2;
 let WALLS_URL_SMALL = "https://i.imgur.com/nKQZ60l.jpg";
 let FLOOR_URL_SMALL = "https://i.imgur.com/xChDZVr.png";
 let CEILING_URL_SMALL = "https://i.imgur.com/ghE9cGA.png";
+
+let score = 0;
 
 window.onload = function () {
     InitWebGL();
@@ -204,6 +208,9 @@ function DrawScene() {
     document.getElementById("transX").innerText = transX + "";
     document.getElementById("transY").innerText = transY + "";
     document.getElementById("transZ").innerText = transZ + "";
+
+    updateScore(score);
+    updateSmallLabyrinth(labyrinthMovement.labyrinth);
 }
 
 // Función que compila los shaders que se le pasan por parámetro (vertex & fragment shaders)
@@ -253,18 +260,39 @@ function WindowResize() {
 }
 
 function GenerateLabyrinth() {
-    let columns = parseInt(document.getElementById("labyrinth-size").value);
-    let rows = columns;
-    let labyrinthGenerator = new LabyrinthGenerator(rows, columns);
+    let numberOfXSquares = parseInt(document.getElementById("labyrinth-size").value);
+    let numberOfZSquares = numberOfXSquares;
+    let labyrinthGenerator = new LabyrinthGenerator(numberOfXSquares, numberOfZSquares);
 
     //draw in right side bar
-    let grid = document.getElementsByClassName("grid").item(0);
-    grid.innerHTML = '';
-    grid.style.gridTemplateColumns = `repeat(${columns}, 10px)`;
-    grid.style.gridTemplateRows = `repeat(${rows}, 10px)`;
+    grid = document.getElementsByClassName("grid").item(0);
 
     let labyrinth = labyrinthGenerator.wilsonAlgorithm();
     labyrinthGenerator.addGems(labyrinth, Proportion.Large);
+
+    numberOfXSquares = labyrinth.getNumberOfXSquares();
+    numberOfZSquares = labyrinth.getNumberOfZSquares();
+    labyrinthDrawer.setAbstractLabyrinth(labyrinth);
+    labyrinthDrawer.setMesh([], [], []);
+
+
+    labyrinthMovement = new LabyrinthMovement(labyrinth);
+
+    start_id = labyrinthMovement.getStartId();
+    end_id = labyrinthMovement.getEndId();
+
+    [transX, transZ] = labyrinthMovement.calculateCenterCoordinates(start_id);
+    transY = CAMERA_HEIGHT;
+}
+
+function updateSmallLabyrinth(labyrinth) {
+
+    let rows = labyrinth.getNumberOfZSquares();
+    let columns = labyrinth.getNumberOfXSquares();
+
+    grid.innerHTML = '';
+    grid.style.gridTemplateColumns = `repeat(${columns}, 10px)`;
+    grid.style.gridTemplateRows = `repeat(${rows}, 10px)`;
 
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < columns; j++) {
@@ -283,26 +311,17 @@ function GenerateLabyrinth() {
                 cell.style.borderLeft = "hidden";
             if (j < columns - 1 && node.neighbors.includes(id + 1))
                 cell.style.borderRight = "hidden";
-            if (labyrinth.gems.includes(labyrinth.getIdFromCoordinates(i,j))) {
+            if (labyrinth.hasGem(i, j)) {
                 cell.style.backgroundImage = "radial-gradient(circle closest-side, red 0%, red 50%, transparent 50%, transparent 100%)";
                 cell.style.backgroundPosition = "center center";
             }
             grid.appendChild(cell)
         }
     }
-    xLength = labyrinth.xLength;
-    zLength = labyrinth.zLength;
-    labyrinthDrawer.setAbstractLabyrinth(labyrinth);
-    labyrinthDrawer.setMesh([], [], []);
+}
 
-
-    labyrinthMovement = new LabyrinthMovement(labyrinth);
-
-    start_id = labyrinthMovement.getStartId();
-    end_id = labyrinthMovement.getEndId();
-
-    [transX, transZ] = labyrinthMovement.calculateCenterCoordinates(start_id);
-    transY = CAMERA_HEIGHT;
+function updateScore(increment){
+    document.getElementById("score-number").innerText = score;
 }
 
 function configureUIScoreText() {

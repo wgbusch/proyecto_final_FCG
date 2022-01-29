@@ -6,21 +6,21 @@ class Node {
         this.id = id;
         this.neighbors = [];
     }
-
-
 }
 
 class Graph {
-    xLength;
-    zLength;
+    numberOfXSquares;
+    numberOfZSquares;
     nodes;
     size = 0;
-    gems = [];
+    gems;
+    GEM_SCORE = 10;
 
-    constructor(xLength, zLength) {
-        this.xLength = zLength;
-        this.zLength = xLength;
+    constructor(numberOfXSquares, numberOfZSquares) {
+        this.numberOfXSquares = numberOfXSquares;
+        this.numberOfZSquares = numberOfZSquares;
         this.nodes = [];
+        this.gems = new Set();
     }
 
     insertNode(id) {
@@ -38,11 +38,11 @@ class Graph {
     }
 
     row(id) {
-        return Math.floor(id / this.xLength);
+        return Math.floor(id / this.numberOfXSquares);
     }
 
     column(id) {
-        return id % this.xLength;
+        return id % this.numberOfXSquares;
     }
 
     has(id) {
@@ -66,12 +66,12 @@ class Graph {
         this.nodes[this.row(utsNode)][this.column(utsNode)].neighbors.push(randomWalk[randomWalk.length - 2])
     }
 
-    getZLength() {
-        return this.zLength;
+    getNumberOfZSquares() {
+        return this.numberOfZSquares;
     }
 
-    getXLength() {
-        return this.xLength;
+    getNumberOfXSquares() {
+        return this.numberOfXSquares;
     }
 
     getCoordinates(id) {
@@ -87,7 +87,7 @@ class Graph {
     }
 
     getIdOfMovingOneStepInSouthDirection(id) {
-        return id + this.xLength;
+        return id + this.numberOfXSquares;
     }
 
     getIdOfMovingOneStepInEastDirection(id) {
@@ -95,7 +95,7 @@ class Graph {
     }
 
     getIdOfMovingOneStepInNorthDirection(id) {
-        return id - this.xLength;
+        return id - this.numberOfXSquares;
     }
 
     getIdOfMovingOneStepInWestDirection(id) {
@@ -109,10 +109,22 @@ class Graph {
     }
 
     addGem(id) {
-        this.gems.push(id);
+        this.gems.add(id);
     }
 
     getIdFromCoordinates(xIndex, zIndex) {
-        return xIndex * this.getZLength() + zIndex;
+        return xIndex * this.getNumberOfZSquares() + zIndex;
+    }
+
+    consumeGemIfAny(id) {
+        if (this.gems.has(id)) {
+            this.gems.delete(id);
+            return this.GEM_SCORE;
+        }
+        return 0;
+    }
+
+    hasGem(i,j){
+        return this.gems.has(this.getIdFromCoordinates(i, j));
     }
 }

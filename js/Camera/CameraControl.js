@@ -173,11 +173,10 @@ class PathInstruction {
 function getForwardPromise() {
     let forwardPromise = () => {
         return new Promise((resolve, reject) => {
-            let length = 2 / zLength;
+            let length = TOTAL_Z_LENGTH / numberOfZSquares;
             let speed = UPDATE_SPEED * length / TIME_TO_TRAVEL_ONE_BLOCK;
             let original = transZ;
             let forward = () => {
-                console.log("forward first!!");
                 transZ -= speed;
                 DrawScene();
                 if (transZ <= original - length) {
@@ -196,7 +195,7 @@ function getLeftPromise() {
     let leftPromise = () => {
         return new Promise((resolve, reject) => {
 
-            let length = 2 / xLength;
+            let length = 2 / numberOfXSquares;
             let speed = UPDATE_SPEED * length / TIME_TO_TRAVEL_ONE_BLOCK;
             let original = transX;
 
@@ -219,7 +218,7 @@ function getLeftPromise() {
 function getRightPromise() {
     let rightPromise = () => {
         return new Promise((resolve, reject) => {
-            let length = 2 / xLength;
+            let length = 2 / numberOfXSquares;
             let speed = UPDATE_SPEED * length / TIME_TO_TRAVEL_ONE_BLOCK;
             let original = transX;
 
@@ -241,7 +240,7 @@ function getRightPromise() {
 function getBackwardPromise() {
     let backwardPromise = () => {
         return new Promise((resolve, reject) => {
-            let length = 2 / zLength;
+            let length = 2 / numberOfZSquares;
             let speed = UPDATE_SPEED * length / TIME_TO_TRAVEL_ONE_BLOCK;
             let original = transZ;
 
@@ -310,14 +309,14 @@ function get90DegreeAntiClockwiseRotationPromise() {
 }
 
 class LabyrinthMovement {
-    zLength;
-    xLength;
+    numberOfZSquares;
+    numberOfXSquares;
     labyrinth;
 
     constructor(labyrinth) {
         this.labyrinth = labyrinth;
-        this.zLength = labyrinth.getZLength();
-        this.xLength = labyrinth.getXLength();
+        this.numberOfZSquares = labyrinth.getNumberOfZSquares();
+        this.numberOfXSquares = labyrinth.getNumberOfXSquares();
     }
 
     calculateRelativeDirection(startX, startZ, nextX, nextZ) {
@@ -358,8 +357,8 @@ class LabyrinthMovement {
 
     calculateCenterCoordinates(id) {
         let [xIndex, zIndex] = this.labyrinth.getCoordinates(id);
-        return [(1 / this.xLength) * (2 * xIndex - 1) + 1,
-                (1 / this.zLength) * (2 * zIndex + 1) - 1];
+        return [(1 / this.numberOfXSquares) * (2 * xIndex - 1) + 1,
+                (1 / this.numberOfZSquares) * (2 * zIndex + 1) - 1];
     }
 
     getNextIdBasedOnRightSideAlgorithm(id, direction) {
@@ -379,15 +378,15 @@ class LabyrinthMovement {
     }
 
     getStartId() {
-        return this.xLength * (this.zLength - 1);
+        return this.numberOfXSquares * (this.numberOfZSquares - 1);
     }
 
     getEndId() {
-        return this.xLength - 1;
+        return this.numberOfXSquares - 1;
     }
 
     consumeGemIfAny(id){
-        this.labyrinth.consumeGemIfAny
+        return this.labyrinth.consumeGemIfAny(id);
     }
 
 }

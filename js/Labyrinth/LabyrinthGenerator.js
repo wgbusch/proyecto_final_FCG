@@ -1,18 +1,18 @@
 class LabyrinthGenerator {
-    zLength;
-    xLength;
+    numberOfZSquares;
+    numberOfXSquares;
 
-    constructor(zLength, xLength) {
-        this.zLength = zLength;
-        this.xLength = xLength;
+    constructor(numberOfXSquares, numberOfZSquares) {
+        this.numberOfZSquares = numberOfZSquares;
+        this.numberOfXSquares = numberOfXSquares;
     }
 
     wilsonAlgorithm() {
-        let xLength = this.xLength;
-        let zLength = this.zLength;
-        let uniform_spanning_tree = new Graph(xLength, zLength);
-        uniform_spanning_tree.insertNode(this.random(zLength * xLength));
-        while (uniform_spanning_tree.size < zLength * xLength) {
+        let numberOfXSquares = this.numberOfXSquares;
+        let numberOfZSquares = this.numberOfZSquares;
+        let uniform_spanning_tree = new Graph(numberOfXSquares, numberOfZSquares);
+        uniform_spanning_tree.insertNode(this.random(numberOfZSquares * numberOfXSquares));
+        while (uniform_spanning_tree.size < numberOfZSquares * numberOfXSquares) {
             let randomWalk = this.generateRandomWalk(uniform_spanning_tree);
             uniform_spanning_tree.insertWalk(randomWalk);
         }
@@ -26,8 +26,8 @@ class LabyrinthGenerator {
     generateRandomWalk(uts) {
 
         let pickNodeNotInUts = (uts) => {
-            let zIndex = this.zLength;
-            let xIndex = this.xLength;
+            let zIndex = this.numberOfZSquares;
+            let xIndex = this.numberOfXSquares;
             let randomNumber = this.random(zIndex * xIndex);
             while (uts.has(randomNumber)) {
                 randomNumber = this.random(zIndex * xIndex);
@@ -54,8 +54,8 @@ class LabyrinthGenerator {
         let previousNode = -1;
         let currentNode = pickNodeNotInUts(uts);
         randomWalk.push(currentNode);
-        let zIndex = this.zLength;
-        let xIndex = this.xLength;
+        let zIndex = this.numberOfZSquares;
+        let xIndex = this.numberOfXSquares;
         while (!uts.has(currentNode)) {
             let possibleMovementDirections = [];
 

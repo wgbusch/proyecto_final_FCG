@@ -17,13 +17,14 @@ function FindEscapeRecursion(labyrinthMovement, start_id, start_direction, next_
     let callback = () => {
         start_id = next_id;
         next_id = labyrinthMovement.getNextIdBasedOnRightSideAlgorithm(start_id, nextDirection);
+
         if (start_id !== end_id) {
             FindEscapeRecursion(labyrinthMovement, start_id, nextDirection, next_id);
         }
     }
     executeListOfInstructions(movementInstructions, callback);
-    labyrinthMovement.consumeGemIfAny(next_id);
-}
+    score += Number.parseInt(labyrinthMovement.consumeGemIfAny(start_id));
+ }
 
 function FindEscape(labyrinthMovement) {
 

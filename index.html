@@ -26,7 +26,10 @@
     <body onresize="WindowResize()">
     <!-- canvas (WebGL)-->
     <div id="canvas-div">
-        <div id="score-ui" ><span>SCORE: </span><span id="score-number">0</span></div>
+        <div id="score-ui">
+            <span>SCORE: </span>
+            <span id="score-number"></span>
+        </div>
         <canvas id="canvas" tabindex='1'></canvas>
     </div>
     <div id="controls-div" style="position: absolute">
@@ -40,7 +43,8 @@
                 <pre id="file-content-ceiling"></pre>
                 <div class="control">Textura Ceiling:<br/><input id="texture-ceiling" type="file"
                                                                  onchange="LoadTextureCeilingFromFile(this)"
-                                                                 accept="image/*"/></div>
+                                                                 accept="image/*"/>
+                </div>
             </div>
             <div class="control-group">
                 <img hidden id="texture-img-ceiling" height="50px" width="50px"/>
@@ -49,7 +53,8 @@
                 <pre id="file-content"></pre>
                 <div class="control">Textura Walls:<br/><input id="texture-walls" type="file"
                                                                onchange="LoadTextureWallsFromFile(this)"
-                                                               accept="image/*"/></div>
+                                                               accept="image/*"/>
+                </div>
             </div>
             <div class="control-group">
                 <img hidden id="texture-img-walls" height="50px" width="50px"/>
@@ -58,15 +63,19 @@
                 <pre id="file-content-floor"></pre>
                 <div class="control">Textura Floor:<br/><input id="texture-floor" type="file"
                                                                onchange="LoadTextureFloorFromFile(this)"
-                                                               accept="image/*"/></div>
+                                                               accept="image/*"/>
+                </div>
             </div>
             <div class="control-group">
                 <img hidden id="texture-img-floor" height="50px" width="50px"/>
             </div>
             <div class="control-group">
                 <div class="control">Generate Labyrinth:<br/><input id="labyrinth" type="submit"
-                                                                   onclick="StartScreensaver(this)"/></div>
-                <div class="control"><input id="labyrinth-size" name="labyrinth-size" type="number" value="10"/></div>
+                                                                    onclick="StartScreensaver(this)"/>
+                </div>
+                <div class="control">
+                    <input id="labyrinth-size" name="labyrinth-size" type="number" value="10"/>
+                </div>
                 <div class="container">
                     <div class="grid"></div>
                 </div>
@@ -93,7 +102,7 @@
                     <p id="zCoord"></p></div>
             </div>
             <div class="control">Find exit route:<br/><input id="find-exit-route" type="submit"
-                                                               onclick="StartMovement(this)"/></div>
+                                                             onclick="StartMovement(this)"/></div>
         </div>
     </div>
     </body>
