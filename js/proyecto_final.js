@@ -260,9 +260,8 @@ function WindowResize() {
 }
 
 function GenerateLabyrinth() {
-    let numberOfXSquares = parseInt(document.getElementById("labyrinth-size").value);
-    let numberOfZSquares = numberOfXSquares;
-    let labyrinthGenerator = new LabyrinthGenerator(numberOfXSquares, numberOfZSquares);
+    let labyrinthSize = parseInt(document.getElementById("labyrinth-size").value);
+    let labyrinthGenerator = new LabyrinthGenerator(labyrinthSize, labyrinthSize);
 
     //draw in right side bar
     grid = document.getElementsByClassName("grid").item(0);

@@ -173,12 +173,13 @@ class PathInstruction {
 function getForwardPromise() {
     let forwardPromise = () => {
         return new Promise((resolve, reject) => {
-            let length = TOTAL_Z_LENGTH / numberOfZSquares;
+            let length = 2 / numberOfZSquares;
             let speed = UPDATE_SPEED * length / TIME_TO_TRAVEL_ONE_BLOCK;
             let original = transZ;
             let forward = () => {
-                transZ -= speed;
-                DrawScene();
+                // transZ -= speed;
+                moveZ(-speed);
+                // DrawScene();
                 if (transZ <= original - length) {
                     resolve();
                     return;
@@ -245,8 +246,9 @@ function getBackwardPromise() {
             let original = transZ;
 
             let backwards = () => {
-                transZ += speed;
-                DrawScene();
+                moveZ(speed);
+                // transZ += speed;
+                // DrawScene();
                 if (transZ >= original + length) {
                     resolve();
                     return;
@@ -308,87 +310,29 @@ function get90DegreeAntiClockwiseRotationPromise() {
     return new PathInstruction(counterClockwisePromise);
 }
 
-class LabyrinthMovement {
-    numberOfZSquares;
-    numberOfXSquares;
-    labyrinth;
-
-    constructor(labyrinth) {
-        this.labyrinth = labyrinth;
-        this.numberOfZSquares = labyrinth.getNumberOfZSquares();
-        this.numberOfXSquares = labyrinth.getNumberOfXSquares();
-    }
-
-    calculateRelativeDirection(startX, startZ, nextX, nextZ) {
-        if (startX === nextX) {
-            if (startZ + 1 === nextZ) {
-                return new South();
-            }
-            if (startZ - 1 === nextZ) {
-                return new North();
-            }
-        } else if (startZ === nextZ) {
-            if (startX + 1 === nextX) {
-                return new East();
-            }
-            if (startX - 1 === nextX) {
-                return new West();
-            }
-        } else {
-            console.log("error in path");
-        }
-    }
-
-    getCoordinates(id) {
-        return this.labyrinth.getCoordinates(id);
-    }
-
-    getMovementInstructionsAndNextDirection(starPoint, startDirection, endPoint) {
-        let instructions = [];
-        let [startX, startZ] = this.getCoordinates(starPoint);
-        let [nextX, nextZ] = this.getCoordinates(endPoint);
-
-        let nextDirection = this.calculateRelativeDirection(startX, startZ, nextX, nextZ);
-        startDirection.rotateToNextDirection(nextDirection, instructions);
-
-        nextDirection.move(instructions);
-        return [instructions, nextDirection];
-    }
-
-    calculateCenterCoordinates(id) {
-        let [xIndex, zIndex] = this.labyrinth.getCoordinates(id);
-        return [(1 / this.numberOfXSquares) * (2 * xIndex - 1) + 1,
-                (1 / this.numberOfZSquares) * (2 * zIndex + 1) - 1];
-    }
-
-    getNextIdBasedOnRightSideAlgorithm(id, direction) {
-        let rightSide = direction.rightSide();
-        if (this.labyrinth.areNeighbors(id, this.labyrinth.getIdOfMovingOneStepInThatDirection(id, rightSide))) {
-            return this.labyrinth.getIdOfMovingOneStepInThatDirection(id, rightSide);
-
-        }
-        if (this.labyrinth.areNeighbors(id, this.labyrinth.getIdOfMovingOneStepInThatDirection(id, direction))) {
-            return this.labyrinth.getIdOfMovingOneStepInThatDirection(id, direction);
-        }
-
-        if (this.labyrinth.areNeighbors(id, this.labyrinth.getIdOfMovingOneStepInThatDirection(id, rightSide.opposite()))) {
-            return this.labyrinth.getIdOfMovingOneStepInThatDirection(id, rightSide.opposite());
-        }
-        return this.labyrinth.getIdOfMovingOneStepInThatDirection(id, direction.opposite());
-    }
-
-    getStartId() {
-        return this.numberOfXSquares * (this.numberOfZSquares - 1);
-    }
-
-    getEndId() {
-        return this.numberOfXSquares - 1;
-    }
-
-    consumeGemIfAny(id){
-        return this.labyrinth.consumeGemIfAny(id);
-    }
-
+function moveX(change) {
+    let id = calculateIdFromCoordinates(transX, transZ);
+    transX += change;
+    score += Number.parseInt(labyrinthMovement.consumeGemIfAny(id));
+    DrawScene();
 }
 
+function moveY(change) {
+    let id = 0;
+    transY += change;
+    score += Number.parseInt(labyrinthMovement.consumeGemIfAny(id));
+    DrawScene();
+}
 
+function moveZ(change) {
+    let id = calculateIdFromCoordinates(transX, transZ);
+    transZ += change;
+    score += Number.parseInt(labyrinthMovement.consumeGemIfAny(id));
+    DrawScene();
+}
+
+function calculateIdFromCoordinates(x, z) {
+    let xIndex = Math.floor((numberOfXSquares / TOTAL_X_LENGTH) * (1 - x) - 1);
+    let zIndex = Math.floor(5 * (z + 1));
+    return [xIndex, zIndex];
+}
