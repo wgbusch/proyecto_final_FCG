@@ -310,6 +310,7 @@ function CreateSmallLabyrinth() {
 }
 
 function updateSmallLabyrinth(labyrinth, xIndex, zIndex) {
+    if (xIndex < 0 || zIndex < 0) return;
 
     let cell = document.getElementById("cell-" + xIndex + "-" + zIndex);
 
