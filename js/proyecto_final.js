@@ -2,6 +2,7 @@ let labyrinthDrawer;         // clase para contener el comportamiento de la mall
 let floorDrawer;
 let floorDrawer2;
 let ceilingDrawer;
+let gemsDrawer;
 let canvas, gl;         // canvas y contexto WebGL
 let perspectiveMatrix;	// matriz de perspectiva
 let buttonsPressed;
@@ -130,6 +131,7 @@ function InitWebGL() {
     ceilingDrawer = new CeilingDrawer();
     floorDrawer = new FloorDrawer();
     floorDrawer2 = new FloorDrawer2();
+    gemsDrawer = new GemsDrawer();
 
     // Setear el tamaño del viewport
     UpdateCanvasSize();
@@ -189,6 +191,7 @@ function DrawScene() {
     labyrinthDrawer.draw(mvp, mv);
     ceilingDrawer.draw(mvp, mv);
     floorDrawer.draw(mvp, mv);
+    gemsDrawer.draw(mvp);
 
     configureUIScoreText();
 

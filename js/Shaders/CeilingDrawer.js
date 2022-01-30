@@ -10,7 +10,7 @@ class CeilingDrawer {
 
         // 2. Obtenemos los IDs de las variables uniformes en los shaders
         this.mvp = gl.getUniformLocation(this.prog, 'mvp');
-        this.mv = gl.getUniformLocation(this.prog, 'mv');
+
         this.texGPU = gl.getUniformLocation(this.prog, 'texGPU');
 
         // 3. Obtenemos los IDs de los atributos de los vértices en los shaders
@@ -50,15 +50,12 @@ class CeilingDrawer {
         gl.useProgram(this.prog);
     }
 
-    draw(mvp, mv) {
+    draw(mvp) {
         // 1. Seleccionamos el shader
         gl.useProgram(this.prog);
 
         // 2. Setear matriz de transformacion
         gl.uniformMatrix4fv(this.mvp, false, mvp);
-
-        // 2.  Setear matrix mv
-        gl.uniformMatrix4fv(this.mv, false, mv);
 
         gl.useProgram(this.prog);
 
