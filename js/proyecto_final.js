@@ -7,6 +7,8 @@ let canvas, gl;         // canvas y contexto WebGL
 let perspectiveMatrix;	// matriz de perspectiva
 let buttonsPressed;
 let labyrinthMovement;
+let gemsManager;
+
 let numberOfXSquares;
 let numberOfZSquares;
 
@@ -26,6 +28,7 @@ let FLOOR_URL_SMALL = "https://i.imgur.com/xChDZVr.png";
 let CEILING_URL_SMALL = "https://i.imgur.com/ghE9cGA.png";
 
 let score = 0;
+
 
 window.onload = function () {
     InitWebGL();
@@ -104,6 +107,7 @@ window.onload = function () {
     LoadTextureFloor();
     LoadTextureCeiling();
     GenerateLabyrinth();
+    AddGems();
     CreateSmallLabyrinth();
     UpdateCanvasSize();
     DrawScene();
@@ -191,7 +195,8 @@ function DrawScene() {
     labyrinthDrawer.draw(mvp, mv);
     ceilingDrawer.draw(mvp, mv);
     floorDrawer.draw(mvp, mv);
-    gemsDrawer.draw(mvp);
+
+    gemsDrawer.draw(mvp, gemsManager.getGemsIndexes());
 
     configureUIScoreText();
 
@@ -256,7 +261,7 @@ function GenerateLabyrinth() {
     grid = document.getElementsByClassName("grid").item(0);
 
     let labyrinth = labyrinthGenerator.wilsonAlgorithm();
-    labyrinthGenerator.addGems(labyrinth, Proportion.Large);
+    // labyrinthGenerator.addGems(labyrinth, Proportion.Large);
 
     numberOfXSquares = labyrinth.getNumberOfXSquares();
     numberOfZSquares = labyrinth.getNumberOfZSquares();
@@ -300,7 +305,7 @@ function CreateSmallLabyrinth() {
                 cell.style.borderLeft = "hidden";
             if (xIndex < xSquares - 1 && node.neighbors.includes(id + 1))
                 cell.style.borderRight = "hidden";
-            if (labyrinth.hasGem(xIndex, zIndex)) {
+            if (gemsManager.hasGem(id)) {
                 cell.style.backgroundImage = "radial-gradient(circle closest-side, red 0%, red 50%, transparent 50%, transparent 100%)";
                 cell.style.backgroundPosition = "center center";
             }
@@ -332,4 +337,9 @@ function configureUIScoreText() {
     scoreDiv.style.color = "black";
     scoreDiv.style.fontWeight = "900";
     scoreDiv.style.fontSize = "larger";
+}
+
+function AddGems() {
+    gemsManager = new GemManager(numberOfXSquares, numberOfZSquares);
+    gemsManager.generateGems(Proportion.Large);
 }

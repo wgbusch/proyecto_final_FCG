@@ -75,11 +75,7 @@ class LabyrinthMovement {
         return this.numberOfXSquares - 1;
     }
 
-    consumeGemIfAny(id) {
-        return this.labyrinth.consumeGemIfAny(id);
-    }
-
-    calculateIdFromCoordinates(x, z) {
+    calculateIndexesFromCoordinates(x, z) {
         let xIndex = Math.floor((numberOfXSquares / TOTAL_X_LENGTH) * (1 - x));
         let zIndex = Math.floor((numberOfZSquares / TOTAL_Z_LENGTH) * (z + 1));
         return [xIndex, zIndex];

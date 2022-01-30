@@ -26,11 +26,11 @@ class LabyrinthGenerator {
     generateRandomWalk(uts) {
 
         let pickNodeNotInUts = (uts) => {
-            let zIndex = this.numberOfZSquares;
-            let xIndex = this.numberOfXSquares;
-            let randomNumber = this.random(zIndex * xIndex);
+            let numberOfZSquares = this.numberOfZSquares;
+            let numberOfXSquares = this.numberOfXSquares;
+            let randomNumber = this.random(numberOfZSquares * numberOfXSquares);
             while (uts.has(randomNumber)) {
-                randomNumber = this.random(zIndex * xIndex);
+                randomNumber = this.random(numberOfZSquares * numberOfXSquares);
             }
             return randomNumber;
         }
@@ -54,20 +54,20 @@ class LabyrinthGenerator {
         let previousNode = -1;
         let currentNode = pickNodeNotInUts(uts);
         randomWalk.push(currentNode);
-        let zIndex = this.numberOfZSquares;
-        let xIndex = this.numberOfXSquares;
+        let numberOfZSquares = this.numberOfZSquares;
+        let numberOfXSquares = this.numberOfXSquares;
         while (!uts.has(currentNode)) {
             let possibleMovementDirections = [];
 
-            let row = uts.row(currentNode);
-            let column = uts.column(currentNode);
-            if (row > 0 && currentNode - xIndex !== previousNode)
-                possibleMovementDirections.push(currentNode - xIndex);
-            if (row < zIndex - 1 && currentNode + xIndex !== previousNode)
-                possibleMovementDirections.push(currentNode + xIndex)
+            let row = uts.zIndex(currentNode);
+            let column = uts.xIndex(currentNode);
+            if (row > 0 && currentNode - numberOfXSquares !== previousNode)
+                possibleMovementDirections.push(currentNode - numberOfXSquares);
+            if (row < numberOfZSquares - 1 && currentNode + numberOfXSquares !== previousNode)
+                possibleMovementDirections.push(currentNode + numberOfXSquares)
             if (column > 0 && currentNode - 1 !== previousNode)
                 possibleMovementDirections.push(currentNode - 1)
-            if (column < xIndex - 1 && currentNode + 1 !== previousNode)
+            if (column < numberOfXSquares - 1 && currentNode + 1 !== previousNode)
                 possibleMovementDirections.push(currentNode + 1)
             let nextNode = possibleMovementDirections[this.random(possibleMovementDirections.length)];
 

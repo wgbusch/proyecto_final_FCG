@@ -34,7 +34,6 @@ class GemsDrawer {
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
 
-
         this.vertPos = this.createMeshOfGemsToDraw(indexesOfGemsToDraw);
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertPos), gl.STATIC_DRAW);
@@ -83,21 +82,34 @@ class GemsDrawer {
 
     createMeshOfGemsToDraw(indexesOfGemsToDraw) {
 
-        let list = [[0, 0], [0, 1], [1, 0], [1, 1]]
         let vertexes = [];
-        for (let i = 0; i < list.length; i++) {
-            let [xIndex, zIndex] = list[i];
+        let result = indexesOfGemsToDraw.next();
+        while (!result.done) {
+            let [xIndex, zIndex] = indexesOfGemsToDraw.value;
             let xTranslation = xIndex * (TOTAL_X_LENGTH / numberOfXSquares);
             let yTranslation = 0;
             let zTranslation = zIndex * (TOTAL_Z_LENGTH / numberOfZSquares);
-
-            vertexes = vertexes.concat([-0.96 + xTranslation, 0.03 + yTranslation, -0.81 + zTranslation,
+            let translatedGem =
+                [ -0.96 + xTranslation, 0.03 + yTranslation, -0.81 + zTranslation,
                 -0.83 + xTranslation, 0.03 + yTranslation, -0.81 + zTranslation,
-                -0.83 + xTranslation, 0.12 + yTranslation, -0.81 + zTranslation]);
-        }
-        return vertexes;
-        // let xIndex = 1; let zIndex = 1;
+                -0.83 + xTranslation, 0.12 + yTranslation, -0.81 + zTranslation]
+            vertexes = vertexes.concat(translatedGem);
 
+            result = indexesOfGemsToDraw.next();
+        }
+
+
+        // for (let i = 0; i < indexesOfGemsToDraw.length; i++) {
+        //     let [xIndex, zIndex] = indexesOfGemsToDraw[i];
+        //     let xTranslation = xIndex * (TOTAL_X_LENGTH / numberOfXSquares);
+        //     let yTranslation = 0;
+        //     let zTranslation = zIndex * (TOTAL_Z_LENGTH / numberOfZSquares);
+        //     let translatedGem = [ -0.96 + xTranslation, 0.03 + yTranslation, -0.81 + zTranslation,
+        //                     -0.83 + xTranslation, 0.03 + yTranslation, -0.81 + zTranslation,
+        //                     -0.83 + xTranslation, 0.12 + yTranslation, -0.81 + zTranslation]
+        //     vertexes = vertexes.concat(translatedGem);
+        // }
+        return vertexes;
     }
 
     gemsVS = `

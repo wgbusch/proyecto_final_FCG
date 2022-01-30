@@ -14,6 +14,7 @@ class Graph {
     nodes;
     size = 0;
     gems;
+    gems2;
     GEM_SCORE = 10;
 
     constructor(numberOfXSquares, numberOfZSquares) {
@@ -21,11 +22,12 @@ class Graph {
         this.numberOfZSquares = numberOfZSquares;
         this.nodes = [];
         this.gems = new Set();
+        this.gems2 = new Set();
     }
 
     insertNode(id) {
-        let rowNum = this.row(id);
-        let column = this.column(id);
+        let rowNum = this.zIndex(id);
+        let column = this.xIndex(id);
         if (!this.nodes[rowNum])
             this.nodes[rowNum] = []
         if (!this.nodes[rowNum][column]) {
@@ -37,24 +39,17 @@ class Graph {
         }
     }
 
-    row(id) {
-        return Math.floor(id / this.numberOfXSquares);
-    }
-
-    column(id) {
-        return id % this.numberOfXSquares;
-    }
 
     has(id) {
-        return this.nodes[this.row(id)] && this.nodes[this.row(id)][this.column(id)] ? true : false;
+        return this.nodes[this.zIndex(id)] && this.nodes[this.zIndex(id)][this.xIndex(id)] ? true : false;
     }
 
     insertWalk(randomWalk) {
         for (let i = 0; i < randomWalk.length - 1; i++) {
             let currentNode = randomWalk[i];
             let nextNode = randomWalk[i + 1];
-            let row = this.row(currentNode);
-            let column = this.column(currentNode);
+            let row = this.zIndex(currentNode);
+            let column = this.xIndex(currentNode);
             this.insertNode(currentNode);
             this.nodes[row][column].neighbors.push(nextNode);
             if (i > 0) {
@@ -63,7 +58,7 @@ class Graph {
             }
         }
         let utsNode = randomWalk[randomWalk.length - 1];
-        this.nodes[this.row(utsNode)][this.column(utsNode)].neighbors.push(randomWalk[randomWalk.length - 2])
+        this.nodes[this.zIndex(utsNode)][this.xIndex(utsNode)].neighbors.push(randomWalk[randomWalk.length - 2])
     }
 
     getNumberOfZSquares() {
@@ -74,8 +69,16 @@ class Graph {
         return this.numberOfXSquares;
     }
 
+    zIndex(id) {
+        return Math.floor(id / this.numberOfXSquares);
+    }
+
+    xIndex(id) {
+        return id % this.numberOfXSquares;
+    }
+
     getCoordinates(id) {
-        return [this.column(id), this.row(id)];
+        return [this.xIndex(id), this.zIndex(id)];
     }
 
     areNeighbors(id1, id2) {
@@ -104,27 +107,28 @@ class Graph {
 
     getNode(id) {
         if (this.has(id)) {
-            return this.nodes[this.row(id)][this.column(id)];
+            return this.nodes[this.zIndex(id)][this.xIndex(id)];
         }
     }
 
-    addGem(id) {
-        this.gems.add(id);
-    }
+    // addGem(id) {
+    //     this.gems.add(id);
+    //     this.gems2.add([this.xIndex(id), this.zIndex(id)])
+    // }
 
     getIdFromCoordinates(xIndex, zIndex) {
         return zIndex * this.getNumberOfZSquares() + xIndex;
     }
 
-    consumeGemIfAny(id) {
-        if (this.gems.has(id)) {
-            this.gems.delete(id);
-            return this.GEM_SCORE;
-        }
-        return 0;
-    }
-
-    hasGem(xIndex, zIndex) {
-        return this.gems.has(this.getIdFromCoordinates(xIndex, zIndex));
-    }
+    // consumeGemIfAny(id) {
+    //     if (this.gems.has(id)) {
+    //         this.gems.delete(id);
+    //         return this.GEM_SCORE;
+    //     }
+    //     return 0;
+    // }
+    //
+    // hasGem(xIndex, zIndex) {
+    //     return this.gems.has(this.getIdFromCoordinates(xIndex, zIndex));
+    // }
 }

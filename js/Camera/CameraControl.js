@@ -304,28 +304,44 @@ function get90DegreeAntiClockwiseRotationPromise() {
 }
 
 function moveX(change) {
-    let [xIndex, zIndex] = labyrinthMovement.calculateIdFromCoordinates(transX, transZ);
-    let id = labyrinthMovement.getIdFromCoordinates(xIndex, zIndex);
-
-    transX += change;
-    score += Number.parseInt(labyrinthMovement.consumeGemIfAny(id));
-    DrawScene();
-    updateSmallLabyrinth(labyrinthMovement.labyrinth, xIndex, zIndex);
+    moveCoordinate(Coordinate.X, change);
 }
 
 function moveY(change) {
     let id = 0;
     transY += change;
-    score += Number.parseInt(labyrinthMovement.consumeGemIfAny(id));
+    score += Number.parseInt(gemsManager.consumeGemIfAny(id));
     DrawScene();
 }
 
 function moveZ(change) {
-    let [xIndex, zIndex] = labyrinthMovement.calculateIdFromCoordinates(transX, transZ);
+    moveCoordinate(Coordinate.Z, change);
+}
+
+function moveCoordinate(coordinate, change) {
+    let [xIndex, zIndex] = labyrinthMovement.calculateIndexesFromCoordinates(transX, transZ);
     let id = labyrinthMovement.getIdFromCoordinates(xIndex, zIndex);
 
-    transZ += change;
-    score += Number.parseInt(labyrinthMovement.consumeGemIfAny(id));
+    switch(coordinate){
+        case(Coordinate.X):
+            transX += change;
+            break;
+        case(Coordinate.Y):
+            transY += change;
+            break;
+        case(Coordinate.Z):
+            transZ += change;
+            break;
+        default:
+            break;
+    }
+    score += Number.parseInt(gemsManager.consumeGemIfAny(id));
     DrawScene();
     updateSmallLabyrinth(labyrinthMovement.labyrinth, xIndex, zIndex);
+}
+
+class Coordinate {
+    static X = "x";
+    static Y = "y";
+    static Z = "z";
 }
