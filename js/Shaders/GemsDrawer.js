@@ -85,30 +85,23 @@ class GemsDrawer {
         let vertexes = [];
         let result = indexesOfGemsToDraw.next();
         while (!result.done) {
-            let [xIndex, zIndex] = indexesOfGemsToDraw.value;
-            let xTranslation = xIndex * (TOTAL_X_LENGTH / numberOfXSquares);
-            let yTranslation = 0;
-            let zTranslation = zIndex * (TOTAL_Z_LENGTH / numberOfZSquares);
+            let [xIndex, zIndex] = result.value;
+            let xTranslation = (xIndex + 1 / 2) * (TOTAL_X_LENGTH / numberOfXSquares) - TOTAL_X_LENGTH / 2;
+            let yTranslation = 0.01;
+            let zTranslation = (zIndex + 1 / 2) * (TOTAL_Z_LENGTH / numberOfZSquares) - TOTAL_Z_LENGTH / 2;
+
             let translatedGem =
-                [ -0.96 + xTranslation, 0.03 + yTranslation, -0.81 + zTranslation,
-                -0.83 + xTranslation, 0.03 + yTranslation, -0.81 + zTranslation,
-                -0.83 + xTranslation, 0.12 + yTranslation, -0.81 + zTranslation]
+                [-(TOTAL_X_LENGTH / (4 * numberOfXSquares)) + xTranslation, 0 - yTranslation, 0 - zTranslation,
+                    (TOTAL_X_LENGTH / (4 * numberOfXSquares)) + xTranslation, 0 - yTranslation, 0 - zTranslation,
+                    (TOTAL_X_LENGTH / (4 * numberOfXSquares)) + xTranslation, 0.1 - yTranslation, 0 - zTranslation,
+                    xTranslation, 0 - yTranslation, (TOTAL_X_LENGTH / (4 * numberOfXSquares)) - zTranslation,
+                    xTranslation, 0 - yTranslation, -(TOTAL_X_LENGTH / (4 * numberOfXSquares)) - zTranslation,
+                    xTranslation, 0.1 - yTranslation, -(TOTAL_X_LENGTH / (4 * numberOfXSquares)) - zTranslation]
+
             vertexes = vertexes.concat(translatedGem);
 
             result = indexesOfGemsToDraw.next();
         }
-
-
-        // for (let i = 0; i < indexesOfGemsToDraw.length; i++) {
-        //     let [xIndex, zIndex] = indexesOfGemsToDraw[i];
-        //     let xTranslation = xIndex * (TOTAL_X_LENGTH / numberOfXSquares);
-        //     let yTranslation = 0;
-        //     let zTranslation = zIndex * (TOTAL_Z_LENGTH / numberOfZSquares);
-        //     let translatedGem = [ -0.96 + xTranslation, 0.03 + yTranslation, -0.81 + zTranslation,
-        //                     -0.83 + xTranslation, 0.03 + yTranslation, -0.81 + zTranslation,
-        //                     -0.83 + xTranslation, 0.12 + yTranslation, -0.81 + zTranslation]
-        //     vertexes = vertexes.concat(translatedGem);
-        // }
         return vertexes;
     }
 

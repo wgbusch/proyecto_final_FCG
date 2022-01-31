@@ -12,7 +12,7 @@ class GemManager {
         let numberOfGems = Math.floor(size * proportion / 100);
         for (let i = 0; i < numberOfGems; i++) {
             let id = Math.floor(Math.random() * size);
-            this.gems[id] = this.getCoordinates(id);
+            this.gems.set(id, this.getCoordinates(id));
         }
     }
 

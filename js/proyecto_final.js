@@ -195,7 +195,6 @@ function DrawScene() {
     labyrinthDrawer.draw(mvp, mv);
     ceilingDrawer.draw(mvp, mv);
     floorDrawer.draw(mvp, mv);
-
     gemsDrawer.draw(mvp, gemsManager.getGemsIndexes());
 
     configureUIScoreText();
@@ -261,10 +260,9 @@ function GenerateLabyrinth() {
     grid = document.getElementsByClassName("grid").item(0);
 
     let labyrinth = labyrinthGenerator.wilsonAlgorithm();
-    // labyrinthGenerator.addGems(labyrinth, Proportion.Large);
 
-    numberOfXSquares = labyrinth.getNumberOfXSquares();
-    numberOfZSquares = labyrinth.getNumberOfZSquares();
+    numberOfXSquares = labyrinthSize;
+    numberOfZSquares = labyrinthSize;
     labyrinthDrawer.setAbstractLabyrinth(labyrinth);
     labyrinthDrawer.setMesh([], [], []);
 
@@ -281,29 +279,26 @@ function GenerateLabyrinth() {
 function CreateSmallLabyrinth() {
     let labyrinth = labyrinthMovement.labyrinth;
 
-    let zSquares = labyrinth.getNumberOfZSquares();
-    let xSquares = labyrinth.getNumberOfXSquares();
-
     grid.innerHTML = '';
-    grid.style.gridTemplateColumns = `repeat(${xSquares}, 10px)`;
-    grid.style.gridTemplateRows = `repeat(${zSquares}, 10px)`;
+    grid.style.gridTemplateColumns = `repeat(${numberOfXSquares}, 10px)`;
+    grid.style.gridTemplateRows = `repeat(${numberOfZSquares}, 10px)`;
 
-    for (let zIndex = 0; zIndex < zSquares; zIndex++) {
-        for (let xIndex = 0; xIndex < xSquares; xIndex++) {
+    for (let zIndex = 0; zIndex < numberOfZSquares; zIndex++) {
+        for (let xIndex = 0; xIndex < numberOfXSquares; xIndex++) {
             let node = labyrinth.nodes[zIndex][xIndex];
             let id = node.id;
 
             let cell = document.createElement("div");
             cell.setAttribute("class", "cell");
-            cell.setAttribute("id", "cell-" + xIndex + "-" + zIndex);
+            cell.setAttribute("id", "cell-" + id);
 
-            if (zIndex > 0 && node.neighbors.includes(id - xSquares))
+            if (zIndex > 0 && node.neighbors.includes(id - numberOfXSquares))
                 cell.style.borderTop = "hidden";
-            if (zIndex < zSquares - 1 && node.neighbors.includes(id + xSquares))
+            if (zIndex < numberOfZSquares - 1 && node.neighbors.includes(id + numberOfXSquares))
                 cell.style.borderBottom = "hidden";
             if (xIndex > 0 && node.neighbors.includes(id - 1))
                 cell.style.borderLeft = "hidden";
-            if (xIndex < xSquares - 1 && node.neighbors.includes(id + 1))
+            if (xIndex < numberOfXSquares - 1 && node.neighbors.includes(id + 1))
                 cell.style.borderRight = "hidden";
             if (gemsManager.hasGem(id)) {
                 cell.style.backgroundImage = "radial-gradient(circle closest-side, red 0%, red 50%, transparent 50%, transparent 100%)";
@@ -314,12 +309,11 @@ function CreateSmallLabyrinth() {
     }
 }
 
-function updateSmallLabyrinth(labyrinth, xIndex, zIndex) {
-    if (xIndex < 0 || zIndex < 0) return;
+function updateSmallLabyrinth(labyrinth, id) {
 
-    let cell = document.getElementById("cell-" + xIndex + "-" + zIndex);
+    let cell = document.getElementById("cell-" + id);
 
-    if (!labyrinth.hasGem(xIndex, zIndex)) {
+    if (!gemsManager.hasGem(id)) {
         cell.style.backgroundImage = "";
     }
 }

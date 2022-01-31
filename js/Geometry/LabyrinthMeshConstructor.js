@@ -6,28 +6,24 @@ LABYRINTH_HEIGHT = 0.15;
 class LabyrinthMeshConstructor {
 
     abstractLabyrinth;
-    zSquares;
     height;
-    xSquares;
     wallXLength;
     wallZLength;
 
     constructor(abstractLabyrinth) {
         this.abstractLabyrinth = abstractLabyrinth;
-        this.zSquares = abstractLabyrinth.getNumberOfZSquares();
-        this.xSquares = abstractLabyrinth.getNumberOfXSquares();
         this.height = LABYRINTH_HEIGHT;
-        this.wallXLength = TOTAL_X_LENGTH / this.xSquares;
-        this.wallZLength = TOTAL_Z_LENGTH / this.zSquares;
+        this.wallXLength = TOTAL_X_LENGTH / numberOfXSquares;
+        this.wallZLength = TOTAL_Z_LENGTH / numberOfZSquares;
     }
 
     constructInnerWallsMesh(mesh) {
         let labyrinth = this.abstractLabyrinth;
         let wallsToCreate = [];
-        for (let zIndex = 0; zIndex < this.xSquares - 1; zIndex++) {
+        for (let zIndex = 0; zIndex < numberOfXSquares - 1; zIndex++) {
 
             wallsToCreate[zIndex] = [];
-            for (let xIndex = 0; xIndex < this.zSquares - 1; xIndex++) {
+            for (let xIndex = 0; xIndex < numberOfZSquares - 1; xIndex++) {
                 let node1 = labyrinth.nodes[zIndex][xIndex];
                 let node2 = labyrinth.nodes[zIndex][xIndex + 1];
                 let node3 = labyrinth.nodes[zIndex + 1][xIndex + 1];
@@ -166,7 +162,7 @@ class LabyrinthMeshConstructor {
                                                          WALL_WIDTH);
         }
 
-        if (zIndex < this.xSquares - 1 && xIndex < this.zSquares - 1) {
+        if (zIndex < numberOfXSquares - 1 && xIndex < numberOfZSquares - 1) {
             if (cross.includes("N")) {
                 startingPoint = [xCoord, 0.0, zCoord];
                 wallDirection = [0.0, 0.0, -1.0];
@@ -196,10 +192,10 @@ class LabyrinthMeshConstructor {
     }
 
     calculateXCoordinate(xIndex) {
-        return -1 + WALL_WIDTH + 2 * (xIndex + 1) / this.zSquares;
+        return -1 + WALL_WIDTH + 2 * (xIndex + 1) / numberOfZSquares;
     }
 
     calculateZCoordinate(zIndex) {
-        return 1 - WALL_WIDTH - 2 * (zIndex + 1) / this.xSquares;
+        return 1 - WALL_WIDTH - 2 * (zIndex + 1) / numberOfXSquares;
     }
 }

@@ -1,15 +1,14 @@
 class LabyrinthGenerator {
-    numberOfZSquares;
-    numberOfXSquares;
 
     constructor(numberOfXSquares, numberOfZSquares) {
-        this.numberOfZSquares = numberOfZSquares;
         this.numberOfXSquares = numberOfXSquares;
+        this.numberOfZSquares = numberOfZSquares;
     }
 
     wilsonAlgorithm() {
         let numberOfXSquares = this.numberOfXSquares;
         let numberOfZSquares = this.numberOfZSquares;
+
         let uniform_spanning_tree = new Graph(numberOfXSquares, numberOfZSquares);
         uniform_spanning_tree.insertNode(this.random(numberOfZSquares * numberOfXSquares));
         while (uniform_spanning_tree.size < numberOfZSquares * numberOfXSquares) {
@@ -24,10 +23,10 @@ class LabyrinthGenerator {
     }
 
     generateRandomWalk(uts) {
+        let numberOfXSquares = this.numberOfXSquares;
+        let numberOfZSquares = this.numberOfZSquares;
 
         let pickNodeNotInUts = (uts) => {
-            let numberOfZSquares = this.numberOfZSquares;
-            let numberOfXSquares = this.numberOfXSquares;
             let randomNumber = this.random(numberOfZSquares * numberOfXSquares);
             while (uts.has(randomNumber)) {
                 randomNumber = this.random(numberOfZSquares * numberOfXSquares);
@@ -54,8 +53,7 @@ class LabyrinthGenerator {
         let previousNode = -1;
         let currentNode = pickNodeNotInUts(uts);
         randomWalk.push(currentNode);
-        let numberOfZSquares = this.numberOfZSquares;
-        let numberOfXSquares = this.numberOfXSquares;
+
         while (!uts.has(currentNode)) {
             let possibleMovementDirections = [];
 
@@ -80,14 +78,6 @@ class LabyrinthGenerator {
             currentNode = nextNode;
         }
         return randomWalk;
-    }
-
-    addGems(labyrinth, proportion) {
-        let size = labyrinth.size;
-        let numberOfGems = Math.floor(size * proportion / 100);
-        for (let i = 0; i < numberOfGems; i++) {
-            labyrinth.addGem(Math.floor(Math.random() * size));
-        }
     }
 }
 

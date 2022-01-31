@@ -13,16 +13,11 @@ class Graph {
     numberOfZSquares;
     nodes;
     size = 0;
-    gems;
-    gems2;
-    GEM_SCORE = 10;
 
     constructor(numberOfXSquares, numberOfZSquares) {
         this.numberOfXSquares = numberOfXSquares;
         this.numberOfZSquares = numberOfZSquares;
         this.nodes = [];
-        this.gems = new Set();
-        this.gems2 = new Set();
     }
 
     insertNode(id) {
@@ -111,24 +106,7 @@ class Graph {
         }
     }
 
-    // addGem(id) {
-    //     this.gems.add(id);
-    //     this.gems2.add([this.xIndex(id), this.zIndex(id)])
-    // }
-
     getIdFromCoordinates(xIndex, zIndex) {
         return zIndex * this.getNumberOfZSquares() + xIndex;
     }
-
-    // consumeGemIfAny(id) {
-    //     if (this.gems.has(id)) {
-    //         this.gems.delete(id);
-    //         return this.GEM_SCORE;
-    //     }
-    //     return 0;
-    // }
-    //
-    // hasGem(xIndex, zIndex) {
-    //     return this.gems.has(this.getIdFromCoordinates(xIndex, zIndex));
-    // }
 }

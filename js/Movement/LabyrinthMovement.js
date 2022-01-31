@@ -1,12 +1,8 @@
 class LabyrinthMovement {
-    numberOfZSquares;
-    numberOfXSquares;
     labyrinth;
 
     constructor(labyrinth) {
         this.labyrinth = labyrinth;
-        this.numberOfZSquares = labyrinth.getNumberOfZSquares();
-        this.numberOfXSquares = labyrinth.getNumberOfXSquares();
     }
 
     calculateRelativeDirection(startX, startZ, nextX, nextZ) {
@@ -47,8 +43,8 @@ class LabyrinthMovement {
 
     calculateCenterCoordinates(id) {
         let [xIndex, zIndex] = this.labyrinth.getCoordinates(id);
-        return [(1 / this.numberOfXSquares) * (2 * xIndex - 1) + 1,
-            (1 / this.numberOfZSquares) * (2 * zIndex + 1) - 1];
+        return [(1 / numberOfXSquares) * (2 * xIndex - 1) + 1,
+            (1 / numberOfZSquares) * (2 * zIndex + 1) - 1];
     }
 
     getNextIdBasedOnRightSideAlgorithm(id, direction) {
@@ -68,11 +64,11 @@ class LabyrinthMovement {
     }
 
     getStartId() {
-        return this.numberOfXSquares * (this.numberOfZSquares - 1);
+        return numberOfXSquares * (numberOfZSquares - 1);
     }
 
     getEndId() {
-        return this.numberOfXSquares - 1;
+        return numberOfXSquares - 1;
     }
 
     calculateIndexesFromCoordinates(x, z) {

@@ -79,12 +79,12 @@ function SetTransX(param) {
 
 function StartScreensaver() {
     GenerateLabyrinth();
+    AddGems();
+    CreateSmallLabyrinth();
     UpdateCanvasSize();
     DrawScene();
 }
 
 function StartMovement(){
     FindEscape(labyrinthMovement);
-    // UpdateCanvasSize();
-    // DrawScene();
 }
