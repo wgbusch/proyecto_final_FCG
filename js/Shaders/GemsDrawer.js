@@ -73,28 +73,8 @@ class GemsDrawer {
     }
 
     createMeshOfGemsToDraw(indexesOfGemsToDraw) {
-
         let vertexes = [];
         let result = indexesOfGemsToDraw.next();
-        while (!result.done) {
-            let [xIndex, zIndex] = result.value;
-            let xTranslation = (xIndex + 1 / 2) * (TOTAL_X_LENGTH / numberOfXSquares) - TOTAL_X_LENGTH / 2;
-            let yTranslation = 0.01;
-            let zTranslation = (zIndex + 1 / 2) * (TOTAL_Z_LENGTH / numberOfZSquares) - TOTAL_Z_LENGTH / 2;
-
-            let translatedGem =
-                [-(TOTAL_X_LENGTH / (4 * numberOfXSquares)) + xTranslation, 0.001 + yTranslation, 0 - zTranslation,
-                    (TOTAL_X_LENGTH / (4 * numberOfXSquares)) + xTranslation, 0.001 + yTranslation, 0 - zTranslation,
-                    (TOTAL_X_LENGTH / (4 * numberOfXSquares)) + xTranslation, 0.1 + yTranslation, 0 - zTranslation,
-                    xTranslation, 0.001 + yTranslation, (TOTAL_X_LENGTH / (4 * numberOfXSquares)) - zTranslation,
-                    xTranslation, 0.001 + yTranslation, -(TOTAL_X_LENGTH / (4 * numberOfXSquares)) - zTranslation,
-                    xTranslation, 0.1 + yTranslation, -(TOTAL_X_LENGTH / (4 * numberOfXSquares)) - zTranslation]
-
-
-            vertexes = vertexes.concat(translatedGem);
-
-            result = indexesOfGemsToDraw.next();
-        }
 
         let objToMeshConverter = new ObjToMeshConverter();
 
@@ -144,8 +124,28 @@ class GemsDrawer {
         objToMeshConverter.parse(obj);
         let xx = objToMeshConverter.getVertexBuffers();
 
-        return xx.positionBuffer;
-        // return vertexes;
+        let centeredGem = xx.positionBuffer;
+
+        while (!result.done) {
+            let [xIndex, zIndex] = result.value;
+            let xTranslation = (xIndex + 1 / 2) * (TOTAL_X_LENGTH / numberOfXSquares) - TOTAL_X_LENGTH / 2;
+            let yTranslation = 0.01;
+            let zTranslation = (zIndex + 1 / 2) * (TOTAL_Z_LENGTH / numberOfZSquares) - TOTAL_Z_LENGTH / 2;
+
+            let translatedGem =
+                [-(TOTAL_X_LENGTH / (4 * numberOfXSquares)) + xTranslation, 0.001 + yTranslation, 0 - zTranslation,
+                    (TOTAL_X_LENGTH / (4 * numberOfXSquares)) + xTranslation, 0.001 + yTranslation, 0 - zTranslation,
+                    (TOTAL_X_LENGTH / (4 * numberOfXSquares)) + xTranslation, 0.1 + yTranslation, 0 - zTranslation,
+                    xTranslation, 0.001 + yTranslation, (TOTAL_X_LENGTH / (4 * numberOfXSquares)) - zTranslation,
+                    xTranslation, 0.001 + yTranslation, -(TOTAL_X_LENGTH / (4 * numberOfXSquares)) - zTranslation,
+                    xTranslation, 0.1 + yTranslation, -(TOTAL_X_LENGTH / (4 * numberOfXSquares)) - zTranslation]
+
+            vertexes = vertexes.concat(translatedGem);
+
+            result = indexesOfGemsToDraw.next();
+        }
+
+        return vertexes;
     }
 
     gemsVS = `
