@@ -32,8 +32,8 @@ class North {
         return new East();
     }
 
-    getIdOfMovingOneStepFrom(id, uts) {
-        return uts.getIdOfMovingOneStepInNorthDirection(id);
+    getIdOfMovingOneStepFrom(id, labyrinth) {
+        return labyrinth.getIdOfMovingOneStepInNorthDirection(id);
     }
 
     opposite() {
@@ -71,8 +71,8 @@ class East {
         return new South();
     }
 
-    getIdOfMovingOneStepFrom(id, uts) {
-        return uts.getIdOfMovingOneStepInEastDirection(id);
+    getIdOfMovingOneStepFrom(id, labyrinth) {
+        return labyrinth.getIdOfMovingOneStepInEastDirection(id);
     }
 
     opposite() {
@@ -110,8 +110,8 @@ class West {
         return new North();
     }
 
-    getIdOfMovingOneStepFrom(id, uts) {
-        return uts.getIdOfMovingOneStepInWestDirection(id);
+    getIdOfMovingOneStepFrom(id, labyrinth) {
+        return labyrinth.getIdOfMovingOneStepInWestDirection(id);
     }
 
     opposite() {
@@ -149,8 +149,8 @@ class South {
         return new West();
     }
 
-    getIdOfMovingOneStepFrom(id, uts) {
-        return uts.getIdOfMovingOneStepInSouthDirection(id);
+    getIdOfMovingOneStepFrom(id, labyrinth) {
+        return labyrinth.getIdOfMovingOneStepInSouthDirection(id);
     }
 
     opposite() {
@@ -173,7 +173,7 @@ class PathInstruction {
 function getForwardPromise() {
     let forwardPromise = () => {
         return new Promise((resolve, reject) => {
-            let length = 2 / numberOfZSquares;
+            let length = TOTAL_Z_LENGTH / numberOfZSquares;
             let speed = UPDATE_SPEED * length / TIME_TO_TRAVEL_ONE_BLOCK;
             let original = transZ;
             let forward = () => {
@@ -194,7 +194,7 @@ function getLeftPromise() {
     let leftPromise = () => {
         return new Promise((resolve, reject) => {
 
-            let length = 2 / numberOfXSquares;
+            let length = TOTAL_X_LENGTH / numberOfXSquares;
             let speed = UPDATE_SPEED * length / TIME_TO_TRAVEL_ONE_BLOCK;
             let original = transX;
 
@@ -215,7 +215,7 @@ function getLeftPromise() {
 function getRightPromise() {
     let rightPromise = () => {
         return new Promise((resolve, reject) => {
-            let length = 2 / numberOfXSquares;
+            let length = TOTAL_X_LENGTH / numberOfXSquares;
             let speed = UPDATE_SPEED * length / TIME_TO_TRAVEL_ONE_BLOCK;
             let original = transX;
 
@@ -236,7 +236,7 @@ function getRightPromise() {
 function getBackwardPromise() {
     let backwardPromise = () => {
         return new Promise((resolve, reject) => {
-            let length = 2 / numberOfZSquares;
+            let length = TOTAL_Z_LENGTH / numberOfZSquares;
             let speed = UPDATE_SPEED * length / TIME_TO_TRAVEL_ONE_BLOCK;
             let original = transZ;
 
@@ -308,9 +308,7 @@ function moveX(change) {
 }
 
 function moveY(change) {
-    let id = 0;
     transY += change;
-    score += Number.parseInt(gemsManager.consumeGemIfAny(id));
     DrawScene();
 }
 

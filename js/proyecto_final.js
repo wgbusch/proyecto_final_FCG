@@ -1,6 +1,5 @@
 let labyrinthDrawer;         // clase para contener el comportamiento de la malla
 let floorDrawer;
-let floorDrawer2;
 let ceilingDrawer;
 let gemsDrawer;
 let canvas, gl;         // canvas y contexto WebGL
@@ -134,7 +133,6 @@ function InitWebGL() {
     labyrinthDrawer = new LabyrinthDrawer();
     ceilingDrawer = new CeilingDrawer();
     floorDrawer = new FloorDrawer();
-    floorDrawer2 = new FloorDrawer2();
     gemsDrawer = new GemsDrawer();
 
     // Setear el tamaño del viewport
@@ -198,10 +196,6 @@ function DrawScene() {
     gemsDrawer.draw(mvp, gemsManager.getGemsIndexes());
 
     configureUIScoreText();
-
-    document.getElementById("transX").innerText = transX + "";
-    document.getElementById("transY").innerText = transY + "";
-    document.getElementById("transZ").innerText = transZ + "";
 
     updateScore();
 }

@@ -5,19 +5,19 @@ class LabyrinthMovement {
         this.labyrinth = labyrinth;
     }
 
-    calculateRelativeDirection(startX, startZ, nextX, nextZ) {
-        if (startX === nextX) {
-            if (startZ + 1 === nextZ) {
+    calculateRelativeDirection(startXIndex, startZIndex, nextXIndex, nextZIndex) {
+        if (startXIndex === nextXIndex) {
+            if (startZIndex + 1 === nextZIndex) {
                 return new South();
             }
-            if (startZ - 1 === nextZ) {
+            if (startZIndex - 1 === nextZIndex) {
                 return new North();
             }
-        } else if (startZ === nextZ) {
-            if (startX + 1 === nextX) {
+        } else if (startZIndex === nextZIndex) {
+            if (startXIndex + 1 === nextXIndex) {
                 return new East();
             }
-            if (startX - 1 === nextX) {
+            if (startXIndex - 1 === nextXIndex) {
                 return new West();
             }
         } else {
@@ -25,16 +25,16 @@ class LabyrinthMovement {
         }
     }
 
-    getCoordinates(id) {
-        return this.labyrinth.getCoordinates(id);
+    getIndexes(id) {
+        return this.labyrinth.getIndexes(id);
     }
 
     getMovementInstructionsAndNextDirection(startPoint, startDirection, endPoint) {
         let instructions = [];
-        let [startX, startZ] = this.getCoordinates(startPoint);
-        let [nextX, nextZ] = this.getCoordinates(endPoint);
+        let [startXIndex, startZIndex] = this.getIndexes(startPoint);
+        let [nextXIndex, nextZIndex] = this.getIndexes(endPoint);
 
-        let nextDirection = this.calculateRelativeDirection(startX, startZ, nextX, nextZ);
+        let nextDirection = this.calculateRelativeDirection(startXIndex, startZIndex, nextXIndex, nextZIndex);
         startDirection.rotateToNextDirection(nextDirection, instructions);
 
         nextDirection.move(instructions);
@@ -42,9 +42,9 @@ class LabyrinthMovement {
     }
 
     calculateCenterCoordinates(id) {
-        let [xIndex, zIndex] = this.labyrinth.getCoordinates(id);
-        return [(1 / numberOfXSquares) * (2 * xIndex - 1) + 1,
-            (1 / numberOfZSquares) * (2 * zIndex + 1) - 1];
+        let [xIndex, zIndex] = this.labyrinth.getIndexes(id);
+        return [(1 / numberOfXSquares) * (TOTAL_X_LENGTH * xIndex - 1) + 1,
+            (1 / numberOfZSquares) * (TOTAL_Z_LENGTH * zIndex + 1) - 1];
     }
 
     getNextIdBasedOnRightSideAlgorithm(id, direction) {

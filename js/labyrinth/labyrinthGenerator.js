@@ -84,6 +84,6 @@ class LabyrinthGenerator {
 class Proportion {
     // Create new instances of the same class as static attributes
     static Large = 20;
-    static Medium = 10;
-    static Small = 5;
+    static Medium = 15;
+    static Small = 10;
 }

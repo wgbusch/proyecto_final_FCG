@@ -28,7 +28,6 @@ input[type=range] {
 #controls-div {
 	vertical-align: top;
 	background-color: rgb(58, 3, 80);
-	overflow: auto;
 }
 #controls {
 	padding: 1em;
@@ -39,27 +38,6 @@ input[type=range] {
 }
 .control {
 	padding: 0.2em;
-}
-#lightcontrol {
-	width:  12em;
-	height: 12em;
-	background-color: rgb(58, 3, 80);
-	outline: 1px solid #ffffff;
-	outline-offset: -1px;
-}
-#lightcontrol-label {
-	position: absolute;
-	top: 0.2em;
-	left: 0.2em;
-	pointer-events: none;
-}
-#shininess-label {
-	float: left;
-}
-#shininess-value {
-	float: right;
-	text-align: right;
-	width: 4em;
 }
 #labyrinth-img{
 	width:  12em;
@@ -82,7 +60,6 @@ input[type=range] {
 	justify-content: center;
 	align-items: center;
 	display: flex;
-	font-family: Arial;
 	font-size: 1rem;
 	font-weight: bold;
 	background: white;
@@ -95,14 +72,13 @@ input[type=range] {
 @media (orientation: landscape) {
 	#canvas-div {
 		display: inline-block;
-		width:  calc(100% - 16em);
+		width:  calc(100% - 13em);
 		height: 100%;
 	}
 	#controls-div {
 		display: inline-block;
-		width:   16em;
+		width:   13em;
 		height: 100%;
-		overflow: scroll;
 	}
 	.control-group {
 		margin-top: 1em;

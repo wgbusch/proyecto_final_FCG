@@ -12,7 +12,7 @@ class GemManager {
         let numberOfGems = Math.floor(size * proportion / 100);
         for (let i = 0; i < numberOfGems; i++) {
             let id = Math.floor(Math.random() * size);
-            this.gems.set(id, this.getCoordinates(id));
+            this.gems.set(id, this.getIndexes(id));
         }
     }
 
@@ -36,12 +36,11 @@ class GemManager {
         return id % numberOfXSquares;
     }
 
-    getCoordinates(id) {
+    getIndexes(id) {
         return [this.xIndex(id), this.zIndex(id)];
     }
 
     getGemsIndexes() {
         return this.gems.values();
     }
-
 }

@@ -1,28 +1,28 @@
 <doctype html>
     <html>
     <head>
-        <title> FCG 2021 - TP5</title>
+        <title> FCG 2021 - Final Project</title>
 
         <!-- estilo-->
         <link href="css/style.css" rel="stylesheet">
         <script type="text/javascript" id="includedscript" src="js/proyecto_final.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Camera/CameraControl.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Controls/BrowserControls.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Geometry/LabyrinthMeshConstructor.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Geometry/Mesh.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Labyrinth/GemManager.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Labyrinth/Graph.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Labyrinth/LabyrinthGenerator.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Movement/LabyrinthMovement.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Movement/MazeTraversalLogic.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Shaders/CeilingDrawer.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Shaders/FloorDrawer.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Shaders/LabyrinthDrawer.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Shaders/FloorDrawer2.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Shaders/GemsDrawer.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Texture/TextureConstructor.js"></script>
-        <script type="text/javascript" id="includedscript" src="js/Utils/Math.js"></script>
-        <script type="text/javascript" src="js/Utils/ObjToMeshConverter.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/camera/cameraControl.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/controls/browserControls.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/geometry/gemObjFile.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/geometry/labyrinthMeshConstructor.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/geometry/mesh.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/labyrinth/gemManager.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/labyrinth/graph.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/labyrinth/labyrinthGenerator.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/movement/labyrinthMovement.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/movement/mazeTraversalLogic.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/shaders/ceilingDrawer.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/shaders/floorDrawer.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/shaders/labyrinthDrawer.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/shaders/gemsDrawer.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/texture/textureConstructor.js"></script>
+        <script type="text/javascript" id="includedscript" src="js/utils/math.js"></script>
+        <script type="text/javascript" src="js/utils/objToMeshConverter.js"></script>
 
     </head>
     <body onresize="WindowResize()">
@@ -37,10 +37,6 @@
     <div id="controls-div" style="position: absolute">
         <!-- menu y controles-->
         <div id="controls">
-            <div class="control-group">
-                <canvas id="lightcontrol"></canvas>
-                <div id="lightcontrol-label">Dirección de la Luz</div>
-            </div>
             <div class="control-group">
                 <pre id="file-content-ceiling"></pre>
                 <div class="control">Textura Ceiling:<br/><input id="texture-ceiling" type="file"
@@ -81,27 +77,6 @@
                 <div class="container">
                     <div class="grid"></div>
                 </div>
-            </div>
-
-            <div class="control">
-                <div>x trans: <p id="transX"></p></div>
-                <input id="transX-manual" type="range" min="-1" max="1" value="0.99" step="0.001"
-                       oninput="SetTransX(this)"/>
-            </div>
-            <div>y trans: <p id="transY"></p></div>
-
-            <div class="control">
-                <div>z trans: <p id="transZ"></p></div>
-                <input id="transZ-manual" type="range" min="-1" max="1" value="0.99" step="0.001"
-                       oninput="SetTransZ(this)"/>
-            </div>
-            <div>
-                <div>
-                    <div>x coord:</div>
-                    <p id="xCoord"></p></div>
-                <div>
-                    <div>z coord:</div>
-                    <p id="zCoord"></p></div>
             </div>
             <div class="control">Find exit route:<br/><input id="find-exit-route" type="submit"
                                                              onclick="StartMovement(this)"/></div>

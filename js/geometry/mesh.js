@@ -76,45 +76,6 @@ class Triangle extends Shape {
         return new Triangle(sum(this.A, diff), sum(this.B, diff), sum(this.C, diff));
     }
 
-    orthogonalVertex() {
-        if (this.orthogonal != null)
-            return this.orthogonal;
-        let A = this.A;
-        let B = this.B;
-        let C = this.C;
-        if (dot(minus(B, A), minus(C, A)) === 0) {
-            this.orthogonal = [A, B, C];
-        }
-        if (dot(minus(A, B), minus(C, B)) === 0) {
-            this.orthogonal = [B, A, C];
-        }
-        if (dot(minus(A, C), minus(B, C)) === 0) {
-            this.orthogonal = [C, A, B];
-        }
-        return this.orthogonal;
-    }
-
-    //TODO add option to skip sides.
-    fill(triangle2) {
-        let A1 = this.A;
-        let B1 = this.B;
-        let C1 = this.C;
-        let A2 = triangle2.A;
-        let B2 = triangle2.B;
-        let C2 = triangle2.C;
-        let arrayToReturn = new Shape();
-        arrayToReturn.insert(this.fillTwoLines(
-            [A1, B1],
-            [A2, B2]));
-        arrayToReturn.insert(this.fillTwoLines(
-            [A1, C1],
-            [A2, C2]));
-        arrayToReturn.insert(this.fillTwoLines(
-            [B1, C1],
-            [B2, C2]));
-        return arrayToReturn;
-    }
-
     get(i) {
         if (i === 0)
             return this;

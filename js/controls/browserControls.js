@@ -10,6 +10,16 @@ function LoadTextureCeiling() {
     LoadTexture(CEILING_URL_SMALL, 'texture-img-ceiling', ceilingDrawer);
 }
 
+function LoadTexture(url, id, drawer) {
+    let img = document.getElementById(id);
+    img.onload = () => {
+        drawer.setTexture(img);
+        DrawScene();
+    }
+    img.crossOrigin = "";
+    img.src = url;
+}
+
 function LoadTextureWallsFromFile(param) {
     if (param.files && param.files[0]) {
         let reader = new FileReader();
@@ -55,28 +65,6 @@ function LoadTextureCeilingFromFile(param) {
     }
 }
 
-function LoadTexture(url, id, drawer) {
-    let img = document.getElementById(id);
-    img.onload = () => {
-        drawer.setTexture(img);
-        DrawScene();
-    }
-    img.crossOrigin = "";
-    img.src = url;
-}
-
-function SetTransZ(param) {
-    let exp = param.value;
-    transZ = Number.parseFloat(exp);
-    DrawScene();
-}
-
-function SetTransX(param) {
-    let exp = param.value;
-    transX = Number.parseFloat(exp);
-    DrawScene();
-}
-
 function StartScreensaver() {
     GenerateLabyrinth();
     AddGems();
@@ -85,6 +73,6 @@ function StartScreensaver() {
     DrawScene();
 }
 
-function StartMovement(){
+function StartMovement() {
     FindEscape(labyrinthMovement);
 }

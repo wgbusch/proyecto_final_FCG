@@ -21,12 +21,12 @@ class Graph {
     }
 
     insertNode(id) {
-        let rowNum = this.zIndex(id);
-        let column = this.xIndex(id);
-        if (!this.nodes[rowNum])
-            this.nodes[rowNum] = []
-        if (!this.nodes[rowNum][column]) {
-            this.nodes[rowNum][column] = new Node(id);
+        let zIndex = this.zIndex(id);
+        let xIndex = this.xIndex(id);
+        if (!this.nodes[zIndex])
+            this.nodes[zIndex] = []
+        if (!this.nodes[zIndex][xIndex]) {
+            this.nodes[zIndex][xIndex] = new Node(id);
             this.size++;
         } else {
             console.log("Graph already exists at id " + id)
@@ -39,29 +39,25 @@ class Graph {
         return this.nodes[this.zIndex(id)] && this.nodes[this.zIndex(id)][this.xIndex(id)] ? true : false;
     }
 
+    getIndexes(id) {
+        return [this.xIndex(id), this.zIndex(id)];
+    }
+
     insertWalk(randomWalk) {
         for (let i = 0; i < randomWalk.length - 1; i++) {
             let currentNode = randomWalk[i];
             let nextNode = randomWalk[i + 1];
-            let row = this.zIndex(currentNode);
-            let column = this.xIndex(currentNode);
+            let zIndex = this.zIndex(currentNode);
+            let xIndex = this.xIndex(currentNode);
             this.insertNode(currentNode);
-            this.nodes[row][column].neighbors.push(nextNode);
+            this.nodes[zIndex][xIndex].neighbors.push(nextNode);
             if (i > 0) {
                 let previousNode = randomWalk[i - 1];
-                this.nodes[row][column].neighbors.push(previousNode);
+                this.nodes[zIndex][xIndex].neighbors.push(previousNode);
             }
         }
         let utsNode = randomWalk[randomWalk.length - 1];
         this.nodes[this.zIndex(utsNode)][this.xIndex(utsNode)].neighbors.push(randomWalk[randomWalk.length - 2])
-    }
-
-    getNumberOfZSquares() {
-        return this.numberOfZSquares;
-    }
-
-    getNumberOfXSquares() {
-        return this.numberOfXSquares;
     }
 
     zIndex(id) {
@@ -70,10 +66,6 @@ class Graph {
 
     xIndex(id) {
         return id % this.numberOfXSquares;
-    }
-
-    getCoordinates(id) {
-        return [this.xIndex(id), this.zIndex(id)];
     }
 
     areNeighbors(id1, id2) {
@@ -107,6 +99,6 @@ class Graph {
     }
 
     getIdFromCoordinates(xIndex, zIndex) {
-        return zIndex * this.getNumberOfZSquares() + xIndex;
+        return zIndex * this.numberOfZSquares + xIndex;
     }
 }
