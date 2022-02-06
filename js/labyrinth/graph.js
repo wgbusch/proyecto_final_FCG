@@ -96,6 +96,22 @@ class Graph {
         return id - 1;
     }
 
+    isOnTopBorder(zIndex) {
+        return zIndex === 0;
+    }
+
+    isOnBottomBorder(zIndex) {
+        return zIndex === this.numberOfZSquares - 1;
+    }
+
+    isOnRightBorder(xIndex) {
+        return xIndex === this.numberOfXSquares - 1;
+    }
+
+    isOnLeftBorder(xIndex) {
+        return xIndex === 0;
+    }
+
     getNode(id) {
         if (this.has(id)) {
             return this.nodes[this.getZIndex(id)][this.getXIndex(id)];

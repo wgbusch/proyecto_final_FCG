@@ -216,21 +216,31 @@ function CreateMinimap() {
     for (let zIndex = 0; zIndex < numberOfZSquares; zIndex++) {
         for (let xIndex = 0; xIndex < numberOfXSquares; xIndex++) {
             let node = labyrinth.nodes[zIndex][xIndex];
-            let id = node.id;
+            let currentSquare = node.id;
 
             let cell = document.createElement("div");
             cell.setAttribute("class", "cell");
-            cell.setAttribute("id", "cell-" + id);
+            cell.setAttribute("id", "cell-" + currentSquare);
 
-            if (zIndex > 0 && node.neighbors.includes(id - numberOfXSquares))
+            let topSquare = labyrinth.getIdOfMovingOneStepInNorthDirection(currentSquare);
+            let bottomSquare = labyrinth.getIdOfMovingOneStepInSouthDirection(currentSquare);
+            let leftSquare = labyrinth.getIdOfMovingOneStepInWestDirection(currentSquare);
+            let rightSquare = labyrinth.getIdOfMovingOneStepInEastDirection(currentSquare);
+
+            let isOnTopBorder = labyrinth.isOnTopBorder(zIndex);
+            let isOnBottomBorder =  labyrinth.isOnBottomBorder(zIndex);
+            let isOnLeftBorder =  labyrinth.isOnLeftBorder(xIndex);
+            let isOnRightBorder =  labyrinth.isOnRightBorder(xIndex);
+
+            if (!isOnTopBorder && node.neighbors.includes(topSquare))
                 cell.style.borderTop = "hidden";
-            if (zIndex < numberOfZSquares - 1 && node.neighbors.includes(id + numberOfXSquares))
+            if (!isOnBottomBorder && node.neighbors.includes(bottomSquare))
                 cell.style.borderBottom = "hidden";
-            if (xIndex > 0 && node.neighbors.includes(id - 1))
+            if (!isOnLeftBorder && node.neighbors.includes(leftSquare))
                 cell.style.borderLeft = "hidden";
-            if (xIndex < numberOfXSquares - 1 && node.neighbors.includes(id + 1))
+            if (!isOnRightBorder && node.neighbors.includes(rightSquare))
                 cell.style.borderRight = "hidden";
-            if (gemsManager.hasGem(id)) {
+            if (gemsManager.hasGem(currentSquare)) {
                 cell.style.backgroundImage = "radial-gradient(circle closest-side, red 0%, red 50%, transparent 50%, transparent 100%)";
                 cell.style.backgroundPosition = "center center";
             }
@@ -239,7 +249,7 @@ function CreateMinimap() {
     }
 }
 
-function updateSmallLabyrinth(labyrinth, id) {
+function updateMinimap(id) {
 
     let cell = document.getElementById("cell-" + id);
 

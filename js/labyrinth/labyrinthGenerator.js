@@ -51,24 +51,24 @@ class LabyrinthGenerator {
 
         let randomWalk = [];
         let previousNode = -1;
-        let currentNode = pickIdNotInUTS(uniformSpanningTree);
-        randomWalk.push(currentNode);
+        let currentId = pickIdNotInUTS(uniformSpanningTree);
+        randomWalk.push(currentId);
 
-        while (!uniformSpanningTree.has(currentNode)) {
+        while (!uniformSpanningTree.has(currentId)) {
             let possibleMovementDirections = [];
 
-            let xIndex = uniformSpanningTree.getXIndex(currentNode);
-            let zIndex = uniformSpanningTree.getZIndex(currentNode);
+            let xIndex = uniformSpanningTree.getXIndex(currentId);
+            let zIndex = uniformSpanningTree.getZIndex(currentId);
 
-            let topSquare = uniformSpanningTree.getIdOfMovingOneStepInNorthDirection(currentNode);
-            let bottomSquare = uniformSpanningTree.getIdOfMovingOneStepInSouthDirection(currentNode);
-            let rightSquare = uniformSpanningTree.getIdOfMovingOneStepInEastDirection(currentNode);
-            let leftSquare = uniformSpanningTree.getIdOfMovingOneStepInWestDirection(currentNode);
+            let topSquare = uniformSpanningTree.getIdOfMovingOneStepInNorthDirection(currentId);
+            let bottomSquare = uniformSpanningTree.getIdOfMovingOneStepInSouthDirection(currentId);
+            let leftSquare = uniformSpanningTree.getIdOfMovingOneStepInWestDirection(currentId);
+            let rightSquare = uniformSpanningTree.getIdOfMovingOneStepInEastDirection(currentId);
 
-            let isOnTopBorder = zIndex === 0;
-            let isOnBottomBorder = zIndex === numberOfZSquares - 1;
-            let isOnRightBorder = xIndex === numberOfXSquares - 1;
-            let isOnLeftBorder = xIndex === 0;
+            let isOnTopBorder = uniformSpanningTree.isOnTopBorder(zIndex);
+            let isOnBottomBorder =  uniformSpanningTree.isOnBottomBorder(zIndex);
+            let isOnLeftBorder =  uniformSpanningTree.isOnLeftBorder(xIndex);
+            let isOnRightBorder =  uniformSpanningTree.isOnRightBorder(xIndex);
 
             if (!isOnTopBorder && topSquare !== previousNode)
                 possibleMovementDirections.push(topSquare);
@@ -85,8 +85,8 @@ class LabyrinthGenerator {
             } else {
                 randomWalk = removeLoop(nextNode, randomWalk);
             }
-            previousNode = currentNode;
-            currentNode = nextNode;
+            previousNode = currentId;
+            currentId = nextNode;
         }
         return randomWalk;
     }

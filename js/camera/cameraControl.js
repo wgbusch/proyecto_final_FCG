@@ -335,7 +335,7 @@ function moveCoordinate(coordinate, change) {
     }
     score += Number.parseInt(gemsManager.consumeGemIfAny(id));
     DrawScene();
-    updateSmallLabyrinth(labyrinthMovement.labyrinth, id);
+    updateMinimap(id);
 }
 
 class Coordinate {
