@@ -1,5 +1,3 @@
-
-
 class LabyrinthDrawer {
     // El constructor es donde nos encargamos de realizar las inicializaciones necesarias.
     constructor() {
@@ -8,7 +6,6 @@ class LabyrinthDrawer {
 
         // 2. Obtenemos los IDs de las variables uniformes en los shaders
         this.mvp = gl.getUniformLocation(this.prog, 'mvp');
-        this.mv = gl.getUniformLocation(this.prog, 'mv');
         this.texGPU = gl.getUniformLocation(this.prog, 'texGPU');
 
         // 3. Obtenemos los IDs de los atributos de los vértices en los shaders
@@ -52,15 +49,12 @@ class LabyrinthDrawer {
         gl.useProgram(this.prog);
     }
 
-    draw(matrixMVP, matrixMV) {
+    draw(matrixMVP) {
         // 1. Seleccionamos el shader
         gl.useProgram(this.prog);
 
         // 2. Setear matriz de transformacion
         gl.uniformMatrix4fv(this.mvp, false, matrixMVP);
-
-        // 2.  Setear matrix mv
-        gl.uniformMatrix4fv(this.mv, false, matrixMV);
 
         gl.useProgram(this.prog);
 

@@ -1,4 +1,6 @@
 class FloorDrawer {
+    FLOOR_LEVEL = -0.0001;
+
     // El constructor es donde nos encargamos de realizar las inicializaciones necesarias.
     constructor() {
         // 1. Compilamos el programa de shaders
@@ -6,7 +8,6 @@ class FloorDrawer {
 
         // 2. Obtenemos los IDs de las variables uniformes en los shaders
         this.mvp = gl.getUniformLocation(this.prog, 'mvp');
-        this.mv = gl.getUniformLocation(this.prog, 'mv');
         this.texGPU = gl.getUniformLocation(this.prog, 'texGPU');
 
         // 3. Obtenemos los IDs de los atributos de los vértices en los shaders
@@ -19,12 +20,13 @@ class FloorDrawer {
         // 4. Obtenemos los IDs de los atributos de los vértices en los shaders
         this.positionBuffer = gl.createBuffer();
 
-        this.vertPos = [-TOTAL_X_LENGTH / 2, -0.0001, -TOTAL_Z_LENGTH / 2,
-                        -TOTAL_X_LENGTH / 2, -0.0001, TOTAL_Z_LENGTH / 2,
-                        TOTAL_X_LENGTH / 2, -0.0001, -TOTAL_Z_LENGTH / 2,
-                        TOTAL_X_LENGTH / 2, -0.0001, TOTAL_Z_LENGTH / 2,
-                        -TOTAL_X_LENGTH / 2, -0.0001, TOTAL_Z_LENGTH / 2,
-                        TOTAL_X_LENGTH / 2, -0.0001, -TOTAL_Z_LENGTH / 2];
+        let FLOOR_LEVEL = this.FLOOR_LEVEL;
+        this.vertPos = [-TOTAL_X_LENGTH / 2, FLOOR_LEVEL, -TOTAL_Z_LENGTH / 2,
+                        -TOTAL_X_LENGTH / 2, FLOOR_LEVEL, TOTAL_Z_LENGTH / 2,
+                        TOTAL_X_LENGTH / 2, FLOOR_LEVEL, -TOTAL_Z_LENGTH / 2,
+                        TOTAL_X_LENGTH / 2, FLOOR_LEVEL, TOTAL_Z_LENGTH / 2,
+                        -TOTAL_X_LENGTH / 2, FLOOR_LEVEL, TOTAL_Z_LENGTH / 2,
+                        TOTAL_X_LENGTH / 2, FLOOR_LEVEL, -TOTAL_Z_LENGTH / 2];
 
         this.numTriangles = this.vertPos.length / 9;
 
@@ -44,15 +46,12 @@ class FloorDrawer {
         gl.useProgram(this.prog);
     }
 
-    draw(matrixMVP, matrixMV) {
+    draw(matrixMVP) {
         // 1. Seleccionamos el shader
         gl.useProgram(this.prog);
 
         // 2. Setear matriz de transformacion
         gl.uniformMatrix4fv(this.mvp, false, matrixMVP);
-
-        // 2.  Setear matrix mv
-        gl.uniformMatrix4fv(this.mv, false, matrixMV);
 
         gl.useProgram(this.prog);
 

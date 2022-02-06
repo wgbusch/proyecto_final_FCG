@@ -126,9 +126,9 @@ function DrawScene() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // 3. Le pedimos a cada objeto que se dibuje a si mismo
-    labyrinthDrawer.draw(mvp, mv);
-    ceilingDrawer.draw(mvp, mv);
-    floorDrawer.draw(mvp, mv);
+    labyrinthDrawer.draw(mvp);
+    ceilingDrawer.draw(mvp);
+    floorDrawer.draw(mvp);
     gemsDrawer.draw(mvp, gemsManager.getGemsIndexes());
 
     configureUIScoreText();

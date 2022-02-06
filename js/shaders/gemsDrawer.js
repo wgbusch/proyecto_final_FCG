@@ -1,5 +1,9 @@
 class GemsDrawer {
 
+    CYAN = {
+        x: 0.0, y: 0.718, z: 0.922
+    }
+
     // El constructor es donde nos encargamos de realizar las inicializaciones necesarias.
     constructor() {
 
@@ -38,10 +42,10 @@ class GemsDrawer {
 
         this.numTriangles = this.vertPos.length / 9;
         let colors = [];
-        for (let i = 0; i < this.numTriangles; i++) {
-            colors.push(0.725, 0.239, 0.741, 1);
-            colors.push(0.725, 0.239, 0.741, 1);
-            colors.push(0.725, 0.239, 0.741, 1);
+        for (let i = 0; i < this.numTriangles; i += 1) {
+            for (let vertexNumber = 0; vertexNumber < 3; vertexNumber++) {
+                colors.push(this.CYAN.x, this.CYAN.y, this.CYAN.z, 1.0);
+            }
         }
 
         // setting up colour buffers
@@ -84,10 +88,10 @@ class GemsDrawer {
             let zTranslation = (zIndex + 1 / 2) * (TOTAL_Z_LENGTH / numberOfZSquares) - TOTAL_Z_LENGTH / 2;
 
             let translatedGem = [];
-            for(let i = 0; i < centeredGem.length; i+=3){
+            for (let i = 0; i < centeredGem.length; i += 3) {
                 translatedGem.push(centeredGem[i] + xTranslation);
-                translatedGem.push(centeredGem[i+1] + yTranslation);
-                translatedGem.push(centeredGem[i+2] - zTranslation);
+                translatedGem.push(centeredGem[i + 1] + yTranslation);
+                translatedGem.push(centeredGem[i + 2] - zTranslation);
             }
             vertexes = vertexes.concat(translatedGem);
             result = indexesOfGemsToDraw.next();
@@ -118,7 +122,7 @@ varying vec4 vcolor;
 
 void main()
 {
-        gl_FragColor = vcolor;
+        gl_FragColor =  vcolor;
 }
 `;
 }

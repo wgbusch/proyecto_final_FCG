@@ -50,12 +50,12 @@ class CeilingDrawer {
         gl.useProgram(this.prog);
     }
 
-    draw(mvp) {
+    draw(matrixMVP) {
         // 1. Seleccionamos el shader
         gl.useProgram(this.prog);
 
         // 2. Setear matriz de transformacion
-        gl.uniformMatrix4fv(this.mvp, false, mvp);
+        gl.uniformMatrix4fv(this.mvp, false, matrixMVP);
 
         gl.useProgram(this.prog);
 
