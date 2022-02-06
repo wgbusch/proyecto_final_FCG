@@ -28,86 +28,25 @@ let CEILING_URL_SMALL = "https://i.imgur.com/ghE9cGA.png";
 
 let score = 0;
 
-
 window.onload = function () {
     InitWebGL();
 
-    buttonsPressed = {};
     FAR_CLIPPING_PLANE = Math.floor(Math.sqrt(TOTAL_X_LENGTH ^ 2 + TOTAL_Z_LENGTH ^ 2)) + 1
 
-    canvas.zoom = function (s) {
-        transZ *= s / canvas.height + 1;
-        UpdateProjectionMatrix();
-        DrawScene();
-    }
-    canvas.onwheel = function () {
-        canvas.zoom(0.3 * event.deltaY);
-    }
-
-    canvas.onmousedown = function () {
-        let cx = event.clientX;
-        let cy = event.clientY;
-        if (event.ctrlKey) {
-            canvas.onmousemove = function () {
-                canvas.zoom(5 * (event.clientY - cy));
-                cy = event.clientY;
-            }
-        } else {
-            // Si se mueve el mouse, actualizo las matrices de rotación
-            canvas.onmousemove = function () {
-                rotY += (cx - event.clientX) / canvas.width * 5;
-                rotX += (cy - event.clientY) / canvas.height * 5;
-
-                cx = event.clientX;
-                cy = event.clientY;
-                UpdateProjectionMatrix();
-                DrawScene();
-            }
-        }
-    }
-
-    canvas.onmouseup = canvas.onmouseleave = function () {
-        canvas.onmousemove = null;
-    }
-
-    canvas.onkeyup = canvas.onkeydown = function () {
-
-        buttonsPressed[event.key] = event.type !== 'keyup';
-
-        if (event.type === 'keyup') return;
-        if (buttonsPressed['w'] === true) {
-            moveZ(-movementSpeed / canvas.height);
-        } else if (buttonsPressed['s'] === true) {
-            moveZ(movementSpeed / canvas.height);
-        }
-        if (buttonsPressed['a'] === true) {
-            moveX(movementSpeed / canvas.height);
-        }
-        if (buttonsPressed['d'] === true) {
-            moveX(-movementSpeed / canvas.height);
-        }
-        if (buttonsPressed['q'] === true) {
-            moveY(movementSpeed / canvas.height);
-        }
-        if (buttonsPressed['e'] === true) {
-            moveY(-movementSpeed / canvas.height);
-        }
-        if (event.code === 'ArrowRight') {
-            cameraRotationXY -= Math.PI / 32;
-            DrawScene();
-        }
-        if (event.code === 'ArrowLeft') {
-            cameraRotationXY += Math.PI / 32;
-            DrawScene();
-        }
-    }
+    //Configure controls
+    buttonsPressed = {};
+    SetUpCanvasZoom();
+    SetUpOnMouseWheel();
+    SetUpOnMouseDown();
+    SetUpOnMouseUp();
+    SetUpOnKeyUp();
 
     LoadTextureWalls();
     LoadTextureFloor();
     LoadTextureCeiling();
     GenerateLabyrinth();
     AddGems();
-    CreateSmallLabyrinth();
+    CreateMinimap();
     UpdateCanvasSize();
     DrawScene();
 };
@@ -134,9 +73,6 @@ function InitWebGL() {
     ceilingDrawer = new CeilingDrawer();
     floorDrawer = new FloorDrawer();
     gemsDrawer = new GemsDrawer();
-
-    // Setear el tamaño del viewport
-    UpdateCanvasSize();
 }
 
 // Funcion para actualizar el tamaño de la ventana cada vez que se hace resize
@@ -159,11 +95,11 @@ function UpdateCanvasSize() {
     gl.viewport(0, 0, canvas.width, canvas.height);
 
     // 3. Cambian las matrices de proyección, hay que actualizarlas
-    UpdateProjectionMatrix();
+    CreatePerspectiveMatrix();
 }
 
 // Devuelve la matriz de perspectiva (column-major)
-function UpdateProjectionMatrix() {
+function CreatePerspectiveMatrix() {
 
     let fov_angle = 60;
     let r = canvas.width / canvas.height;
@@ -270,7 +206,7 @@ function GenerateLabyrinth() {
     transY = CAMERA_HEIGHT;
 }
 
-function CreateSmallLabyrinth() {
+function CreateMinimap() {
     let labyrinth = labyrinthMovement.labyrinth;
 
     grid.innerHTML = '';
@@ -330,4 +266,83 @@ function configureUIScoreText() {
 function AddGems() {
     gemsManager = new GemManager(numberOfXSquares, numberOfZSquares);
     gemsManager.generateGems(Proportion.Large);
+}
+
+
+function SetUpCanvasZoom() {
+    canvas.zoom = function (s) {
+        transZ *= s / canvas.height + 1;
+        CreatePerspectiveMatrix();
+        DrawScene();
+    }
+}
+
+function SetUpOnMouseWheel() {
+    canvas.onwheel = function () {
+        canvas.zoom(0.3 * event.deltaY);
+    }
+}
+
+function SetUpOnMouseDown() {
+    canvas.onmousedown = function () {
+        let cx = event.clientX;
+        let cy = event.clientY;
+        if (event.ctrlKey) {
+            canvas.onmousemove = function () {
+                canvas.zoom(5 * (event.clientY - cy));
+                cy = event.clientY;
+            }
+        } else {
+            // Si se mueve el mouse, actualizo las matrices de rotación
+            canvas.onmousemove = function () {
+                rotY += (cx - event.clientX) / canvas.width * 5;
+                rotX += (cy - event.clientY) / canvas.height * 5;
+
+                cx = event.clientX;
+                cy = event.clientY;
+                CreatePerspectiveMatrix();
+                DrawScene();
+            }
+        }
+    }
+}
+
+function SetUpOnMouseUp() {
+    canvas.onmouseup = canvas.onmouseleave = function () {
+        canvas.onmousemove = null;
+    }
+}
+
+function SetUpOnKeyUp() {
+    canvas.onkeyup = canvas.onkeydown = function () {
+
+        buttonsPressed[event.key] = event.type !== 'keyup';
+
+        if (event.type === 'keyup') return;
+        if (buttonsPressed['w'] === true) {
+            moveZ(-movementSpeed / canvas.height);
+        } else if (buttonsPressed['s'] === true) {
+            moveZ(movementSpeed / canvas.height);
+        }
+        if (buttonsPressed['a'] === true) {
+            moveX(movementSpeed / canvas.height);
+        }
+        if (buttonsPressed['d'] === true) {
+            moveX(-movementSpeed / canvas.height);
+        }
+        if (buttonsPressed['q'] === true) {
+            moveY(movementSpeed / canvas.height);
+        }
+        if (buttonsPressed['e'] === true) {
+            moveY(-movementSpeed / canvas.height);
+        }
+        if (event.code === 'ArrowRight') {
+            cameraRotationXY -= Math.PI / 32;
+            DrawScene();
+        }
+        if (event.code === 'ArrowLeft') {
+            cameraRotationXY += Math.PI / 32;
+            DrawScene();
+        }
+    }
 }

@@ -21,8 +21,8 @@ class Graph {
     }
 
     insertNode(id) {
-        let zIndex = this.zIndex(id);
-        let xIndex = this.xIndex(id);
+        let zIndex = this.getZIndex(id);
+        let xIndex = this.getXIndex(id);
         if (!this.nodes[zIndex])
             this.nodes[zIndex] = []
         if (!this.nodes[zIndex][xIndex]) {
@@ -34,21 +34,25 @@ class Graph {
         }
     }
 
-
     has(id) {
-        return this.nodes[this.zIndex(id)] && this.nodes[this.zIndex(id)][this.xIndex(id)] ? true : false;
+        let zIndex = this.getZIndex(id);
+        let xIndex = this.getXIndex(id);
+
+        if(!this.nodes[zIndex]) return false;
+
+        return this.nodes[zIndex][xIndex];
     }
 
     getIndexes(id) {
-        return [this.xIndex(id), this.zIndex(id)];
+        return [this.getXIndex(id), this.getZIndex(id)];
     }
 
     insertWalk(randomWalk) {
         for (let i = 0; i < randomWalk.length - 1; i++) {
             let currentNode = randomWalk[i];
             let nextNode = randomWalk[i + 1];
-            let zIndex = this.zIndex(currentNode);
-            let xIndex = this.xIndex(currentNode);
+            let zIndex = this.getZIndex(currentNode);
+            let xIndex = this.getXIndex(currentNode);
             this.insertNode(currentNode);
             this.nodes[zIndex][xIndex].neighbors.push(nextNode);
             if (i > 0) {
@@ -57,14 +61,14 @@ class Graph {
             }
         }
         let utsNode = randomWalk[randomWalk.length - 1];
-        this.nodes[this.zIndex(utsNode)][this.xIndex(utsNode)].neighbors.push(randomWalk[randomWalk.length - 2])
+        this.nodes[this.getZIndex(utsNode)][this.getXIndex(utsNode)].neighbors.push(randomWalk[randomWalk.length - 2])
     }
 
-    zIndex(id) {
+    getZIndex(id) {
         return Math.floor(id / this.numberOfXSquares);
     }
 
-    xIndex(id) {
+    getXIndex(id) {
         return id % this.numberOfXSquares;
     }
 
@@ -94,7 +98,7 @@ class Graph {
 
     getNode(id) {
         if (this.has(id)) {
-            return this.nodes[this.zIndex(id)][this.xIndex(id)];
+            return this.nodes[this.getZIndex(id)][this.getXIndex(id)];
         }
     }
 

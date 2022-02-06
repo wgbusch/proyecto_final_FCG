@@ -9,26 +9,26 @@ class LabyrinthGenerator {
         let numberOfXSquares = this.numberOfXSquares;
         let numberOfZSquares = this.numberOfZSquares;
 
-        let uniform_spanning_tree = new Graph(numberOfXSquares, numberOfZSquares);
-        uniform_spanning_tree.insertNode(this.random(numberOfZSquares * numberOfXSquares));
-        while (uniform_spanning_tree.size < numberOfZSquares * numberOfXSquares) {
-            let randomWalk = this.generateRandomWalk(uniform_spanning_tree);
-            uniform_spanning_tree.insertWalk(randomWalk);
+        let uniformSpanningTree = new Graph(numberOfXSquares, numberOfZSquares);
+        uniformSpanningTree.insertNode(this.random(numberOfZSquares * numberOfXSquares));
+        while (uniformSpanningTree.size < numberOfZSquares * numberOfXSquares) {
+            let randomWalk = this.generateRandomWalk(uniformSpanningTree);
+            uniformSpanningTree.insertWalk(randomWalk);
         }
-        return uniform_spanning_tree;
+        return uniformSpanningTree;
     }
 
     random(range) {
         return Math.floor(Math.random() * range);
     }
 
-    generateRandomWalk(uts) {
+    generateRandomWalk(uniformSpanningTree) {
         let numberOfXSquares = this.numberOfXSquares;
         let numberOfZSquares = this.numberOfZSquares;
 
-        let pickNodeNotInUts = (uts) => {
+        let pickIdNotInUTS = (uniformSpanningTree) => {
             let randomNumber = this.random(numberOfZSquares * numberOfXSquares);
-            while (uts.has(randomNumber)) {
+            while (uniformSpanningTree.has(randomNumber)) {
                 randomNumber = this.random(numberOfZSquares * numberOfXSquares);
             }
             return randomNumber;
@@ -51,22 +51,33 @@ class LabyrinthGenerator {
 
         let randomWalk = [];
         let previousNode = -1;
-        let currentNode = pickNodeNotInUts(uts);
+        let currentNode = pickIdNotInUTS(uniformSpanningTree);
         randomWalk.push(currentNode);
 
-        while (!uts.has(currentNode)) {
+        while (!uniformSpanningTree.has(currentNode)) {
             let possibleMovementDirections = [];
 
-            let row = uts.zIndex(currentNode);
-            let column = uts.xIndex(currentNode);
-            if (row > 0 && currentNode - numberOfXSquares !== previousNode)
-                possibleMovementDirections.push(currentNode - numberOfXSquares);
-            if (row < numberOfZSquares - 1 && currentNode + numberOfXSquares !== previousNode)
-                possibleMovementDirections.push(currentNode + numberOfXSquares)
-            if (column > 0 && currentNode - 1 !== previousNode)
-                possibleMovementDirections.push(currentNode - 1)
-            if (column < numberOfXSquares - 1 && currentNode + 1 !== previousNode)
-                possibleMovementDirections.push(currentNode + 1)
+            let xIndex = uniformSpanningTree.getXIndex(currentNode);
+            let zIndex = uniformSpanningTree.getZIndex(currentNode);
+
+            let topSquare = uniformSpanningTree.getIdOfMovingOneStepInNorthDirection(currentNode);
+            let bottomSquare = uniformSpanningTree.getIdOfMovingOneStepInSouthDirection(currentNode);
+            let rightSquare = uniformSpanningTree.getIdOfMovingOneStepInEastDirection(currentNode);
+            let leftSquare = uniformSpanningTree.getIdOfMovingOneStepInWestDirection(currentNode);
+
+            let isOnTopBorder = zIndex === 0;
+            let isOnBottomBorder = zIndex === numberOfZSquares - 1;
+            let isOnRightBorder = xIndex === numberOfXSquares - 1;
+            let isOnLeftBorder = xIndex === 0;
+
+            if (!isOnTopBorder && topSquare !== previousNode)
+                possibleMovementDirections.push(topSquare);
+            if (!isOnBottomBorder && bottomSquare !== previousNode)
+                possibleMovementDirections.push(bottomSquare)
+            if (!isOnLeftBorder && leftSquare !== previousNode)
+                possibleMovementDirections.push(leftSquare)
+            if (!isOnRightBorder && rightSquare !== previousNode)
+                possibleMovementDirections.push(rightSquare)
             let nextNode = possibleMovementDirections[this.random(possibleMovementDirections.length)];
 
             if (!makesALoop(nextNode, randomWalk)) {

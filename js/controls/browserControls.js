@@ -68,7 +68,7 @@ function LoadTextureCeilingFromFile(param) {
 function StartScreensaver() {
     GenerateLabyrinth();
     AddGems();
-    CreateSmallLabyrinth();
+    CreateMinimap();
     UpdateCanvasSize();
     DrawScene();
 }
